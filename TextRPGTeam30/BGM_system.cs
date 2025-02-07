@@ -55,7 +55,7 @@ class Program
 
     static Random rnd = new Random();
 
-    static void Main(string[] args)
+    static void Main1(string[] args)
     {
         // 재생 설정
         int sampleRate = 44100;       // 44.1 kHz

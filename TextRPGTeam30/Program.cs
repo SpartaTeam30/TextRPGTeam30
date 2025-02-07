@@ -2,7 +2,7 @@
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main1(string[] args)
         {
             GameManager gameManager = new GameManager();
 

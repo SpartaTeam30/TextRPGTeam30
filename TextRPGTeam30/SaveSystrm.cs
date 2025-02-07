@@ -87,27 +87,68 @@ namespace TextRPGTeam30
 
 }
 
-class Program
+class Program2
 {
-    static void Main()
-    {
-        GameSaveManager saveManager = new GameSaveManager();
+        static void Main()
+        {
+            GameSaveManager saveManager = new GameSaveManager();
 
-        // 저장된 데이터를 불러오거나 새로 생성
-        PlayerData player = saveManager.LoadCharacter();
+            // 저장된 데이터를 불러오거나 새로 생성
+            PlayerData player = saveManager.LoadCharacter();
 
-        Console.WriteLine($"현재 플레이어: {player.Name}, HP: {player.Hp}, Gold: {player.Gold}");
+            Console.WriteLine("\n=== 현재 플레이어 정보 ===");
+            Console.WriteLine($"이름: {player.Name}");
+            Console.WriteLine($"HP: {player.Hp}");
+            Console.WriteLine($"공격력: {player.Attack}");
+            Console.WriteLine($"치명타 확률: {player.Crit}%");
+            Console.WriteLine($"MP: {player.Mp}");
+            Console.WriteLine($"Gold: {player.Gold}");
+            Console.WriteLine($"Exp: {player.Exp}");
+            Console.WriteLine("\n=== 인벤토리 ===");
 
-        // 플레이어 데이터 변경 테스트
-        player.Gold += 500;
-        player.Inventory.Add(new ItemData { Name = "체력 포션", Explanation = "HP를 50 회복", Type = "소비형", ItemCount = 1, IsEquipped = false });
+            if (player.Inventory.Count == 0)
+            {
+                Console.WriteLine("인벤토리가 비어 있습니다.");
+            }
+            else
+            {
+                for (int i = 0; i < player.Inventory.Count; i++)
+                {
+                    var item = player.Inventory[i];
+                    string equipped = item.IsEquipped ? "[E]" : "";
+                    Console.WriteLine($"{i + 1}. {equipped} {item.Name} - {item.Explanation} (수량: {item.ItemCount})");
+                }
+            }
 
-        Console.WriteLine("골드 추가 & 아이템 추가 완료!");
+            // 플레이어 데이터 변경 테스트
+            Console.WriteLine("\n골드 +500 추가 & 아이템 '체력 포션' 추가!");
+            player.Gold += 500;
+            player.Inventory.Add(new ItemData
+            {
+                Name = "체력 포션",
+                Explanation = "HP를 50 회복",
+                Type = "소비형",
+                ItemCount = 50,
+                IsEquipped = false
+            });
 
-        // 데이터 저장
-        saveManager.SaveGame(player);
+            // 변경된 정보 다시 출력
+            Console.WriteLine("\n=== 변경된 플레이어 정보 ===");
+            Console.WriteLine($"Gold: {player.Gold}");
+            Console.WriteLine("\n=== 변경된 인벤토리 ===");
+
+            for (int i = 0; i < player.Inventory.Count; i++)
+            {
+                var item = player.Inventory[i];
+                string equipped = item.IsEquipped ? "[E]" : "";
+                Console.WriteLine($"{i + 1}. {equipped} {item.Name} - {item.Explanation} (수량: {item.ItemCount})");
+            }
+
+            // 데이터 저장
+            saveManager.SaveGame(player);
+        }
+
     }
-}
 
 
 
