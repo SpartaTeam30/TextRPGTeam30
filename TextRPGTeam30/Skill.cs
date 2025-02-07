@@ -6,6 +6,11 @@
         public int damage;
         public int cost;
 
+        public Skill()
+        {
+
+        }
+
         public Skill(string name, int damage, int cost)
         {
             this.name = name;
@@ -13,13 +18,9 @@
             this.cost = cost;
         }
 
-        public void UseSkill()
+        public int UseSkill()
         {
             Console.WriteLine($"{name} 스킬 사용! (MP {cost} 소모)");
-        }
-
-        public int GetDamage()
-        {
             return damage;
         }
     }

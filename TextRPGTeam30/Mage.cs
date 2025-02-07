@@ -2,10 +2,18 @@
 {
     internal class Mage : Job
     {
-        public string name { get; }
-        public Mage(Skill skill, int hp, float attack, float defense) : base(skill, hp, attack, defense)
+        public Mage()
         {
             name = "마법사";
+            skill = new Fireball();
+            hp = 75;
+            attack = 15;
+            defense = 5;
+        }
+
+        public Mage(string name, Skill skill, int hp, float attack, float defense) : base(name, skill, hp, attack, defense)
+        {
+
         }
     }
 }

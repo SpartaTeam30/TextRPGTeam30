@@ -3,29 +3,35 @@
     internal class Job
     {
         public string name;
-        private Skill _skill;
-        private int _hp;
-        private float _attack;
-        private float _defense;
+        public Skill skill;
+        public int hp;
+        public float attack;
+        public float defense;
 
-        public Job(Skill skill, int hp, float attack, float defense)
+        public Job()
         {
-            this._skill = skill;
-            this._hp = hp;
-            this._attack = attack;
-            this._defense = defense;
+
         }
 
-        public void UseSkill()
+        public Job(string name, Skill skill, int hp, float attack, float defense)
         {
-            _skill.UseSkill();
+            this.name = name;
+            this.skill = skill;
+            this.hp = hp;
+            this.attack = attack;
+            this.defense = defense;
+        }
+
+        public int UseSkill()
+        {
+            return skill.UseSkill();
         }
 
         public void ResetStat(Player player)
         {
-            player.Hp = _hp;
-            player.Attack = _attack;
-            //player.Defense = _defense;
+            player.Hp = hp;
+            player.Attack = attack;
+            //player.Defense = defense;
         }
     }
 }
