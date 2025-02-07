@@ -9,24 +9,30 @@ namespace TextRPGTeam30
     //플레이어 변수
     public class PlayerData
     {
-        public string Name { get; set; }
-        public int Hp { get; set; }
-        public float Attack { get; set; }
-        public int Crit { get; set; }
-        public int Mp { get; set; }
-        public int Gold { get; set; }
-        public int Gob { get; set; }
-        public int Exp { get; set; }
+        public string Name { get; set; } //이름
+        public string job { get; set; } //직업
+        public float Attack { get; set; } //공격력
+        public int Level { get; set; } //레벨
+        public int Defense { get; set; } //방어력
+        public int Hp { get; set; } // 체력
+        public int Mp { get; set; } //마나
+        public int CritRate { get; set; } //크리티컬
+        public int Gold { get; set; } //골드
+        public int Exp { get; set; } //경험치
+        // public int CritDamage { get; set; } //크리티컬 데미지
+        public int Evasion { get; set; } // 회피
 
-        public List<ItemData> Inventory { get; set; } // 플레이어 아이템 리스트
+        //public List<ItemData> Inventory { get; set; } // 플레이어 아이템 리스트
         //public List<ItemData> Quest { get; set; }
-
-        public PlayerData()
-        {
-            Inventory = new List<ItemData>(); // 기본값으로 빈 리스트 생성
-        }
+        /*
+           public PlayerData()
+            {
+             Inventory = new List<ItemData>(); // 기본값으로 빈 리스트 생성
+            }
+        */
     }
 
+    /*
     //아이템 저장 (예시)
     public class ItemData
     {
@@ -36,6 +42,8 @@ namespace TextRPGTeam30
         public int ItemCount { get; set; }      // 아이템 개수
         public bool IsEquipped { get; set; }    // 장비 착용 여부
     }
+    */
+    //저장&불러오기 스택틱으로수정예정
 
     //게임 저장 클래스 저장&불러오기
     public class GameSaveManager
@@ -70,14 +78,18 @@ namespace TextRPGTeam30
                 PlayerData newCharacter = new PlayerData
                 {
                     Name = name,
-                    Hp = 100,
-                    Attack = 10.0f,
-                    Crit = 5,
-                    Mp = 50,
+                    Job = Warrior,
+                    Level = 1,
+                    Hp = 150, // 전사는 체력 많음
+                    Mp = 80, // 마법사는 마나 많음
+                    Attack = 10.0f, // 전사는 공격력 높음
+                    Defense = 5, // 전사는 방어력 높음
+                    CritRate = 10, // 마법사는 크리티컬 확률 높음
+                    //CritDamage = 50, // 기본 크리티컬 데미지
+                    Evasion = 5, // 마법사는 회피율 높음
                     Gold = 100,
-                    Gob = 0,
-                    Exp = 0,
-                    Inventory = new List<ItemData>()
+                    Exp = 0
+                    //Inventory = new List<ItemData>()
                     //퀘스트 변수리스트
                 };
 
@@ -88,3 +100,5 @@ namespace TextRPGTeam30
 
     }
 }
+
+
