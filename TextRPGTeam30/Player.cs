@@ -18,15 +18,15 @@ namespace TextRPGTeam30
 
         public int exp;
 
-        public lJob job;
+       // public lJob job;
 
-        public List<Equipable> equipment;
+       // public List<Equipable> equipment;
 
-        public List<Consumable> consumables;
+       // public List<Consumable> consumables;
 
-        public Weapon? equipWeapon;
+       // public Weapon? equipWeapon;
 
-        public Armor? equipArmor;
+       // public Armor? equipArmor;
 
         public int Level { get; set; }
 
