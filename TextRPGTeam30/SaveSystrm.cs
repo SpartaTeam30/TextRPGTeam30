@@ -19,6 +19,7 @@ namespace TextRPGTeam30
         public int Exp { get; set; }
 
         public List<ItemData> Inventory { get; set; } // 플레이어 아이템 리스트
+        //public List<ItemData> Quest { get; set; }
 
         public PlayerData()
         {
