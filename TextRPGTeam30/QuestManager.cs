@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
 
-public class Quest
+﻿namespace TextRPGTeam30
 {
     public int Id { get; set; }            // 퀘스트 ID
     public string Name { get; set; }       // 퀘스트 이름
