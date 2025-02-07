@@ -68,6 +68,7 @@
             Console.Clear();
             Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
 
+            player = new Player("test", 1, 100, 50, 1500, 0, 15, 10, new Warrior(), 0);
             //플레이어, 던전매니저, 퀘스트매니저 생성 후 필드에 할당
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
@@ -89,6 +90,7 @@
             switch (select)
             {
                 case 1:
+                    player.DisplayStatus();
                     break;
                 case 2:
                     break;

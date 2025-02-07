@@ -41,6 +41,7 @@ namespace TextRPGTeam30
         }
         public void DisplayStatus()
         {
+            Console.Clear();
             Console.WriteLine($"Lv. {Level} {Name} ({job.name})");
             Console.WriteLine($"공격력 : {Attack}");
             Console.WriteLine($"방어력 : {Defense}");
@@ -52,7 +53,11 @@ namespace TextRPGTeam30
             Console.WriteLine("공격력 : 10");
             Console.WriteLine("방어력 : 5");
             Console.WriteLine("체력 : 100");
-            Console.WriteLine("Gold : 1500 G");
+            Console.WriteLine("Gold : 1500 G\n");
+
+            Console.WriteLine("0. 나가기");
+
+            GameManager.CheckWrongInput(out int select, 0, 0);
         }
 
         public void TakeDamage(int damage)

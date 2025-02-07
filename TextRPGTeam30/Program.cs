@@ -7,6 +7,11 @@
             GameManager gameManager = new GameManager();
 
             gameManager.PrintStartScene();
+
+            while(true)
+            {
+                gameManager.StartSelect();
+            }
         }
     }
 }
