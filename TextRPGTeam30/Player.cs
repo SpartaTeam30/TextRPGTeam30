@@ -8,43 +8,40 @@ namespace TextRPGTeam30
         public int mp;
         public int gold;
         public int exp;
-        //public lJob job;
-        //public List<Equipable> equipment;
-        //public List<Consumable> consumables;
-        //public Weapon? equipWeapon;
-        //public Armor? equipArmor;
-
-        public List<IEquipable> equipment { get; set; }
-        public List<Consumable> consumables { get; set; }
-        public Weapon equipWeapon { get; set; }
-        public Armor equipArmor { get; set; }
+        public Job job;
+        // public List<IEquipable> equipment { get; set; } 
+       // public List<Consumable> consumables { get; set; } 
+       // public Weapon equipWeapon { get; set; }
+      // public Armor equipArmor { get; set; }
         public int Level { get; set; }
         public string Name { get; set; }
         public int Defense { get; set; }
-        public string Job { get; set; }
         public int Hp { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public int CritDamage { get; set; }
         public int Evasion { get; set; }
-        public Player(int level, string name, int defense, string job, int hp, int mp, int gold, int exp, int critRate, float attack)
+
+        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, Job job, int defense)
         {
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
             this.Defense = defense;
-            this.Job = job;
+            this.job = job;
             this.mp = mp;
             this.gold = gold;
             this.exp = exp;
             this.CritRate = critRate;
             this.Attack = attack;
-            equipment = new List<Equipable>();  // 장비 가능 리스트
-            consumables = new List<Consumable>(); // 소모품 리스트
+            //equipment = new List<Equipable>();  // 장비 가능 리스트
+            //consumables = new List<Consumable>(); // 소모품 리스트 
+            this.job = job;
+            job.ResetStat(this);
         }
         public void DisplayStatus()
         {
-            Console.WriteLine($"Lv. {Level} {Name} ({Job})");
+            Console.WriteLine($"Lv. {Level} {Name} ({job.name})");
             Console.WriteLine($"공격력 : {Attack}");
             Console.WriteLine($"방어력 : {Defense}");
             Console.WriteLine($"체력 : {Hp}");
@@ -71,11 +68,11 @@ namespace TextRPGTeam30
 
         public void attack(float Attack)
         {
-            if (equipWeapon != null)
-            {
-                Console.WriteLine($"{Name} 공격 시 {equipWeapon.Name}, Power: {equipWeapon.AttackPower}");
-            }
-            else
+         //   if (equipWeapon != null)
+         // {
+         //      Console.WriteLine($"{Name} 공격 시 {equipWeapon.Name}, Power: {equipWeapon.AttackPower}");
+         //  }
+          //  else
             {
                 Console.WriteLine($"{Name} 가 공격합니다!");
             }
