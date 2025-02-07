@@ -14,6 +14,7 @@
 
         public int Evasion { get; set; }
 
+
         public void TakeDamage(int damage)
         {
 
@@ -24,10 +25,27 @@
                         
         }
 
+        public void EquipWeapon()
+        {
+
+        }
+
+        public void EquipArmor()
+        {
+
+        }
+
         public void DisplayInfo()
         {
 
         }
+
+        public void Equip()
+        {
+
+        }
+
+
     }
 }
 
