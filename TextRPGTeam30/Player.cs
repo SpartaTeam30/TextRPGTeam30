@@ -5,7 +5,7 @@
         public int mp;
         public int gold;
         public int exp;
-        //public lJob job;
+        public Job job;
         //public List<Equipable> equipment;
         //public List<Consumable> consumables;
         //public Weapon? equipWeapon;
@@ -17,7 +17,8 @@
         public float Attack { get; set; }
         public int CritDamage { get; set; }
         public int Evasion { get; set; }
-        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack)
+
+        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, Job job)
         {
             this.Name = name;
             this.Level = level;
@@ -27,6 +28,8 @@
             this.exp = exp;
             this.CritRate = critRate;
             this.Attack = attack;
+            this.job = job;
+            job.ResetStat(this);
         }
 
         public void TakeDamage(int damage)
