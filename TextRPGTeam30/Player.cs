@@ -14,27 +14,19 @@
         public string Name { get; set; }
         public int Hp { get; set; }
         public int CritRate { get; set; }
-        public Character(int critRate)
-        {
-            CritRate = critRate;
-        }
         public float Attack { get; set; }
-        public Character(float attack)
-        {
-            Attack = attack;
-        }
         public int CritDamage { get; set; }
         public int Evasion { get; set; }
-
-        public Player(string name, int level, int hp, int mp, int gold, int exp, Job job)
+        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack)
         {
-            Name = name;
-            Level = level;
-            Hp = hp;
-            Mp = mp;
-            Gold = gold;
-            Exp = exp;
-            Job = job;
+            this.Name = name;
+            this.Level = level;
+            this.Hp = hp;
+            this.mp = mp;
+            this.gold = gold;
+            this.exp = exp;
+            this.CritRate = critRate;
+            this.Attack = attack;
         }
 
         public void TakeDamage(int damage)
@@ -58,4 +50,5 @@
         {
             Console.WriteLine($"Name: {Name}, Level: {Level}, HP: {Hp}");
         }
+    }
 }
