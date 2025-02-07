@@ -18,9 +18,14 @@
             Attack = _attack;
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(float attack)
         {
 
+        }
+        public void SetLevel(int level) 
+        {
+            this.Level = level;
+            Attack += level * 0.5f;
         }
         public void Dead()
         {
