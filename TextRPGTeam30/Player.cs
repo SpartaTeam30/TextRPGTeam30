@@ -6,11 +6,13 @@
         public int mp;
         public int gold;
         public int exp;
+
         public lJob job;
         public List<Equipable> equipment;
         public List<Consumable> consumables;
         public Weapon? equipWeapon;
         public Armor? equipArmor;
+
         public int Level { get; set; }
         public string Name { get; set; }
         public int Hp { get; set; }
