@@ -38,5 +38,28 @@
                 return;
             }
         }
+
+        public static void PrintColored(string message, ConsoleColor foreground = ConsoleColor.Gray, ConsoleColor background = ConsoleColor.Black)
+        {
+            ConsoleColor originalForeground = Console.ForegroundColor;
+            ConsoleColor originalBackground = Console.BackgroundColor;
+            try
+            {
+                Console.ForegroundColor = foreground;
+                Console.BackgroundColor = background;
+
+                Console.Write(message);
+            }
+            finally
+            {
+                Console.ForegroundColor = originalForeground;
+                Console.BackgroundColor = originalBackground;
+            }
+        }
+        public static void PrintColoredLine(string message, ConsoleColor foreground = ConsoleColor.Gray, ConsoleColor background = ConsoleColor.Black)
+        {
+            PrintColored(message, foreground, background);
+            Console.WriteLine();
+        }
     }
 }
