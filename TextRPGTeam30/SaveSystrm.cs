@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace TextRPGTeam30
 {
     //플레이어 변수
-        public class PlayerData
+    public class PlayerData
     {
         public string Name { get; set; }
         public int Hp { get; set; }
@@ -50,15 +50,15 @@ namespace TextRPGTeam30
         }
 
         // JSON 파일에서 게임 데이터를 불러오기
-    public PlayerData LoadCharacter()
-    {
-        if (File.Exists(SaveFilePath))
+        public PlayerData LoadCharacter()
         {
-            string jsonData = File.ReadAllText(SaveFilePath);
-            PlayerData character = JsonConvert.DeserializeObject<PlayerData>(jsonData);
-            Console.WriteLine("저장된 캐릭터를 불러왔습니다.");
-            return character;
-        }
+            if (File.Exists(SaveFilePath))
+            {
+                string jsonData = File.ReadAllText(SaveFilePath);
+                PlayerData character = JsonConvert.DeserializeObject<PlayerData>(jsonData);
+                Console.WriteLine("저장된 캐릭터를 불러왔습니다.");
+                return character;
+            }
             else
             {
                 Console.WriteLine("저장된 캐릭터가 없습니다. 캐릭터를 새로 만들어야 합니다.");
@@ -80,22 +80,75 @@ namespace TextRPGTeam30
                     //퀘스트 변수리스트
                 };
 
-                    SaveGame(newCharacter); // 새 캐릭터 즉시 저장
-                    return newCharacter;
+                SaveGame(newCharacter); // 새 캐릭터 즉시 저장
+                return newCharacter;
+            }
         }
+
     }
 
-}
-
-class Program2
-{
+    class Program2
+    {
         static void Main()
         {
             GameSaveManager saveManager = new GameSaveManager();
 
-            // 저장된 데이터를 불러오거나 새로 생성
+            // 게임 실행 시 JSON을 한 번만 불러옴
             PlayerData player = saveManager.LoadCharacter();
 
+            while (true)
+            {
+                Console.WriteLine("\n=== 메뉴 ===");
+                Console.WriteLine("1. 내 정보 보기");
+                Console.WriteLine("2. 골드 추가 (+500)");
+                Console.WriteLine("3. 아이템 추가");
+                Console.WriteLine("4. 저장하기");
+                Console.WriteLine("5. 종료");
+                Console.Write("선택: ");
+
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        ShowPlayerInfo(player);
+                        break;
+
+                    case "2":
+                        player.Gold += 500;
+                        Console.WriteLine("\n골드가 500 증가했습니다.");
+                        break;
+
+                    case "3":
+                        player.Inventory.Add(new ItemData
+                        {
+                            Name = "체력 포션",
+                            Explanation = "HP를 50 회복",
+                            Type = "소비형",
+                            ItemCount = 1,
+                            IsEquipped = false
+                        });
+                        Console.WriteLine("\n'체력 포션'이 추가되었습니다.");
+                        break;
+
+                    case "4":
+                        saveManager.SaveGame(player);
+                        Console.WriteLine("\n게임이 저장되었습니다.");
+                        break;
+
+                    case "5":
+                        Console.WriteLine("\n게임을 종료합니다.");
+                        return;
+
+                    default:
+                        Console.WriteLine("\n올바른 번호를 입력하세요.");
+                        break;
+                }
+            }
+        }
+    
+    static void ShowPlayerInfo(PlayerData player)
+        {
             Console.WriteLine("\n=== 현재 플레이어 정보 ===");
             Console.WriteLine($"이름: {player.Name}");
             Console.WriteLine($"HP: {player.Hp}");
@@ -104,8 +157,8 @@ class Program2
             Console.WriteLine($"MP: {player.Mp}");
             Console.WriteLine($"Gold: {player.Gold}");
             Console.WriteLine($"Exp: {player.Exp}");
-            Console.WriteLine("\n=== 인벤토리 ===");
 
+            Console.WriteLine("\n=== 인벤토리 ===");
             if (player.Inventory.Count == 0)
             {
                 Console.WriteLine("인벤토리가 비어 있습니다.");
@@ -119,37 +172,10 @@ class Program2
                     Console.WriteLine($"{i + 1}. {equipped} {item.Name} - {item.Explanation} (수량: {item.ItemCount})");
                 }
             }
-
-            // 플레이어 데이터 변경 테스트
-            Console.WriteLine("\n골드 +500 추가 & 아이템 '체력 포션' 추가!");
-            player.Gold += 500;
-            player.Inventory.Add(new ItemData
-            {
-                Name = "체력 포션",
-                Explanation = "HP를 50 회복",
-                Type = "소비형",
-                ItemCount = 50,
-                IsEquipped = false
-            });
-
-            // 변경된 정보 다시 출력
-            Console.WriteLine("\n=== 변경된 플레이어 정보 ===");
-            Console.WriteLine($"Gold: {player.Gold}");
-            Console.WriteLine("\n=== 변경된 인벤토리 ===");
-
-            for (int i = 0; i < player.Inventory.Count; i++)
-            {
-                var item = player.Inventory[i];
-                string equipped = item.IsEquipped ? "[E]" : "";
-                Console.WriteLine($"{i + 1}. {equipped} {item.Name} - {item.Explanation} (수량: {item.ItemCount})");
-            }
-
-            // 데이터 저장
-            saveManager.SaveGame(player);
         }
 
+
+
+
     }
-
-
-
 }
