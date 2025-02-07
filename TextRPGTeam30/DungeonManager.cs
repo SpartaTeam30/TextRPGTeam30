@@ -23,13 +23,14 @@ namespace TextRPGTeam30
             int min_range_monster = 1 + stage/5;
             if(max_range_monster >= monsters.Count)
             {
-                max_range_monster = monsters.Count - 1;
                 min_range_monster = max_range_monster - 3;
+                max_range_monster = monsters.Count - 1;
             }
             dungeon = new Dungeon(stage, monsters.GetRange(min_range_monster, max_range_monster));
         }
         public void DungeonStart()
         {
+            CreateDungeon();
             int deadMonster = 0;
             while (true) { 
                 AttackMenu();
@@ -46,12 +47,13 @@ namespace TextRPGTeam30
                 }
             }
             dungeon.DungeonSuccess();
+            stage++;
             
         }
         public void PrintDungeonUI()
         {
             Console.Clear();
-            Console.WriteLine("\nBattle!!\n");
+            GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
             foreach (Monster monster in dungeon.monsters)
             {
                 Console.WriteLine($"Lv.{monster.Level} {monster.Name} HP {monster.Hp}");
@@ -100,7 +102,7 @@ namespace TextRPGTeam30
         public void SelectTarget()
         {
             Console.Clear();
-            Console.WriteLine("\nBattle!!\n");
+            GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
             int num = 0;
             foreach (Monster monster in dungeon.monsters)
             {
@@ -112,24 +114,36 @@ namespace TextRPGTeam30
             Console.WriteLine($"MP {player.mp}/50\n");
             Console.WriteLine("0. 취소");
 
-            int con;
-            GameManager.CheckWrongInput(out con, 0, num);
+            GameManager.CheckWrongInput(out int con, 0, num);
 
+            if(con == 0)
+            {
+                AttackMenu();
+                return;
+            }
+
+            Console.Clear();
             Monster target = dungeon.monsters[con - 1];
+            GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
+            Console.WriteLine($"{player.Name}의 공격!");
+
             target.TakeDamage(player.Attack);
-            if(target.Hp <= 0)
+            Console.WriteLine("\n0. 다음\n");
+            GameManager.CheckWrongInput(out con, 0, 0);
+            if (target.Hp <= 0)
             {
                 target.Dead();
             }
         }
         public void MonsterAttack()
         {
-            Console.WriteLine("Battle!!");
             foreach (Monster monster in dungeon.monsters)
             {
                 if(monster.Hp > 0)
                 {
                     int playerHp = player.Hp;
+                    Console.Clear();
+                    GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
                     Console.WriteLine($"Lv. {monster.Level} {monster.Name} 의 공격");
                     player.TakeDamage((int)monster.Attack);
                     if (player.Hp <= 0)
@@ -138,7 +152,7 @@ namespace TextRPGTeam30
                     }
 
                     Console.WriteLine($"Lv. {player.Level} {player.Name}");
-                    Console.WriteLine($"HP {playerHp} -> {player.Hp}\n");
+                    Console.WriteLine($"HP {player.Hp} -> {player.Hp}\n");
                     Console.WriteLine("0. 다음\n");
                     GameManager.CheckWrongInput(out int con, 0, 0);
                 }
