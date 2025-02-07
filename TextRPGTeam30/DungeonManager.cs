@@ -5,6 +5,7 @@ namespace TextRPGTeam30
     internal class DungeonManager
     {
         int stage;
+        int deadMonster;
         Player player;
         Dungeon? dungeon;
         List<Monster> monsters;
@@ -31,7 +32,7 @@ namespace TextRPGTeam30
         public void DungeonStart()
         {
             CreateDungeon();
-            int deadMonster = 0;
+            deadMonster = 0;
             while (true)
             {
                 AttackMenu();
@@ -48,6 +49,22 @@ namespace TextRPGTeam30
                 }
             }
             dungeon.DungeonSuccess();
+
+            Console.Clear();
+            GameManager.PrintColoredLine("\nBattle!! - Result\n\n", ConsoleColor.Yellow);
+            GameManager.PrintColoredLine("Victory\n", ConsoleColor.Green);
+            Console.Write("던전에서 몬스터 ");
+            GameManager.PrintColored($"{dungeon.monsterNum}", ConsoleColor.Magenta);
+            Console.WriteLine("마리를 잡았습니다.\n");
+
+            Console.WriteLine("\n[캐릭터 정보]");
+            Console.Write($"Lv.");
+            GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
+            Console.WriteLine($"  {player.Name} ()");
+            Console.Write("HP ");
+            GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
+            Console.Write("MP ");
+            GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
             stage++;
 
         }
@@ -131,7 +148,7 @@ namespace TextRPGTeam30
                 }
                 else
                 {
-                    GameManager.PrintColoredLine($"{num++} Lv.{monster.Level} {monster.Name} Dead", ConsoleColor.DarkGray);
+                    GameManager.PrintColoredLine($"{++num} Lv.{monster.Level} {monster.Name} Dead", ConsoleColor.DarkGray);
                 }
             }
             Console.WriteLine("\n[내정보]");
@@ -142,21 +159,49 @@ namespace TextRPGTeam30
             GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
             Console.Write("MP ");
             GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
-
-            GameManager.CheckWrongInput(out int con, 0, num);
-
-            if (con == 0)
+            Monster target;
+            int con;
+            while (true)
             {
-                AttackMenu();
-                return;
+                GameManager.CheckWrongInput(out con, 0, num);
+
+                if (con == 0)
+                {
+                    AttackMenu();
+                    return;
+                }
+                target = dungeon.monsters[con - 1];
+                if (target.Hp <= 0)
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                }
+                else
+                {
+                    break;
+                }
             }
 
+            int targetHp = target.Hp;
             Console.Clear();
-            Monster target = dungeon.monsters[con - 1];
             GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
             Console.WriteLine($"{player.Name}의 공격!");
 
-            target.TakeDamage(player.Attack);
+            target.TakeDamage(player.Attack, player.Evasosion, false);
+            Console.Write("Lv.");
+            GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
+            Console.WriteLine($" {target.Name}");
+            Console.Write("HP ");
+            GameManager.PrintColored($"{targetHp}",ConsoleColor.Magenta);
+            Console.Write(" -> ");
+            if(target.Hp > 0)
+            {
+                Console.WriteLine($"{target.Hp}");
+            }
+            else
+            {
+                deadMonster++;
+                Console.WriteLine("Dead");
+            }
             Console.WriteLine("\n0. 다음\n");
             GameManager.CheckWrongInput(out con, 0, 0);
             if (target.Hp <= 0)
@@ -173,7 +218,9 @@ namespace TextRPGTeam30
                     int playerHp = player.Hp;
                     Console.Clear();
                     GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
-                    Console.WriteLine($"Lv. {monster.Level} {monster.Name} 의 공격");
+                    Console.Write($"Lv. ");
+                    GameManager.PrintColored($"{monster.Level}", ConsoleColor.Magenta);
+                    Console.WriteLine($" {monster.Name} 의 공격");
                     player.TakeDamage((int)monster.Attack);
                     if (player.Hp <= 0)
                     {

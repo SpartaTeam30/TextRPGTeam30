@@ -5,6 +5,7 @@ namespace TextRPGTeam30
 		public int stage;
 		public int rewardExp;
 		public int rewardGold;
+		public int monsterNum;
 		public List<Monster> monsters;
 		public List<Item> items;
 
@@ -14,10 +15,12 @@ namespace TextRPGTeam30
 			rewardExp = 0;
 			monsters = new List<Monster>();
 			rewardGold = 0;
+			monsterNum = 3;
 
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < monsterNum; i++)
 			{
-				Monster monster = _monsters[new Random().Next(0, _monsters.Count)];
+				int index = new Random().Next(0, _monsters.Count);
+				Monster monster = new Monster(_monsters[index]);
 				monster.SetLevel(new Random().Next(stage / 5 + 1, stage / 5 + 6));
 				monsters.Add(monster);
 			}
@@ -29,10 +32,12 @@ namespace TextRPGTeam30
 				rewardExp += monster.Level;
 			}
 			rewardGold = new Random().Next(stage * 100, stage * 200);
-			//item
-        }
+            //item
 
-		public void DungeonFail()
+
+		}
+
+        public void DungeonFail()
 		{
 			
 		}
