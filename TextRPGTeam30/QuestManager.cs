@@ -9,7 +9,7 @@ using static QuestManager;
 
 internal class QuestManager
 {
-    private static readonly string QuestFilePath = "quests.json"; // JSON 파일 경로
+    public static readonly string QuestFilePath = "quests.json"; // JSON 파일 경로
     // 카테고리별 퀘스트를 Dictionary로 관리
     Dictionary<string, List<Quest>> QuestCategories;
 
