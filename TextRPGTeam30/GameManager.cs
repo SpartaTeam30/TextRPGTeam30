@@ -56,10 +56,47 @@
                 Console.BackgroundColor = originalBackground;
             }
         }
+
         public static void PrintColoredLine(string message, ConsoleColor foreground = ConsoleColor.Gray, ConsoleColor background = ConsoleColor.Black)
         {
             PrintColored(message, foreground, background);
             Console.WriteLine();
+        }
+
+        public void PrintStartScene()
+        {
+            Console.Clear();
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+
+            player = new Player("test", 1, 100, 50, 1500, 0, 15, 10, new Warrior(), 0);
+            //플레이어, 던전매니저, 퀘스트매니저 생성 후 필드에 할당
+
+            Console.WriteLine("이제 전투를 시작할 수 있습니다.");
+
+            StartSelect();
+        }
+
+        public void StartSelect()
+        {
+            Console.Clear();
+            PrintColoredLine("마을", ConsoleColor.Green);
+            Console.WriteLine("이곳에서는 다양한 활동을 할 수 있습니다.\n");
+
+            Console.WriteLine("1. 상태 보기");
+            Console.WriteLine("2. 전투 시작");
+
+            CheckWrongInput(out int select, 1, 2);
+
+            switch (select)
+            {
+                case 1:
+                    player.DisplayStatus();
+                    break;
+                case 2:
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
