@@ -4,18 +4,18 @@
     {
         public Player player;
         public DungeonManager dManager;
-        public QuestManager qManager;
+        public QuestManager questManager;
 
         public GameManager()
         {
 
         }
 
-        public GameManager(Player player, DungeonManager dungeonManager, QuestManager questManager)
+        public GameManager(Player player, QuestManager questManager)
         {
             this.player = player;
-            dManager = dungeonManager;
-            qManager = questManager;
+           // dManager = dungeonManager;
+            this.questManager = questManager;
         }
 
         public static void CheckWrongInput(out int select, int minN, int maxN)//입력 예외처리
@@ -71,6 +71,8 @@
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
 
+            QuestManager questManager = new QuestManager();
+
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
 
             StartSelect();
@@ -84,8 +86,8 @@
 
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 전투 시작");
-
-            CheckWrongInput(out int select, 1, 2);
+            Console.WriteLine("3. 퀘스트");
+            CheckWrongInput(out int select, 1, 3);
 
             switch (select)
             {
@@ -93,6 +95,9 @@
                     player.DisplayStatus();
                     break;
                 case 2:
+                    break;
+                case 3:
+                    questManager.Questscreen();
                     break;
                 default:
                     break;

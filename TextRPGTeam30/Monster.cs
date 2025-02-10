@@ -2,13 +2,14 @@
 {
     internal class Monster : ICharacter
     {
+        public bool isUnique;
         public int Level { get; set; }
         public string Name { get; set; }
         public int Hp { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public int CritDamage { get; set; }
-        public int Evasosion { get; set; }
+        public int Evasion { get; set; }
 
         public Monster(string _name, int _level, int _hp, int _attack)
         {
@@ -16,7 +17,7 @@
             Level = _level;
             Hp = _hp;
             Attack = _attack;
-            Evasosion = 10;
+            Evasion = 10;
         }
 
         public Monster(Monster other) 
@@ -27,14 +28,14 @@
             this.CritRate = other.CritRate;
             this.Attack = other.Attack;
             this.CritDamage = other.CritDamage;
-            this.Evasosion = other.Evasosion;
+            this.Evasion = other.Evasion;
         }
 
-        public void TakeDamage(float attack, int crit, bool isSkill)
+        public void TakeDamage(float attack, int crit, bool isSkill = false)
         {
             int evasion_probability = new Random().Next(1, 101);
             
-            if (evasion_probability <= Evasosion && isSkill == false) {
+            if (evasion_probability <= Evasion && isSkill == false) {
                 Console.Write("Lv.");
                 GameManager.PrintColored($"{Level}", ConsoleColor.Magenta);
                 Console.WriteLine($" {Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다.\n");

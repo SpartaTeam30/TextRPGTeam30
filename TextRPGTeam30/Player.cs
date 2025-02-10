@@ -22,6 +22,28 @@ namespace TextRPGTeam30
         public int Evasion { get; set; }
         public int JobType { get; set; }
 
+        public Player()
+        {
+
+        }
+        public Player(string name, Job job)
+        {
+            this.Name = name;
+            this.Level = 1;
+            this.Hp = 100;
+            this.Defense = 5;
+            this.job = job;
+            this.mp = 50;
+            this.gold = 100;
+            this.exp = 0;
+            this.CritRate = 15;
+            this.Attack = 10;
+            //equipment = new List<Equipable>();  // 장비 가능 리스트
+            //consumables = new List<Consumable>(); // 소모품 리스트 
+            this.job = job;
+            this.Evasion = 10;
+            job.ResetStat(this);
+        }
         public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
         {
             this.Name = name;
@@ -53,14 +75,54 @@ namespace TextRPGTeam30
             Console.WriteLine($"Gold : {gold} G");
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(float attack, int crit, bool isSkill = false)
         {
-            Hp -= damage;
+            int evasion_probability = new Random().Next(1, 101);
 
-            if (Hp <= 0)
+            if (evasion_probability <= Evasion && isSkill == false)
             {
-                Hp = 0;
-                Dead();  // 체력이 0 이하일 시
+                Console.Write("Lv.");
+                GameManager.PrintColored($"{Level}", ConsoleColor.Magenta);
+                Console.WriteLine($" {Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다.\n");
+                return;
+            }
+            float damage;
+            if (isSkill)
+            {
+                damage = attack;
+            }
+            else
+            {
+                damage = (float)new Random().NextDouble() * 0.1f * attack + attack;
+            }
+            int critical_probabiliy = new Random().Next(1, 101);
+            bool isCrit = false;
+
+            if (critical_probabiliy <= crit)
+            {
+                isCrit = true;
+                damage *= 1.6f;
+            }
+
+            int finalDamage = (int)Math.Round(damage);
+
+            Hp -= finalDamage;
+
+            Console.Write("Lv.");
+            GameManager.PrintColored($"{Level}", ConsoleColor.Magenta);
+            Console.Write($" {Name} 을(를) 맞췄습니다. [데미지 : ");
+            GameManager.PrintColored($"{finalDamage}", ConsoleColor.Magenta);
+            Console.Write("]");
+
+            if (isCrit)
+            {
+                Console.Write(" - ");
+                GameManager.PrintColored("치명타", ConsoleColor.Black, ConsoleColor.Yellow);
+                Console.WriteLine(" 공격!!\n");
+            }
+            else
+            {
+                Console.WriteLine("\n");
             }
         }
 
