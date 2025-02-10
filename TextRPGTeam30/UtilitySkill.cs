@@ -25,6 +25,15 @@ namespace TextRPGTeam30
             target.ApplydStat(this);
         }
 
+        public void UseSkill(List<ICharacter> targets)
+        {
+            base.UseSkill();
+            foreach (ICharacter target in targets)
+            {
+                UseSkill(target);
+            }
+        }
+
         public void UseSkill(List<ICharacter> targets, int count)
         {
             base.UseSkill();
