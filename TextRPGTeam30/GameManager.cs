@@ -95,6 +95,21 @@
                     player.DisplayStatus();
                     break;
                 case 2:
+                    Console.WriteLine("\n전투를 시작합니다...");
+                    Console.WriteLine("1. 일반 몬스터 처치");
+                    Console.WriteLine("2. 보스 몬스터 처치");
+                    CheckWrongInput(out int battleChoice, 1, 2);
+
+                    if (battleChoice == 1)
+                    {
+                        Console.WriteLine("일반 몬스터를 처치했습니다!");
+                        questManager.OnMonsterKilled(false); // 일반 몬스터 퀘스트 진행
+                    }
+                    else if (battleChoice == 2)
+                    {
+                        Console.WriteLine("보스 몬스터를 처치했습니다!");
+                        questManager.OnMonsterKilled(true); // 보스 몬스터 퀘스트 진행
+                    }
                     break;
                 case 3:
                     questManager.Questscreen();
