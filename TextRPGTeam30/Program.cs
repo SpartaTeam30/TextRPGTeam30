@@ -4,6 +4,10 @@
     {
         static void Main(string[] args)
         {
+            Player player = new Player();
+            player.DisplayInventory();
+                
+            
             GameManager gameManager = new GameManager();
 
             gameManager.PrintStartScene();

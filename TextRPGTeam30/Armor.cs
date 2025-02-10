@@ -10,10 +10,14 @@ namespace TextRPGTeam30
     {
         public int defense;
 
-        public void Toggle()
+        public Armor(string _ItName, int _ItAbility, string _ItType, string _ItInfo) : base(_ItName, _ItAbility, _ItType, _ItInfo)
         {
 
         }
-                 // 인벤토리 
+
+        public void Toggle()
+        {
+
+        }               
     }
 }
