@@ -3,70 +3,58 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 
-
 namespace TextRPGTeam30
 {
-    //플레이어 변수
     public class PlayerData
     {
-        public string Name { get; set; } //이름
-        public string job { get; set; } //직업
-        public float Attack { get; set; } //공격력
-        public int Level { get; set; } //레벨
-        public int Defense { get; set; } //방어력
-        public int Hp { get; set; } // 체력
-        public int Mp { get; set; } //마나
-        public int CritRate { get; set; } //크리티컬
-        public int Gold { get; set; } //골드
-        public int Exp { get; set; } //경험치
-        // public int CritDamage { get; set; } //크리티컬 데미지
-        public int Evasion { get; set; } // 회피
-
-        //public List<ItemData> Inventory { get; set; } // 플레이어 아이템 리스트
-        //public List<ItemData> Quest { get; set; }
-        /*
-           public PlayerData()
-            {
-             Inventory = new List<ItemData>(); // 기본값으로 빈 리스트 생성
-            }
-        */
+        public string Name { get; set; }
+        public int JobType { get; set; }
+        public float Attack { get; set; }
+        public int Level { get; set; }
+        public int Defense { get; set; }
+        public int Hp { get; set; }
+        public int Mp { get; set; }
+        public int CritRate { get; set; }
+        public int Gold { get; set; }
+        public int Exp { get; set; }
+        public int Evasion { get; set; }
     }
 
-    /*
-    //아이템 저장 (예시)
-    public class ItemData
-    {
-        public string Name { get; set; }        // 아이템 이름
-        public string Explanation { get; set; } // 아이템 설명
-        public string Type { get; set; }        // 아이템 타입 (소비형, 장비형 등)
-        public int ItemCount { get; set; }      // 아이템 개수
-        public bool IsEquipped { get; set; }    // 장비 착용 여부
-    }
-    */
-    //저장&불러오기 스택틱으로수정예정
-
-    //게임 저장 클래스 저장&불러오기
     public class GameSaveManager
     {
-        private static readonly string SaveFilePath = "save.json"; // 저장 파일 경로
+        private static readonly string SaveFilePath = "save.json";
 
-        // 게임 데이터를 JSON 파일에 저장
-        public void SaveGame(PlayerData player)
+        public void SaveGame(Player player)
         {
-            string jsonData = JsonConvert.SerializeObject(player, Formatting.Indented);
+            PlayerData playerData = new PlayerData
+            {
+                Name = player.Name,
+                JobType = player.JobType,
+                Level = player.Level,
+                Hp = player.Hp,
+                Mp = player.mp,
+                Attack = player.Attack,
+                Defense = player.Defense,
+                CritRate = player.CritRate,
+                Evasion = player.Evasion,
+                Gold = player.gold,
+                Exp = player.exp
+            };
+
+            string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
             File.WriteAllText(SaveFilePath, jsonData);
             Console.WriteLine("게임이 저장되었습니다.");
         }
 
-        // JSON 파일에서 게임 데이터를 불러오기
-        public PlayerData LoadCharacter()
+        public Player LoadCharacter()
         {
+            PlayerData characterData;
+
             if (File.Exists(SaveFilePath))
             {
                 string jsonData = File.ReadAllText(SaveFilePath);
-                PlayerData character = JsonConvert.DeserializeObject<PlayerData>(jsonData);
+                characterData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
                 Console.WriteLine("저장된 캐릭터를 불러왔습니다.");
-                return character;
             }
             else
             {
@@ -74,31 +62,54 @@ namespace TextRPGTeam30
                 Console.Write("당신의 이름을 입력하세요: ");
                 string name = Console.ReadLine();
 
-                // 새로운 캐릭터 생성
-                PlayerData newCharacter = new PlayerData
+                Console.Write("직업을 선택하세요 (0: 전사, 1: 마법사): ");
+                int jobType;
+                while (!int.TryParse(Console.ReadLine(), out jobType) || (jobType != 0 && jobType != 1))
+                {
+                    Console.WriteLine("올바른 숫자를 입력하세요. (0: 전사, 1: 마법사)");
+                }
+
+                characterData = new PlayerData
                 {
                     Name = name,
-                    Job = Warrior,
+                    JobType = jobType,
                     Level = 1,
-                    Hp = 150, // 전사는 체력 많음
-                    Mp = 80, // 마법사는 마나 많음
-                    Attack = 10.0f, // 전사는 공격력 높음
-                    Defense = 5, // 전사는 방어력 높음
-                    CritRate = 10, // 마법사는 크리티컬 확률 높음
-                    //CritDamage = 50, // 기본 크리티컬 데미지
-                    Evasion = 5, // 마법사는 회피율 높음
+                    Hp = jobType == 0 ? 150 : 75,
+                    Mp = jobType == 0 ? 50 : 150,
+                    Attack = jobType == 0 ? 10.0f : 15.0f,
+                    Defense = jobType == 0 ? 10 : 5,
+                    CritRate = jobType == 0 ? 10 : 20,
+                    Evasion = jobType == 0 ? 5 : 10,
                     Gold = 100,
                     Exp = 0
-                    //Inventory = new List<ItemData>()
-                    //퀘스트 변수리스트
                 };
 
-                SaveGame(newCharacter); // 새 캐릭터 즉시 저장
-                return newCharacter;
+                SaveGame(new Player(
+                    characterData.Name,
+                    characterData.Level,
+                    characterData.Hp,
+                    characterData.Mp,
+                    characterData.Gold,
+                    characterData.Exp,
+                    characterData.CritRate,
+                    characterData.Attack,
+                    characterData.JobType,
+                    characterData.Defense
+                ));
             }
-        }
 
+            return new Player(
+                characterData.Name,
+                characterData.Level,
+                characterData.Hp,
+                characterData.Mp,
+                characterData.Gold,
+                characterData.Exp,
+                characterData.CritRate,
+                characterData.Attack,
+                characterData.JobType,
+                characterData.Defense
+            );
+        }
     }
 }
-
-
