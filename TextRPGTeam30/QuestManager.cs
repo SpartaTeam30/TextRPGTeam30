@@ -1,44 +1,42 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Newtonsoft.Json;
-using TextRPGTeam30;
 
-internal class QuestManager
+namespace TextRPGTeam30
 {
-    private static readonly string QuestFilePath = "quests.json";
-    private Dictionary<string, List<Quest>> QuestCategories;
-
-    public QuestManager()
+    internal class QuestManager
     {
-        QuestCategories = LoadQuestsFromJson();
-    }
+        private static readonly string QuestFilePath = "quests.json";
+        private Dictionary<string, List<Quest>> QuestCategories;
 
-    // JSON에서 퀘스트 불러오기
-    private Dictionary<string, List<Quest>> LoadQuestsFromJson()
-    {
-        if (!File.Exists(QuestFilePath))
+        public QuestManager()
         {
-            Console.WriteLine("퀘스트 파일을 찾을 수 없습니다. 기본 퀘스트를 생성합니다.");
-            return GetDefaultQuests();
+            QuestCategories = LoadQuestsFromJson();
         }
 
-        try
+        // JSON에서 퀘스트 불러오기
+        private Dictionary<string, List<Quest>> LoadQuestsFromJson()
         {
-            string jsonData = File.ReadAllText(QuestFilePath);
-            return JsonConvert.DeserializeObject<Dictionary<string, List<Quest>>>(jsonData) ?? GetDefaultQuests();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"퀘스트 로딩 중 오류 발생: {e.Message}");
-            return GetDefaultQuests();
-        }
-    }
+            if (!File.Exists(QuestFilePath))
+            {
+                Console.WriteLine("퀘스트 파일을 찾을 수 없습니다. 기본 퀘스트를 생성합니다.");
+                return GetDefaultQuests();
+            }
 
-    // 기본 퀘스트 데이터 설정
-    private Dictionary<string, List<Quest>> GetDefaultQuests()
-    {
-        var defaultQuests = new Dictionary<string, List<Quest>>
+            try
+            {
+                string jsonData = File.ReadAllText(QuestFilePath);
+                return JsonConvert.DeserializeObject<Dictionary<string, List<Quest>>>(jsonData) ?? GetDefaultQuests();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"퀘스트 로딩 중 오류 발생: {e.Message}");
+                return GetDefaultQuests();
+            }
+        }
+
+        // 기본 퀘스트 데이터 설정
+        private Dictionary<string, List<Quest>> GetDefaultQuests()
+        {
+            var defaultQuests = new Dictionary<string, List<Quest>>
         {
             { "몬스터", new List<Quest>
                 {
@@ -60,162 +58,160 @@ internal class QuestManager
             }
         };
 
-        SaveQuestsToJson(defaultQuests);
-        return defaultQuests;
-    }
-
-    // JSON으로 퀘스트 저장
-    private void SaveQuestsToJson(Dictionary<string, List<Quest>> quests)
-    {
-        try
-        {
-            string jsonData = JsonConvert.SerializeObject(quests, Formatting.Indented);
-            File.WriteAllText(QuestFilePath, jsonData);
+            SaveQuestsToJson(defaultQuests);
+            return defaultQuests;
         }
-        catch (Exception e)
+
+        // JSON으로 퀘스트 저장
+        private void SaveQuestsToJson(Dictionary<string, List<Quest>> quests)
         {
-            Console.WriteLine($"퀘스트 저장 중 오류 발생: {e.Message}");
-        }
-    }
-
-    public void Questscreen()
-    {
-        while (true)
-        {
-            Console.Clear();
-            Console.WriteLine("============================================================");
-            Console.WriteLine("                        [퀘스트 목록]");
-            Console.WriteLine("============================================================");
-            Console.WriteLine("1. 몬스터 퀘스트");
-            Console.WriteLine("2. 장비 퀘스트");
-            Console.WriteLine("3. 레벨업 퀘스트");
-            Console.WriteLine("4. 퀘스트 창 나가기");
-            Console.Write("\n>> ");
-
-            GameManager.CheckWrongInput(out int behavior, 1, 4);
-
-            if (behavior == 4)
+            try
             {
-                Console.WriteLine("퀘스트 창을 종료합니다.");
-                return;
+                string jsonData = JsonConvert.SerializeObject(quests, Formatting.Indented);
+                File.WriteAllText(QuestFilePath, jsonData);
             }
-
-            string category = behavior == 1 ? "몬스터" :
-                              behavior == 2 ? "장비" : "레벨업";
-
-            ShowQuestList(category, QuestCategories[category]);
-        }
-    }
-
-    private void ShowQuestList(string category, List<Quest> quests)
-    {
-        while (true)
-        {
-            Console.Clear();
-            Console.WriteLine($"============= [{category} 퀘스트 목록] =============");
-
-            for (int i = 0; i < quests.Count; i++)
+            catch (Exception e)
             {
-                Quest q = quests[i];
-                string statusText = q.Status switch
+                Console.WriteLine($"퀘스트 저장 중 오류 발생: {e.Message}");
+            }
+        }
+
+        public void Questscreen()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("============================================================");
+                Console.WriteLine("                        [퀘스트 목록]");
+                Console.WriteLine("============================================================");
+                Console.WriteLine("1. 몬스터 퀘스트");
+                Console.WriteLine("2. 장비 퀘스트");
+                Console.WriteLine("3. 레벨업 퀘스트");
+                Console.WriteLine("4. 퀘스트 창 나가기");
+
+                GameManager.CheckWrongInput(out int behavior, 1, 4);
+
+                if (behavior == 4)
                 {
-                    0 => "[미수락]",
-                    1 => "[진행중]",
-                    2 => "[완료]",
-                    _ => "[보상 수령 완료]"
-                };
+                    Console.WriteLine("퀘스트 창을 종료합니다.");
+                    return;
+                }
 
-                Console.WriteLine($"{i + 1}. {statusText} {q.Name} - 진행도: {q.Progress}/{q.Condition}");
+                string category = behavior == 1 ? "몬스터" :
+                                  behavior == 2 ? "장비" : "레벨업";
+
+                ShowQuestList(category, QuestCategories[category]);
             }
-
-            Console.WriteLine("\n0. 이전 화면으로 돌아가기");
-            Console.Write(">> ");
-
-            GameManager.CheckWrongInput(out int select, 0, quests.Count);
-
-            if (select == 0)
-            {
-                SaveQuestsToJson(QuestCategories); // 🔥 JSON에 변경 사항 저장
-                break;
-            }
-
-            Quest selectedQuest = quests[select - 1];
-            selectedQuest.ShowQuestDetails();
-
-            SaveQuestsToJson(QuestCategories); // 🔥 퀘스트 진행 후 상태를 저장
         }
-    }
 
-
-    public class Quest
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int Condition { get; set; }
-        public int Progress { get; set; }
-        public string RewardItem { get; set; }
-        public int RewardGold { get; set; }
-        public int RewardExp { get; set; }
-        public int Status { get; set; }
-
-        public Quest(int id, string name, string description, int condition, int progress, string rewardItem, int rewardGold, int rewardExp, int status)
+        private void ShowQuestList(string category, List<Quest> quests)
         {
-            Id = id;
-            Name = name;
-            Description = description;
-            Condition = condition;
-            Progress = progress;
-            RewardItem = rewardItem;
-            RewardGold = rewardGold;
-            RewardExp = rewardExp;
-            Status = status;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine($"============= [{category} 퀘스트 목록] =============");
+
+                for (int i = 0; i < quests.Count; i++)
+                {
+                    Quest q = quests[i];
+                    string statusText = q.Status switch
+                    {
+                        0 => "[미수락]",
+                        1 => "[진행중]",
+                        2 => "[완료]",
+                        3 => "[보상 수령 완료]"
+                    };
+
+                    Console.WriteLine($"{i + 1}. {statusText} {q.Name} - 진행도: {q.Progress}/{q.Condition}");
+                }
+
+                Console.WriteLine("\n0. 이전 화면으로 돌아가기");
+
+                GameManager.CheckWrongInput(out int select, 0, quests.Count);
+
+                if (select == 0)
+                {
+                    SaveQuestsToJson(QuestCategories); // 🔥 JSON에 변경 사항 저장
+                    break;
+                }
+
+                Quest selectedQuest = quests[select - 1];
+                selectedQuest.ShowQuestDetails();
+
+                SaveQuestsToJson(QuestCategories); // 🔥 퀘스트 진행 후 상태를 저장
+            }
         }
 
-        public void ShowQuestDetails()
+
+        public class Quest
         {
-            Console.Clear();
-            Console.WriteLine("============= [퀘스트 상세 정보] =============");
-            Console.WriteLine($"퀘스트 이름: {Name}");
-            Console.WriteLine($"설명: {Description}");
-            Console.WriteLine($"진행도: {Progress}/{Condition}");
+            public int Id { get; set; }                   // 퀘스트 아이디
+            public string Name { get; set; }              // 퀘스트 명칭
+            public string Description { get; set; }       // 퀘스트 설명
+            public int Condition { get; set; }            // 퀘스트 진행상황
+            public int Progress { get; set; }             // 퀘스트 완료조건
+            public string RewardItem { get; set; }        // 보상 아이템
+            public int RewardGold { get; set; }           // 보상 골드
+            public int RewardExp { get; set; }            // 보상 경험치
+            public int Status { get; set; }               // 퀘스트 상황 0=미수락, 1=진행중, 2= 완료 , 3= 보상수령완료
 
-            if (Progress >= Condition && Status == 1)
+            public Quest(int id, string name, string description, int condition, int progress, string rewardItem, int rewardGold, int rewardExp, int status)
             {
-                Console.WriteLine("\n[!] 퀘스트 목표를 달성했습니다!");
-                Status = 2; // 완료 상태로 변경
+                Id = id;
+                Name = name;
+                Description = description;
+                Condition = condition;
+                Progress = progress;
+                RewardItem = rewardItem;
+                RewardGold = rewardGold;
+                RewardExp = rewardExp;
+                Status = status;
             }
 
-            Console.WriteLine("\n보상");
-            Console.WriteLine($"아이템: {RewardItem ?? "없음"}");
-            Console.WriteLine($"골드: {RewardGold} G");
-            Console.WriteLine($"경험치: {RewardExp} EXP");
-            Console.WriteLine("==============================================");
-
-            if (Status == 0)
-                Console.WriteLine("1. 수락\n2. 거절");
-            else if (Status == 1)
-                Console.WriteLine("1. 포기하기\n2. 돌아가기");
-            else if (Status == 2)
-                Console.WriteLine("1. 보상받기\n2. 나중에 받기");
-            else
-                Console.WriteLine("[보상을 이미 받았습니다.]\n1. 돌아가기");
-
-            Console.Write(">> ");
-            GameManager.CheckWrongInput(out int choice, 1, 2);
-
-            if (Status == 0 && choice == 1) Status = 1;
-            else if (Status == 1 && choice == 1) Status = 0;
-            else if (Status == 2 && choice == 1)
+            public void ShowQuestDetails()
             {
-                Status = 3;
-                Console.WriteLine("보상을 받았습니다!");
+                Console.Clear();
+                Console.WriteLine("============= [퀘스트 상세 정보] =============");
+                Console.WriteLine($"퀘스트 이름: {Name}");
+                Console.WriteLine($"설명: {Description}");
+                Console.WriteLine($"진행도: {Progress}/{Condition}");
+
+                if (Progress >= Condition && Status == 1)
+                {
+                    Console.WriteLine("\n[!] 퀘스트 목표를 달성했습니다!");
+                    Status = 2; // 완료 상태로 변경
+                }
+
+                Console.WriteLine("\n보상");
+                Console.WriteLine($"아이템: {RewardItem ?? "없음"}");
+                Console.WriteLine($"골드: {RewardGold} G");
+                Console.WriteLine($"경험치: {RewardExp} EXP");
+                Console.WriteLine("==============================================");
+
+                if (Status == 0)
+                    Console.WriteLine("1. 수락\n2. 거절");
+                else if (Status == 1)
+                    Console.WriteLine("1. 포기하기\n2. 돌아가기");
+                else if (Status == 2)
+                    Console.WriteLine("1. 보상받기\n2. 나중에 받기");
+                else
+                    Console.WriteLine("[보상을 이미 받았습니다.]\n1. 돌아가기");
+
+                GameManager.CheckWrongInput(out int choice, 1, 2);
+
+                if (Status == 0 && choice == 1) Status = 1;
+                else if (Status == 1 && choice == 1) Status = 0;
+                else if (Status == 2 && choice == 1)
+                {
+                    Status = 3;
+                    Console.WriteLine("보상을 받았습니다!");
+                }
+
+                // 🔥 상태 변경 후 JSON 저장
+                QuestManager questManager = new QuestManager();
+                questManager.SaveQuestsToJson(questManager.QuestCategories);
             }
 
-            // 🔥 상태 변경 후 JSON 저장
-            QuestManager questManager = new QuestManager();
-            questManager.SaveQuestsToJson(questManager.QuestCategories);
         }
-
     }
 }
