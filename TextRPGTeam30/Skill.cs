@@ -1,0 +1,27 @@
+﻿namespace TextRPGTeam30
+{
+    public class Skill
+    {
+        public string name;
+        public int damage;
+        public int cost;
+
+        public Skill()
+        {
+
+        }
+
+        public Skill(string name, int damage, int cost)
+        {
+            this.name = name;
+            this.damage = damage;
+            this.cost = cost;
+        }
+
+        public int UseSkill()
+        {
+            Console.WriteLine($"{name} 스킬 사용! (MP {cost} 소모)");
+            return damage;
+        }
+    }
+}

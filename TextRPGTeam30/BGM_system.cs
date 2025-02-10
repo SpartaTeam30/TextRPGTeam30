@@ -55,6 +55,7 @@ class Program
 
     static Random rnd = new Random();
 
+
     void Main(string[] args)
     {
         // 재생 설정
