@@ -10,16 +10,15 @@ namespace TextRPGTeam30
         public int exp;
         public Job job;
         // public List<IEquipable> equipment { get; set; } 
-       // public List<Consumable> consumables { get; set; } 
-       // public Weapon equipWeapon { get; set; }
-      // public Armor equipArmor { get; set; }
+        // public List<Consumable> consumables { get; set; } 
+        // public Weapon equipWeapon { get; set; }
+        // public Armor equipArmor { get; set; }
         public int Level { get; set; }
         public string Name { get; set; }
         public int Defense { get; set; }
         public int Hp { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
-        public int CritDamage { get; set; }
         public int Evasion { get; set; }
 
         public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, Job job, int defense)
@@ -41,23 +40,12 @@ namespace TextRPGTeam30
         }
         public void DisplayStatus()
         {
-            Console.Clear();
-            Console.WriteLine($"Lv. {Level} {Name} ({job.name})");
+            Console.WriteLine($"Lv. {Level}");
+            Console.WriteLine($"{Name}, ({job.name})");
             Console.WriteLine($"공격력 : {Attack}");
             Console.WriteLine($"방어력 : {Defense}");
             Console.WriteLine($"체력 : {Hp}");
             Console.WriteLine($"Gold : {gold} G");
-
-            Console.WriteLine("Lv. 01");
-            Console.WriteLine("Chad (전사)");
-            Console.WriteLine("공격력 : 10");
-            Console.WriteLine("방어력 : 5");
-            Console.WriteLine("체력 : 100");
-            Console.WriteLine("Gold : 1500 G\n");
-
-            Console.WriteLine("0. 나가기");
-
-            GameManager.CheckWrongInput(out int select, 0, 0);
         }
 
         public void TakeDamage(int damage)
@@ -73,11 +61,11 @@ namespace TextRPGTeam30
 
         public void attack(float Attack)
         {
-         //   if (equipWeapon != null)
-         // {
-         //      Console.WriteLine($"{Name} 공격 시 {equipWeapon.Name}, Power: {equipWeapon.AttackPower}");
-         //  }
-          //  else
+            //   if (equipWeapon != null)
+            // {
+            //      Console.WriteLine($"{Name} 공격 시 {equipWeapon.Name}, Power: {equipWeapon.AttackPower}");
+            //  }
+            //  else
             {
                 Console.WriteLine($"{Name} 가 공격합니다!");
             }
@@ -88,17 +76,17 @@ namespace TextRPGTeam30
             Console.WriteLine($"{Name} 가 죽었습니다.");
         }
 
-        public void DisplayInfo()
-        {
-            Console.WriteLine($"Name: {Name}, Level: {Level}, HP: {Hp}");
-        }
+        //public void DisplayInfo()
+        //{
+        //    Console.WriteLine($"Name: {Name}, Level: {Level}, HP: {Hp}");
+        //}
 
-        public void EquipWeapon (string name, int attackPower)
+        public void EquipWeapon(string name, int attackPower)
         {
             Name = name;
         }
 
-        public void EquipArmor (string name)
+        public void EquipArmor(string name)
         {
             Name = name;
         }
