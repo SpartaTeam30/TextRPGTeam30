@@ -10,9 +10,9 @@ namespace TextRPGTeam30
     {
         public float attack;
 
-        public Weapon()
+        public Weapon(string name, int id, string description, int attackBonus)
         {
-
+            //     AttackBonus = attackBonus;
         }
 
         public void Toggle()

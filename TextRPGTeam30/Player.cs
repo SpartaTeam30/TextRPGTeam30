@@ -13,26 +13,30 @@ namespace TextRPGTeam30
         // public List<Consumable> consumables { get; set; } 
         // public Weapon equipWeapon { get; set; }
         // public Armor equipArmor { get; set; }
-        public int Level { get; set; }
+
         public string Name { get; set; }
-        public int Defense { get; set; }
+        public int Level { get; set; }
         public int Hp { get; set; }
+        public int Defense { get; set; } 
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public int Evasion { get; set; }
 
-        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, Job job, int defense)
+        public Player(string name, int level, int hp, int mp, float attackl, int defense, int critRate, Job job, int gold, int exp)
         {
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
-            this.Defense = defense;
-            this.job = job;
             this.mp = mp;
-            this.gold = gold;
-            this.exp = exp;
+            this.Attack = attackl;
+            this.Defense = defense;
             this.CritRate = critRate;
-            this.Attack = attack;
+            this.job = job;
+            this.exp = exp;
+            this.gold = gold;
+
+            // EquippedWeapon = null;
+            // EquippedArmor = null;
             //equipment = new List<Equipable>();  // 장비 가능 리스트
             //consumables = new List<Consumable>(); // 소모품 리스트 
             this.job = job;
