@@ -9,6 +9,7 @@ namespace TextRPGTeam30
         Player player;//플레이어
         Dungeon? dungeon;//현재 던전
         List<Monster> monsters;//출현가능한 몬스터
+        List<Monster> bossMonsters;//보스 몬스터
 
         public DungeonManager(Player player)//생성자 함수
         {
@@ -19,21 +20,25 @@ namespace TextRPGTeam30
                 new Monster("슬라임", 1, 10, 3), new Monster("고블린", 1, 15, 5), new Monster("코볼트", 1, 20, 7), new Monster("고스트", 1, 15, 13),
                 new Monster("스켈레톤", 1, 35, 8), new Monster("리치", 1, 40, 15)
             };
+            bossMonsters = new List<Monster>()
+            {
+                new Monster("트롤", 1 , 200, 10), new Monster("오우거", 1, 130, 25)
+            };
         }
 
         public void CreateDungeon()//던전 생성
         {
             //스테이지에 따라 출현가능한 몬스터의 범위가 달라짐
-            int max_range_monster = 3 + stage / 5;
-            int min_range_monster = 1 + stage / 5;
-            
-            if (max_range_monster >= monsters.Count)
+            int maxRangeMonster = 3 + stage / 5;
+            int minRangeMonster = 1 + stage / 5;
+            int randomBoss = new Random().Next(0, bossMonsters.Count);
+            if (maxRangeMonster >= monsters.Count)
             {
-                min_range_monster = max_range_monster - 3;
-                max_range_monster = monsters.Count - 1;
+                minRangeMonster = maxRangeMonster - 3;
+                maxRangeMonster = monsters.Count - 1;
             }
             //던전 생성
-            dungeon = new Dungeon(stage, monsters.GetRange(min_range_monster, max_range_monster));
+            dungeon = new Dungeon(stage, monsters.GetRange(minRangeMonster, maxRangeMonster), bossMonsters[randomBoss]);
         }
 
         public void DungeonStart()//던전 시작화면
@@ -60,39 +65,35 @@ namespace TextRPGTeam30
                     return;
                 }
             }
-           
+
             //출력
-            Console.Clear();
-            GameManager.PrintColoredLine("\nBattle!! - Result\n\n", ConsoleColor.Yellow);
-            GameManager.PrintColoredLine("Victory\n", ConsoleColor.Green);
-            Console.Write("던전에서 몬스터 ");
-            GameManager.PrintColored($"{dungeon.monsterNum}", ConsoleColor.Magenta);
-            Console.WriteLine("마리를 잡았습니다.\n");
-            Console.WriteLine("\n[캐릭터 정보]");
-            Console.Write($"Lv.");
-            GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
-            Console.WriteLine($"  {player.Name} ()");
-            Console.Write("HP ");
-            GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
-            Console.Write("MP ");
-            GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
-            
+            PrintReward();
+
             stage++;//스테이지 값 증가
+        }
+
+        public void PrintTitle()
+        {
+            Console.Clear();
+            if (stage % 20 == 0)
+            {
+                GameManager.PrintColoredLine("\nBoss Battle!!\n", ConsoleColor.Yellow);
+            }
+            else
+            {
+                GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
+            }
         }
 
         public void PrintDungeonUI()//던전 정보 출력
         {
-            Console.Clear();
-            GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
+            PrintTitle();
 
             foreach (Monster monster in dungeon.monsters)
             {
                 if (monster.Hp > 0)
                 {
-                    Console.Write("Lv.");
-                    GameManager.PrintColored($"{monster.Level}",ConsoleColor.Magenta);
-                    Console.Write($" {monster.Name} HP ");
-                    GameManager.PrintColoredLine($"{monster.Hp}", ConsoleColor.Magenta);
+                    PrintMonster(monster);
                 }
                 else
                 {
@@ -106,6 +107,36 @@ namespace TextRPGTeam30
         public void PrintPlayer()
         {
             Console.WriteLine("\n[내정보]");
+            Console.Write($"Lv.");
+            GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
+            Console.WriteLine($"  {player.Name} ({player.job.name})");
+            Console.Write("HP ");
+            GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
+            Console.Write("MP ");
+            GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
+        }
+
+        public void PrintMonster(Monster monster)
+        {
+            if (monster.isUnique == true)
+            {
+                Console.Write("[U] ");
+            }
+            Console.Write("Lv.");
+            GameManager.PrintColored($"{monster.Level}", ConsoleColor.Magenta);
+            Console.Write($" {monster.Name} HP ");
+            GameManager.PrintColoredLine($"{monster.Hp}", ConsoleColor.Magenta);
+        }
+
+        public void PrintReward()
+        {
+            Console.Clear();
+            GameManager.PrintColoredLine("\nBattle!! - Result\n\n", ConsoleColor.Yellow);
+            GameManager.PrintColoredLine("Victory\n", ConsoleColor.Green);
+            Console.Write("던전에서 몬스터 ");
+            GameManager.PrintColored($"{dungeon.monsterNum}", ConsoleColor.Magenta);
+            Console.WriteLine("마리를 잡았습니다.\n");
+            Console.WriteLine("\n[캐릭터 정보]");
             Console.Write($"Lv.");
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
             Console.WriteLine($"  {player.Name} ()");
@@ -156,8 +187,7 @@ namespace TextRPGTeam30
 
         public void SelectTarget()
         {
-            Console.Clear();
-            GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
+            PrintTitle();
 
             int num = 0;
 
@@ -165,11 +195,8 @@ namespace TextRPGTeam30
             {
                 if (monster.Hp > 0)
                 {
-                    GameManager.PrintColored($"{++num}", ConsoleColor.Cyan);
-                    Console.Write($" Lv.");
-                    GameManager.PrintColored($"{monster.Level}", ConsoleColor.Magenta);
-                    Console.Write($" {monster.Name} HP ");
-                    GameManager.PrintColoredLine($"{monster.Hp}", ConsoleColor.Magenta);
+                    GameManager.PrintColored($"{++num} ", ConsoleColor.Cyan);
+                    PrintMonster(monster);
                 }
                 else
                 {
@@ -177,7 +204,7 @@ namespace TextRPGTeam30
                 }
             }
             PrintPlayer();
-
+            Console.WriteLine("0. 취소");
             Monster target;
             int con;
 
@@ -205,22 +232,21 @@ namespace TextRPGTeam30
 
             int targetHp = target.Hp;
 
-            Console.Clear();
-            GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
+            PrintTitle();
             Console.WriteLine($"{player.Name}의 공격!");
 
-            target.TakeDamage(player.Attack, player.Evasosion, false);
-            
+            target.TakeDamage(player.Attack, player.CritRate, false);
+
             Console.Write("Lv.");
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
             Console.WriteLine($" {target.Name}");
             Console.Write("HP ");
-            GameManager.PrintColored($"{targetHp}",ConsoleColor.Magenta);
+            GameManager.PrintColored($"{targetHp}", ConsoleColor.Magenta);
             Console.Write(" -> ");
 
-            if(target.Hp > 0)
+            if (target.Hp > 0)
             {
-                Console.WriteLine($"{target.Hp}");
+                GameManager.PrintColored($"{target.Hp}", ConsoleColor.Magenta);
             }
             else
             {
@@ -245,13 +271,12 @@ namespace TextRPGTeam30
                 {
                     int playerHp = player.Hp;
 
-                    Console.Clear();
-                    GameManager.PrintColoredLine("\nBattle!!\n", ConsoleColor.Yellow);
+                    PrintTitle();
                     Console.Write($"Lv. ");
                     GameManager.PrintColored($"{monster.Level}", ConsoleColor.Magenta);
                     Console.WriteLine($" {monster.Name} 의 공격");
 
-                    player.TakeDamage((int)monster.Attack);
+                    player.TakeDamage(monster.Attack, monster.CritRate, false);
 
                     if (player.Hp <= 0)
                     {
@@ -259,7 +284,10 @@ namespace TextRPGTeam30
                     }
 
                     Console.WriteLine($"Lv. {player.Level} {player.Name}");
-                    Console.WriteLine($"HP {player.Hp} -> {player.Hp}\n");
+                    Console.Write("HP");
+                    GameManager.PrintColored($"{playerHp}", ConsoleColor.Magenta);
+                    Console.Write(" -> ");
+                    GameManager.PrintColored($"{playerHp}\n", ConsoleColor.Magenta);
                     Console.WriteLine("0. 다음\n");
                     GameManager.CheckWrongInput(out int con, 0, 0);
                 }
