@@ -1,10 +1,11 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Mage : Job
+    public class Mage : Job
     {
         public string name = "마법사";
         public Mage()
         {
+            name = "마법사";
             skills.Add(new Fireball());
             hp = 75;
             attack = 15;

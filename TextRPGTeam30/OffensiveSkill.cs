@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class OffensiveSkill : Skill
+    public class OffensiveSkill : Skill
     {
         public float damageModifier = 1f;
 

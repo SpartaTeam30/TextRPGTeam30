@@ -1,9 +1,6 @@
-﻿using System;
-using System.Numerics;
-
 namespace TextRPGTeam30
 {
-    internal class Player : ICharacter
+    public class Player : ICharacter
     {
         public int mp;
         public int gold;
@@ -23,6 +20,8 @@ namespace TextRPGTeam30
         public float DAttack {  get; set; }
         public int Evasion { get; set; }
         public List<Item> inventory = new List<Item>();
+        public int JobType { get; set; }
+
         public Player() 
         {
             inventory = new List<Item>()
@@ -35,15 +34,32 @@ namespace TextRPGTeam30
                     new Item("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.")
             };
         }
-        
 
-        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, Job job, int defense)
+        public Player(string name, Job job)
+        {
+            this.Name = name;
+            this.job = job;
+            job.ResetStat(this);
+
+            this.Level = 1;
+            this.Hp = 100;
+            this.Defense = 5;
+            this.mp = 50;
+            this.gold = 100;
+            this.exp = 0;
+            this.CritRate = 15;
+            this.Attack = 10;
+            //equipment = new List<Equipable>();  // 장비 가능 리스트
+            //consumables = new List<Consumable>(); // 소모품 리스트 
+            this.Evasion = 10;
+            
+        }
+
+        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
         {
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
-            this.Defense = defense;
-            this.job = job;
             this.mp = mp;
             this.gold = gold;
             this.exp = exp;
@@ -51,9 +67,6 @@ namespace TextRPGTeam30
             this.Attack = attack;
             //equipment = new List<Equipable>();  // 장비 가능 리스트
             //consumables = new List<Consumable>(); // 소모품 리스트 
-            this.job = job;
-            job.ResetStat(this);
-
 
             inventory = new List<Item>()
             {
@@ -65,7 +78,18 @@ namespace TextRPGTeam30
                     new Item("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.")
             };
 
+            this.Defense = defense; 
+            this.JobType = jobType; //타입 0전사 1마법사
+            this.job = ConvertJob(jobType);  // 직업 변환
+            job.ResetStat(this);
         }
+
+        //직업 변환
+        private Job ConvertJob(int jobType)
+        {
+            return jobType == 0 ? new Warrior() : new Mage();
+        }
+
         public void DisplayStatus()
         {
             Console.WriteLine($"Lv. {Level}");
@@ -74,16 +98,60 @@ namespace TextRPGTeam30
             Console.WriteLine($"방어력 : {Defense}");
             Console.WriteLine($"체력 : {Hp}");
             Console.WriteLine($"Gold : {gold} G");
+
+            Console.WriteLine("0. 돌아가기");
+            GameManager.CheckWrongInput(out int select, 0, 0);
+            return;
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(float attack, int crit, bool isSkill = false)
         {
-            Hp -= damage;
+            int evasion_probability = new Random().Next(1, 101);
 
-            if (Hp <= 0)
+            if (evasion_probability <= Evasion && isSkill == false)
             {
-                Hp = 0;
-                Dead();  // 체력이 0 이하일 시
+                Console.Write("Lv.");
+                GameManager.PrintColored($"{Level}", ConsoleColor.Magenta);
+                Console.WriteLine($" {Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다.\n");
+                return;
+            }
+            float damage;
+            if (isSkill)
+            {
+                damage = attack;
+            }
+            else
+            {
+                damage = (float)new Random().NextDouble() * 0.1f * attack + attack;
+            }
+            int critical_probabiliy = new Random().Next(1, 101);
+            bool isCrit = false;
+
+            if (critical_probabiliy <= crit)
+            {
+                isCrit = true;
+                damage *= 1.6f;
+            }
+
+            int finalDamage = (int)Math.Round(damage);
+
+            Hp -= finalDamage;
+
+            Console.Write("Lv.");
+            GameManager.PrintColored($"{Level}", ConsoleColor.Magenta);
+            Console.Write($" {Name} 을(를) 맞췄습니다. [데미지 : ");
+            GameManager.PrintColored($"{finalDamage}", ConsoleColor.Magenta);
+            Console.Write("]");
+
+            if (isCrit)
+            {
+                Console.Write(" - ");
+                GameManager.PrintColored("치명타", ConsoleColor.Black, ConsoleColor.Yellow);
+                Console.WriteLine(" 공격!!\n");
+            }
+            else
+            {
+                Console.WriteLine("\n");
             }
         }
 
@@ -156,7 +224,9 @@ namespace TextRPGTeam30
                 Console.WriteLine("=================================================");       
             }
 
-            
+            Console.WriteLine("0. 돌아가기");
+            GameManager.CheckWrongInput(out int select, 0, 0);
+            return;
         }
     }
 }

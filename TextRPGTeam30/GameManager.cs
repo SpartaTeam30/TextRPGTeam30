@@ -1,21 +1,14 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class GameManager
+    public class GameManager
     {
         public Player player;
         public DungeonManager dManager;
-        public QuestManager qManager;
+        public QuestManager questManager;
 
         public GameManager()
         {
-
-        }
-
-        public GameManager(Player player, DungeonManager dungeonManager, QuestManager questManager)
-        {
-            this.player = player;
-            dManager = dungeonManager;
-            qManager = questManager;
+            PrintStartScene();
         }
 
         public static void CheckWrongInput(out int select, int minN, int maxN)//입력 예외처리
@@ -68,12 +61,13 @@
             Console.Clear();
             Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
 
-            player = new Player("test", 1, 100, 50, 1500, 0, 15, 10, new Warrior(), 0);
-            //플레이어, 던전매니저, 퀘스트매니저 생성 후 필드에 할당
+            GameSaveManager saveManager = new GameSaveManager();
+            player = saveManager.LoadCharacter();
+            dManager = new DungeonManager(this.player);
+            QuestManager questManager = new QuestManager();
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
-
-            StartSelect();
+            Thread.Sleep(500);
         }
 
         public void StartSelect()
@@ -83,9 +77,10 @@
             Console.WriteLine("이곳에서는 다양한 활동을 할 수 있습니다.\n");
 
             Console.WriteLine("1. 상태 보기");
-            Console.WriteLine("2. 전투 시작");
-
-            CheckWrongInput(out int select, 1, 2);
+            Console.WriteLine("2. 인벤토리 보기");
+            Console.WriteLine("3. 전투 시작");
+            Console.WriteLine("4. 퀘스트");
+            CheckWrongInput(out int select, 1, 4);
 
             switch (select)
             {
@@ -93,8 +88,13 @@
                     player.DisplayStatus();
                     break;
                 case 2:
+                    player.DisplayInventory();
                     break;
-                default:
+                case 3:
+                    dManager.DungeonStart();
+                    break;
+                case 4:
+                    questManager.Questscreen();
                     break;
             }
         }

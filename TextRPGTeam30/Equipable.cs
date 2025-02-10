@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
-    internal class Equipable : Item
+    public class Equipable : Item
     {
         public int ID { get; set; }
         public string Name { get; set; }

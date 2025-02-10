@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Job
+    public class Job
     {
         public string name;
         public List<Skill> skills = new List<Skill>();
