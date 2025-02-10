@@ -10,6 +10,8 @@
         public float Attack { get; set; }
         public int CritDamage { get; set; }
         public int Evasion { get; set; }
+        public float DAttack { get; set; }
+        public int DDefense { get; set; }
 
         public Monster(string _name, int _level, int _hp, int _attack)
         {
@@ -89,7 +91,18 @@
 
         public void Dead()
         {
+        }
+        
+        public void ResetdStat()
+        {
+            DAttack = 0;
+            DDefense = 0;
+        }
 
+        public void ApplydStat(UtilitySkill s)
+        {
+            DAttack += s.dAttack;
+            DDefense += s.dDefense;
         }
     }
 }

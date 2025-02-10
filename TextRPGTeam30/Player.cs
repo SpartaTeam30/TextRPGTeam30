@@ -16,9 +16,11 @@ namespace TextRPGTeam30
         public string Name { get; set; }
         public int Level { get; set; }
         public int Defense { get; set; }
+        public int DDefense { get; set; }
         public int Hp { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
+        public float DAttack {  get; set; }
         public int Evasion { get; set; }
         public int JobType { get; set; }
         public List<Item> inventory = new List<Item>();
@@ -153,6 +155,18 @@ namespace TextRPGTeam30
             {
                 Console.WriteLine("\n");
             }
+        }
+
+        public void ResetdStat()
+        {
+            DAttack = 0;
+            DDefense = 0;
+        }
+
+        public void ApplydStat(UtilitySkill s)
+        {
+            DAttack += s.dAttack;
+            DDefense += s.dDefense;
         }
 
         public void attack(float Attack)

@@ -1,15 +1,15 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Fireball : Skill
+    internal class Fireball : OffensiveSkill
     {
+        public string name = "화염구";
         public Fireball()
         {
-            name = "화염구";
-            damage = 20;
+            damageModifier = 2.5f;
             cost = 25;
         }
 
-        public Fireball(string name, int damage, int cost) : base("화염구", 20, 25)
+        public Fireball(float damageModifier, int cost) : base(damageModifier, cost)
         {
 
         }
