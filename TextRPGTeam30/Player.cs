@@ -22,6 +22,10 @@ namespace TextRPGTeam30
         public int Evasion { get; set; }
         public int JobType { get; set; }
 
+        public Player()
+        {
+
+        }
         public Player(string name, Job job)
         {
             this.Name = name;
@@ -40,7 +44,6 @@ namespace TextRPGTeam30
             this.Evasion = 10;
             job.ResetStat(this);
         }
-
         public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
         {
             this.Name = name;
