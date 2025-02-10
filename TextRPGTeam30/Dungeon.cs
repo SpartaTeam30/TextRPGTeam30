@@ -20,7 +20,7 @@ namespace TextRPGTeam30
             monsters = new List<Monster>();
             rewardGold = 0;
             uniqueRate = 5;
-            monsterNum = new Random().Next(1, 101);
+            monsterNum = new Random().Next(1, 5);
 
             if (stage % 20 == 0)
             {
@@ -34,7 +34,7 @@ namespace TextRPGTeam30
                 {
                     int index = new Random().Next(0, _monsters.Count);
                     Monster monster = new Monster(_monsters[index]);
-                    int unique = new Random().Next(0, 10);
+                    int unique = new Random().Next(1, 101);
 
                     if (unique <= uniqueRate)
                     {

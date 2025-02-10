@@ -14,7 +14,7 @@
         public GameManager(Player player, QuestManager questManager)
         {
             this.player = player;
-           // dManager = dungeonManager;
+            dManager = new DungeonManager(this.player);
             this.questManager = questManager;
         }
 
@@ -70,7 +70,6 @@
 
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
-
             QuestManager questManager = new QuestManager();
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
@@ -95,6 +94,7 @@
                     player.DisplayStatus();
                     break;
                 case 2:
+                    dManager.DungeonStart();
                     break;
                 case 3:
                     questManager.Questscreen();
