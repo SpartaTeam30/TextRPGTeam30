@@ -1,37 +1,43 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
+using TextRPGTeam30;
+using static QuestManager;
 
 internal class QuestManager
 {
-    static void Main(string[] args)
+    // 카테고리별 퀘스트를 Dictionary로 관리
+    Dictionary<string, List<Quest>> QuestCategories;
+
+    public QuestManager()
     {
-        string behavior = "";
-
-        // 카테고리별 퀘스트를 Dictionary로 관리
-        Dictionary<string, List<Quest>> QuestCategories = new Dictionary<string, List<Quest>>()
-            {
-                { "몬스터", new List<Quest>
-                    {
-                        new Quest(1, "미니언 처치", 10, 0, "나무방패", 5, 3, 0),
-                        new Quest(2, "보스 처치", 1, 0, "나무 칼", 5, 3, 0)
-                    }
-                },
-                { "장비", new List<Quest>
-                    {
-                        new Quest(3, "무기 장비 장착", 1, 0, null, 5, 3, 0),
-                        new Quest(4, "방어구 장비 장착", 1, 0, null, 5, 3, 0)
-                    }
-                },
-                { "레벨업", new List<Quest>
-                    {
-                        new Quest(5, "레벨 5 달성", 5, 0, "목장갑", 15, 0, 0),
-                        new Quest(6, "레벨 10 달성", 10, 0, "나무견갑", 15, 0, 0)
-                    }
+        QuestCategories = new Dictionary<string, List<Quest>>()
+        {
+            { "몬스터", new List<Quest>
+                {// ID, 이름, 설명, 완료조건, 진행상황, 보상(아이템, 골드, 경험치), 퀘스트 상태 순으로 나열됌
+                    new Quest(1, "미니언 처치", " 몬스터가 너무 많아 10마리를 처치하세요. ", 10, 0, "나무방패", 5, 3, 0),
+                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0)
                 }
-            };
-
+            },
+            { "장비", new List<Quest>
+                {
+                    new Quest(3, "무기 장비 장착"," 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0),
+                    new Quest(4, "방어구 장비 장착"," 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0)
+                }
+            },
+            { "레벨업", new List<Quest>
+                {
+                    new Quest(5, "레벨 5 달성"," 캐릭터 레벨을 5까지 올리세요.",5, 0, "목장갑", 15, 0, 0),
+                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.",10, 0, "나무견갑", 15, 0, 0)
+                }
+            }
+        };
+    }
+    public void Questscreen()
+    {
         while (true)
         {
             Console.Clear();
@@ -46,31 +52,29 @@ internal class QuestManager
             Console.WriteLine("");
             Console.Write(">> ");
 
-            behavior = Console.ReadLine();
+            GameManager.CheckWrongInput(out int behavior, 1, 4);
 
             switch (behavior)
             {
-                case "1":
+                case 1:
                     ShowQuestList("몬스터", QuestCategories["몬스터"]);
                     break;
-                case "2":
+                case 2:
                     ShowQuestList("장비", QuestCategories["장비"]);
                     break;
-                case "3":
+                case 3:
                     ShowQuestList("레벨업", QuestCategories["레벨업"]);
                     break;
-                case "4":
+                case 4:
                     Console.WriteLine("퀘스트 창을 종료합니다.");
-                    return;
+                    return;  
                 default:
                     Console.WriteLine("잘못된 입력입니다. 다시 선택해주세요.");
                     break;
             }
         }
     }
-
-    // 특정 카테고리의 퀘스트 목록을 보여주는 함수
-    static void ShowQuestList(string category, List<Quest> quests)
+    public void ShowQuestList(string category, List<Quest> quests) // 특정 카테고리의 퀘스트 목록을 보여주는 함수
     {
         while (true)
         {
@@ -82,7 +86,8 @@ internal class QuestManager
                 Quest q = quests[i];
                 string statusText = q.Status == 0 ? "[미수락]" :
                                     q.Status == 1 ? "[진행중]" :
-                                                    "[완료]";
+                                    q.Status == 2 ? "[완료]" :
+                                    "[보상 수령 완료]";
 
                 Console.WriteLine($"{i + 1}. {statusText} {q.Name} - 진행도: {q.Progress}/{q.Condition}");
             }
@@ -105,67 +110,151 @@ internal class QuestManager
                 break;
             }
 
-            ShowQuestDetails(quests[select - 1]);
-        }
-    }
-
-    // 퀘스트 상세 정보 및 수락/거절 기능
-    static void ShowQuestDetails(Quest quest)
-    {
-        Console.Clear();
-        Console.WriteLine("============= [퀘스트 상세 정보] =============");
-        Console.WriteLine($"퀘스트 이름: {quest.Name}");
-        Console.WriteLine($"진행도: {quest.Progress}/{quest.Condition}");
-        Console.WriteLine("");
-        Console.WriteLine("보상");
-        Console.WriteLine($"아이템: {quest.RewardItem ?? "없음"}");
-        Console.WriteLine($"골드: {quest.RewardGold} G");
-        Console.WriteLine($"경험치: {quest.RewardExp} EXP");
-        Console.WriteLine("==============================================");
-        Console.WriteLine("1. 수락");
-        Console.WriteLine("2. 거절");
-        Console.Write(">> ");
-
-        string choice = Console.ReadLine();
-
-        switch (choice)
-        {
-            case "1":
-                Console.WriteLine($"{quest.Name} 퀘스트를 수락하였습니다.");
-                quest.Status = 1;
-                break;
-            case "2":
-                Console.WriteLine($"{quest.Name} 퀘스트를 거절하였습니다.");
-                quest.Status = 0;
-                break;
-            default:
-                Console.WriteLine("잘못된 입력입니다. 다시 시도해주세요.");
-                break;
-        }
-    }
-
-    // 퀘스트 클래스
-    public class Quest
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Condition { get; set; }
-        public int Progress { get; set; }
-        public string RewardItem { get; set; }
-        public int RewardGold { get; set; }
-        public int RewardExp { get; set; }
-        public int Status { get; set; }
-
-        public Quest(int id, string name, int condition, int progress, string rewarditem, int rewardgold, int rewardexp, int status)
-        {
-            Id = id;
-            Name = name;
-            Condition = condition;
-            Progress = progress;
-            RewardItem = rewarditem;
-            RewardGold = rewardgold;
-            RewardExp = rewardexp;
-            Status = status;
+            quests[select - 1].ShowQuestDetails();
         }
     }
 }
+
+
+
+// 퀘스트 클래스
+public class Quest
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Condition { get; set; }
+    public int Progress { get; set; }
+    public string Description { get; set; }
+    public string RewardItem { get; set; }
+    public int RewardGold { get; set; }
+    public int RewardExp { get; set; }
+    public int Status { get; set; }
+
+    public Quest(int id, string name, string description, int condition, int progress, string rewarditem, int rewardgold, int rewardexp, int status)
+    {
+        Id = id;
+        Name = name;
+        Description = description;
+        Condition = condition;
+        Progress = progress;
+        RewardItem = rewarditem;
+        RewardGold = rewardgold;
+        RewardExp = rewardexp;
+        Status = status;
+    }
+    public void GiveReward()     // 보상을 지급하는 함수 (181번줄 사용)
+    {
+        Console.WriteLine($"[보상 지급] {RewardGold} G, {RewardExp} EXP 획득!");
+        if (!string.IsNullOrEmpty(RewardItem))
+        {
+            Console.WriteLine($"[아이템 획득] {RewardItem}");
+        }
+        Status = 3; // 보상 지급 완료 상태 (완료 후 다시 못 받게)
+    }
+
+    public void ShowQuestDetails() // 퀘스트 상세 정보 및 수락/거절 기능
+    {
+        Console.Clear();
+        Console.WriteLine("============= [퀘스트 상세 정보] =============");
+        Console.WriteLine($"퀘스트 이름: {Name}");
+        Console.WriteLine($"설명: {Description}");
+        Console.WriteLine($"진행도: {Progress}/{Condition}");
+
+        // 진행도가 목표를 달성하면 자동으로 완료 상태로 변경
+        if (Progress >= Condition && Status == 1)
+        {
+            Console.WriteLine("\n[!] 퀘스트 목표를 달성했습니다!");
+            Status = 2; // 완료 상태로 변경
+        }
+
+        Console.WriteLine("");
+        Console.WriteLine("보상");
+        Console.WriteLine($"아이템: {RewardItem ?? "없음"}");
+        Console.WriteLine($"골드: {RewardGold} G");
+        Console.WriteLine($"경험치: {RewardExp} EXP");
+        Console.WriteLine("==============================================");
+
+        // 상태에 따른 선택지 변경
+        if (Status == 0) // 미수락 상태
+        {
+            Console.WriteLine("1. 수락");
+            Console.WriteLine("2. 거절");
+        }
+        else if (Status == 1) // 진행 중 상태
+        {
+            Console.WriteLine("1. 포기하기");
+            Console.WriteLine("2. 돌아가기");
+        }
+        else if (Status == 2) // 완료 상태
+        {
+            Console.WriteLine("1. 보상받기");
+            Console.WriteLine("2. 나중에 받기");
+        }
+        else if (Status == 3) // 보상 지급 완료 상태
+        {
+            Console.WriteLine("[보상을 이미 받았습니다.]");
+            Console.WriteLine("1. 돌아가기");
+        }
+        ChoiceList();
+    }
+    public void ChoiceList() // 상태에 따른 선택지 변경(141번 줄)
+    {
+        Console.Write(">> ");
+        GameManager.CheckWrongInput(out int choice, 1, 2);
+
+        if (Status == 0) // 미수락 상태
+        {
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine($"{Name} 퀘스트를 수락하였습니다.");
+                    Status = 1; // 진행 중 상태로 변경
+                    break;
+                case 2:
+                    Console.WriteLine($"{Name} 퀘스트를 거절하였습니다.");
+                    return; // 거절 후 돌아가기
+
+            }
+            ShowQuestDetails();
+        }
+        else if (Status == 1) // 진행 중 상태
+        {
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine($"{Name} 퀘스트를 포기하였습니다.");
+                    Status = 0; // 다시 미수락 상태로 변경
+                    break;
+                case 2:
+                    Console.WriteLine("이전 화면으로 돌아갑니다.");
+                    return;
+
+            }
+            ShowQuestDetails();
+        }
+        else if (Status == 2) // 완료 상태
+        {
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine($"{Name} 퀘스트 보상을 받았습니다.");
+                    GiveReward(); // 보상 지급 함수 호출
+                    return;
+                case 2:
+                    Console.WriteLine("나중에 보상을 받기로 했습니다.");
+                    return;
+
+            }
+            ShowQuestDetails();
+        }
+        else if (Status == 3) // 보상 지급 완료 상태
+        {
+            Console.WriteLine("이전 화면으로 돌아갑니다.");
+            return;
+        }
+    }
+
+
+}
+
+
