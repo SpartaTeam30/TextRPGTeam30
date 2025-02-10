@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Skill
+    public class Skill
     {
         public string name;
         public int damage;

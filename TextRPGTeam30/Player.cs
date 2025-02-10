@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Numerics;
 
 namespace TextRPGTeam30
 {
-    internal class Player : ICharacter
+    public class Player : ICharacter
     {
         public int mp;
         public int gold;
@@ -20,6 +20,8 @@ namespace TextRPGTeam30
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public int Evasion { get; set; }
+        public int JobType { get; set; }
+
         public Player(string name, Job job)
         {
             this.Name = name;
@@ -39,23 +41,27 @@ namespace TextRPGTeam30
             job.ResetStat(this);
         }
 
-        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, Job job, int defense)
+        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
         {
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
-            this.Defense = defense;
-            this.job = job;
             this.mp = mp;
             this.gold = gold;
             this.exp = exp;
             this.CritRate = critRate;
             this.Attack = attack;
-            //equipment = new List<Equipable>();  // 장비 가능 리스트
-            //consumables = new List<Consumable>(); // 소모품 리스트 
-            this.job = job;
-            job.ResetStat(this);
+            this.Defense = defense; 
+            this.JobType = jobType; //타입 0전사 1마법사
+            this.job = ConvertJob(jobType);  // 직업 변환
         }
+
+        //직업 변환
+        private Job ConvertJob(int jobType)
+        {
+            return jobType == 0 ? new Warrior() : new Mage();
+        }
+
         public void DisplayStatus()
         {
             Console.WriteLine($"Lv. {Level}");
