@@ -9,5 +9,10 @@ namespace TextRPGTeam30
     internal class ManaPotion : Consumable
     {
         public int mana;
+
+        public ManaPotion(string itName, int itAbility, string itType, string itInfo) : base(itName, itAbility, itType, itInfo)
+        {
+
+        }
     }
 }

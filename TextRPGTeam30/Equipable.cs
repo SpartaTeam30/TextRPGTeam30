@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Equipable : IItem
+    internal class Equipable : Item
     {
         public int ID { get; set; }
         public string Name { get; set; }
@@ -14,6 +14,11 @@ namespace TextRPGTeam30
         public string IDescription { get; set; } // 변수 설명용
 
         public bool isEquip;
+
+        public Equipable(string Name, int ItAbility, string ItType, string ItInfo) : base(Name, ItAbility, ItType, ItInfo)
+        {
+
+        }
 
         public void Toggle(Player player)
         {

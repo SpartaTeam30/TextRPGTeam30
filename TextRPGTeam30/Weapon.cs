@@ -8,13 +8,15 @@ namespace TextRPGTeam30
 {
     internal class Weapon : Equipable
     {
-        public float attack;
-
-        public Weapon()
+        public Weapon(string _ItName, int _ItAbility, string _ItType, string _ItInfo) : base(_ItName, _ItAbility, _ItType, _ItInfo)
         {
 
         }
 
+        public float Attack;
+
+        // public Weapon()
+        
         public void Toggle()
         {
 
