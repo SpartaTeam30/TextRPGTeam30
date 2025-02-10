@@ -4,9 +4,16 @@
     {
         static void Main(string[] args)
         {
-            GameManager gameManager = new GameManager();
+            QuestManager questManager = new QuestManager();
+            Player player = new Player();
+            GameManager gameManager = new GameManager(player, questManager);
 
             gameManager.PrintStartScene();
+
+            while (true)
+            {
+                gameManager.StartSelect();
+            }
         }
     }
 }
