@@ -2,50 +2,16 @@
 {
     internal interface ICharacter
     {
-        
-        public int Level { get; set; }
-        public string Name { get; set; }
-        public int Hp { get; set; }      
-        public int CritRate { get; set; }
+        int Level { get; set; }
+        string Name { get; set; }
+        float Attack { get; set; }
+        int Hp { get; set; }
+        int CritRate { get; set; }       
+        int Evasion { get; set; }
 
-        public float Attack { get; set; } 
-        
-        public int CritDamage { get; set; }
+        void TakeDamage(int damage);
 
-        public int Evasion { get; set; }
-
-
-        public void TakeDamage(int damage)
-        {
-
-        }
-
-        public void Dead()
-        {
-                        
-        }
-
-        public void EquipWeapon()
-        {
-
-        }
-
-        public void EquipArmor()
-        {
-
-        }
-
-        public void DisplayInfo()
-        {
-
-        }
-
-        public void Equip()
-        {
-
-        }
-
-
+        void Dead();    
     }
 }
 
