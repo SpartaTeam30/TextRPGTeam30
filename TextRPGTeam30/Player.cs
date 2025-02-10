@@ -20,6 +20,24 @@ namespace TextRPGTeam30
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public int Evasion { get; set; }
+        public Player(string name, Job job)
+        {
+            this.Name = name;
+            this.Level = 1;
+            this.Hp = 100;
+            this.Defense = 5;
+            this.job = job;
+            this.mp = 50;
+            this.gold = 100;
+            this.exp = 0;
+            this.CritRate = 15;
+            this.Attack = 10;
+            //equipment = new List<Equipable>();  // 장비 가능 리스트
+            //consumables = new List<Consumable>(); // 소모품 리스트 
+            this.job = job;
+            this.Evasion = 10;
+            job.ResetStat(this);
+        }
 
         public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, Job job, int defense)
         {
