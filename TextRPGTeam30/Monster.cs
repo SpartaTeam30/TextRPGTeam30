@@ -40,7 +40,15 @@
                 Console.WriteLine($" {Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다.\n");
                 return;
             }
-            float damage = (float)new Random().NextDouble() * 0.1f * attack + attack;
+            float damage;
+            if (isSkill)
+            {
+                damage = attack;
+            }
+            else
+            {
+                damage = (float)new Random().NextDouble() * 0.1f * attack + attack;
+            }
             int critical_probabiliy = new Random().Next(1, 101);
             bool isCrit = false;
 
@@ -49,13 +57,17 @@
                 isCrit = true;
                 damage *= 1.6f;
             }
+
             int finalDamage = (int)Math.Round(damage);
+
             Hp -= finalDamage;
+
             Console.Write("Lv.");
             GameManager.PrintColored($"{Level}", ConsoleColor.Magenta);
             Console.Write($" {Name} 을(를) 맞췄습니다. [데미지 : ");
             GameManager.PrintColored($"{finalDamage}", ConsoleColor.Magenta);
             Console.Write("]");
+
             if (isCrit)
             {
                 Console.Write(" - ");
@@ -67,11 +79,13 @@
                 Console.WriteLine("\n");
             }
         }
+
         public void SetLevel(int level) 
         {
             this.Level = level;
             Attack += level * 0.5f;
         }
+
         public void Dead()
         {
 
