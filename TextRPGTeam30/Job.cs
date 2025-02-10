@@ -13,9 +13,8 @@
 
         }
 
-        public Job(string name, Skill skill, int hp, float attack, float defense)
+        public Job(Skill skill, int hp, float attack, float defense)
         {
-            this.name = name;
             skills.Add(skill);
             this.hp = hp;
             this.attack = attack;

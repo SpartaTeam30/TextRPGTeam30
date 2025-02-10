@@ -9,7 +9,7 @@
             dAttack = -1;
         }
 
-        public Growl(int cost, int dHealth, int dAttack, int dDefense) : base(cost, dHealth, dAttack, dDefense)
+        public Growl(int cost, int dAttack, int dDefense) : base(cost, dAttack, dDefense)
         {
 
         }

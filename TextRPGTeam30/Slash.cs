@@ -10,7 +10,7 @@
             cost = 10;
         }
 
-        public Slash(string name, float damageModifier, int cost) : base(damageModifier, cost)
+        public Slash(float damageModifier, int cost) : base(damageModifier, cost)
         {
 
         }
