@@ -76,6 +76,7 @@ namespace TextRPGTeam30
             }
         }
 
+        // 퀘스트 메인 화면
         public void Questscreen()
         {
             while (true)
@@ -104,6 +105,7 @@ namespace TextRPGTeam30
             }
         }
 
+        // 퀘스트 진행 및 수락 화면
         private void ShowQuestList(string category, List<Quest> quests)
         {
             while (true)
@@ -143,6 +145,7 @@ namespace TextRPGTeam30
         }
 
 
+        // 퀘스트 클래스 선언
         public class Quest
         {
             public int Id { get; set; }                   // 퀘스트 아이디
@@ -168,6 +171,7 @@ namespace TextRPGTeam30
                 Status = status;
             }
 
+            // 퀘스트 상세 정보 창
             public void ShowQuestDetails()
             {
                 Console.Clear();
@@ -188,13 +192,13 @@ namespace TextRPGTeam30
                 Console.WriteLine($"경험치: {RewardExp} EXP");
                 Console.WriteLine("==============================================");
 
-                if (Status == 0)
+                if (Status == 0)                                     // 퀘스트 미수락일때
                     Console.WriteLine("1. 수락\n2. 거절");
-                else if (Status == 1)
+                else if (Status == 1)                                // 퀘스트 진행중일때
                     Console.WriteLine("1. 포기하기\n2. 돌아가기");
-                else if (Status == 2)
+                else if (Status == 2)                                // 퀘스트 완료조건을 달성했을 때
                     Console.WriteLine("1. 보상받기\n2. 나중에 받기");
-                else
+                else                                                 //퀘스트 보상받기를 완료했을 때
                     Console.WriteLine("[보상을 이미 받았습니다.]\n1. 돌아가기");
 
                 GameManager.CheckWrongInput(out int choice, 1, 2);
@@ -203,7 +207,7 @@ namespace TextRPGTeam30
                 else if (Status == 1 && choice == 1) Status = 0;
                 else if (Status == 2 && choice == 1)
                 {
-                    Status = 3;
+                    Status = 3; // 보상받은 상태로 변경
                     Console.WriteLine("보상을 받았습니다!");
                 }
 
