@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Monster : ICharacter
+    public class Monster : ICharacter
     {
         public bool isUnique;
         public int Level { get; set; }
@@ -8,6 +8,9 @@
         public int Hp { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
+        public float DAttack { get; set; }
+        public int Defense { get; set; }
+        public int DDefense { get; set; }
         public int CritDamage { get; set; }
         public int Evasion { get; set; }
 
@@ -85,6 +88,18 @@
         {
             this.Level = level;
             Attack += level * 0.5f;
+        }
+
+        public void ResetdStat()
+        {
+            DAttack = 0;
+            DDefense = 0;
+        }
+
+        public void ApplydStat(UtilitySkill s)
+        {
+            DAttack += s.dAttack;
+            DDefense += s.dDefense;
         }
 
         public void Dead()

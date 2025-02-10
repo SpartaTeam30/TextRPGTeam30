@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
-    internal class DungeonManager
+    public class DungeonManager
     {
         int stage;//현재 스테이지
         int deadMonster;//죽은 몬스터

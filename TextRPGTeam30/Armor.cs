@@ -6,14 +6,18 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Armor : Equipable
+    public class Armor : Equipable
     {
         public int defense;
+
+        public Armor(string _ItName, int _ItAbility, string _ItType, string _ItInfo) : base(_ItName, _ItAbility, _ItType, _ItInfo)
+        {
+
+        }
 
         public void Toggle()
         {
 
-        }
-                 // 인벤토리 
+        }               
     }
 }
