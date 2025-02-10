@@ -5,7 +5,7 @@
         public Warrior()
         {
             name = "전사";
-            skill = new Slash();
+            skills.Add(new Slash());
             hp = 100;
             attack = 10;
             defense = 10;

@@ -1,15 +1,16 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Slash : Skill
+    internal class Slash : OffensiveSkill
     {
+        public string name = "베기";
+
         public Slash()
         {
-            name = "베기";
-            damage = 10;
+            damageModifier = 1.5f;
             cost = 10;
         }
 
-        public Slash(string name, int damage, int cost) : base("베기", 10, 10)
+        public Slash(string name, float damageModifier, int cost) : base(damageModifier, cost)
         {
 
         }

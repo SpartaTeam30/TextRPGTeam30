@@ -5,7 +5,7 @@
         public Mage()
         {
             name = "마법사";
-            skill = new Fireball();
+            skills.Add(new Fireball());
             hp = 75;
             attack = 15;
             defense = 5;
