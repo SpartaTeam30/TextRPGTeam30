@@ -9,7 +9,7 @@
         int CritRate { get; set; }       
         int Evasion { get; set; }
 
-        void TakeDamage(int damage);
+        void TakeDamage(float attack, int crit, bool isSkill);
 
         void Dead();    
     }
