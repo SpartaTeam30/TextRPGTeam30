@@ -65,7 +65,7 @@ namespace TextRPGTeam30
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
             dManager = new DungeonManager(player);
-            questManager = new QuestManager(player.Name);
+            QuestManager.Instance.Initialize(player.Name);
             shop = new Shop(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
@@ -101,7 +101,7 @@ namespace TextRPGTeam30
                     dManager.DungeonStart();
                     break;
                 case 4:
-                    questManager.Questscreen();
+                    QuestManager.Instance.Questscreen();
                     break;
                 case 5:
                     shop.PrintShop();

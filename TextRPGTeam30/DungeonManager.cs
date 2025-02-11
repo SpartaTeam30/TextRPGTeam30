@@ -213,7 +213,6 @@
             PrintTitle();
 
             int num = 0;
-
             foreach (Monster monster in dungeon.monsters)
             {
                 if (monster.Hp > 0)
@@ -226,6 +225,7 @@
                     GameManager.PrintColoredLine($"{++num} Lv.{monster.Level} {monster.Name} Dead", ConsoleColor.DarkGray);
                 }
             }
+
             PrintPlayer();
             Console.WriteLine("0. 취소");
             Monster target;
@@ -275,6 +275,10 @@
             {
                 deadMonster++;
                 Console.WriteLine("Dead");
+
+                //  퀘스트 진행도 업데이트
+                bool isBoss = bossMonsters.Contains(target); // 보스 몬스터인지 확인
+                QuestManager.Instance.OnMonsterKilled(isBoss);
             }
 
             Console.WriteLine("\n0. 다음\n");
@@ -285,7 +289,6 @@
                 target.Dead();
             }
         }
-
         public void MonsterAttack()
         {
             foreach (Monster monster in dungeon.monsters)

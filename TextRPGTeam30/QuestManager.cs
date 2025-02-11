@@ -4,18 +4,32 @@ namespace TextRPGTeam30
 {
     public class QuestManager
     {
-        private readonly string QuestFilePath;
+        private static QuestManager _instance;
+        public static QuestManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new QuestManager();
+                }
+                return _instance;
+            }
+        }
+
+        private string QuestFilePath;
         private Dictionary<string, List<Quest>> QuestCategories;
         private string CharacterName; // 캐릭터 이름 저장
 
-        public QuestManager(string characterName)
+        private QuestManager() { } // 외부에서 생성 못하도록 private 생성자 추가
+
+        public void Initialize(string characterName)
         {
             CharacterName = characterName;
-            QuestFilePath = $"{CharacterName}_Quest.json"; // 🔥 동적 파일명 설정
+            QuestFilePath = $"{CharacterName}_Quest.json";
             QuestCategories = LoadQuestsFromJson();
         }
 
-        // JSON에서 퀘스트 불러오기
         private Dictionary<string, List<Quest>> LoadQuestsFromJson()
         {
             if (!File.Exists(QuestFilePath))
@@ -28,15 +42,7 @@ namespace TextRPGTeam30
             {
                 string jsonData = File.ReadAllText(QuestFilePath);
                 var loadedQuests = JsonConvert.DeserializeObject<Dictionary<string, List<Quest>>>(jsonData);
-
-                // 🔥 JSON 로딩 후, null 체크 추가
-                if (loadedQuests == null)
-                {
-                    Console.WriteLine("⚠️ 퀘스트 데이터를 불러오는 데 실패했습니다. 기본 퀘스트를 생성합니다.");
-                    return GetDefaultQuests();
-                }
-
-                return loadedQuests;
+                return loadedQuests ?? GetDefaultQuests();
             }
             catch (Exception e)
             {
@@ -45,36 +51,34 @@ namespace TextRPGTeam30
             }
         }
 
-        // 기본 퀘스트 데이터 설정
         private Dictionary<string, List<Quest>> GetDefaultQuests()
         {
             var defaultQuests = new Dictionary<string, List<Quest>>
-        {
-            { "몬스터", new List<Quest>
-                {
-                    new Quest(1, "일반 몬스터 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 5, 3, 0, 0),
-                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0, 1)
+            {
+                { "몬스터", new List<Quest>
+                    {
+                        new Quest(1, "일반 몬스터 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 5, 3, 0, 0),
+                        new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0, 1)
+                    }
+                },
+                { "장비", new List<Quest>
+                    {
+                        new Quest(3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0, 2),
+                        new Quest(4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0, 3)
+                    }
+                },
+                { "레벨업", new List<Quest>
+                    {
+                        new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 0, "목장갑", 15, 0, 0, 5),
+                        new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 0, "나무견갑", 15, 0, 0, 5)
+                    }
                 }
-            },
-            { "장비", new List<Quest>
-                {
-                    new Quest(3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0, 2),
-                    new Quest(4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0, 3)
-                }
-            },
-            { "레벨업", new List<Quest>
-                {
-                    new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 0, "목장갑", 15, 0, 0, 5),
-                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 0, "나무견갑", 15, 0, 0, 5)
-                }
-            }
-        };
+            };
 
             SaveQuestsToJson();
             return defaultQuests;
         }
 
-        // JSON으로 퀘스트 저장
         private void SaveQuestsToJson()
         {
             try
@@ -83,24 +87,14 @@ namespace TextRPGTeam30
                 File.WriteAllText(QuestFilePath, jsonData);
                 Console.WriteLine($"✅ {QuestFilePath} 저장 완료!");
             }
-            catch (IOException)
-            {
-                Console.WriteLine($"⚠️ {QuestFilePath} 파일이 사용 중입니다. 나중에 다시 시도하세요.");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Console.WriteLine($"⚠️ {QuestFilePath}에 대한 쓰기 권한이 없습니다. 관리자 권한으로 실행하세요.");
-            }
             catch (Exception e)
             {
                 Console.WriteLine($"퀘스트 저장 중 오류 발생: {e.Message}");
             }
         }
 
-        //표시 메뉴 선택
         public void Questscreen()
         {
-
             while (true)
             {
                 Console.Clear();
@@ -133,12 +127,11 @@ namespace TextRPGTeam30
                     Console.WriteLine($"⚠️ '{category}' 카테고리를 찾을 수 없습니다.");
                     return;
                 }
-                ShowQuestList(category, QuestCategories[category]);
 
+                ShowQuestList(category, QuestCategories[category]);
             }
         }
 
-        //표시 메뉴 - 퀘스트 목록
         private void ShowQuestList(string category, List<Quest> quests)
         {
             while (true)
@@ -167,21 +160,20 @@ namespace TextRPGTeam30
 
                 if (select == 0)
                 {
-                    SaveQuestsToJson(); // 🔥 JSON에 변경 사항 저장
+                    SaveQuestsToJson();
                     break;
                 }
 
                 Quest selectedQuest = quests[select - 1];
                 bool isupdate = selectedQuest.ShowQuestDetails();
 
-                if (isupdate == true)
+                if (isupdate)
                 {
-                    SaveQuestsToJson(); // 🔥 퀘스트 진행 후 상태를 저장
+                    SaveQuestsToJson();
                 }
             }
         }
 
-        // 진행 중인 퀘스트 업데이트
         public void UpdateQuestProgress(int questType, int increase)
         {
             bool hasUpdated = false;
@@ -190,13 +182,11 @@ namespace TextRPGTeam30
             {
                 foreach (var quest in questList)
                 {
-                    // 해당 타입의 퀘스트만 업데이트
                     if (quest.Status == 1 && quest.Type == questType && quest.Progress < quest.Condition)
                     {
                         quest.Progress = Math.Min(quest.Condition, quest.Progress + increase);
                         hasUpdated = true;
 
-                        // 퀘스트 완료 시 상태 변경
                         if (quest.Progress >= quest.Condition)
                         {
                             quest.Status = 2;
@@ -206,44 +196,30 @@ namespace TextRPGTeam30
                 }
             }
 
-            // 변경 사항이 있을 때만 저장
             if (hasUpdated)
             {
                 SaveQuestsToJson();
             }
         }
 
-
-        //조건들
-        //몬스터&보스
         public void OnMonsterKilled(bool isBoss)
         {
-            if (isBoss)
-            {
-                this.UpdateQuestProgress(1, 1); // 보스 처치 퀘스트 업데이트
-            }
-            else
-            {
-                this.UpdateQuestProgress(0, 1); // 일반 몬스터 처치 퀘스트 업데이트
-            }
+            UpdateQuestProgress(isBoss ? 1 : 0, 1);
         }
 
         public void OnWeaponEquipped()
         {
-            this.UpdateQuestProgress(3, 1); // 무기 장착 퀘스트 업데이트
+            UpdateQuestProgress(3, 1);
         }
 
         public void OnArmorEquipped()
         {
-            this.UpdateQuestProgress(4, 1); // 방어구 장착 퀘스트 업데이트
+            UpdateQuestProgress(4, 1);
         }
 
-        public void OnPlayerLevelUp(int Level)
+        public void OnPlayerLevelUp(int level)
         {
-            this.UpdateQuestProgress(5, Level); // 현재 레벨을 증가값으로 전달
+            UpdateQuestProgress(5, level);
         }
-
-
-
     }
 }
