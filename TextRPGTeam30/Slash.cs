@@ -2,10 +2,9 @@
 {
     public class Slash : OffensiveSkill
     {
-        public string name = "베기";
-
         public Slash()
         {
+            name = "베기";
             damageModifier = 1.5f;
             cost = 10;
         }

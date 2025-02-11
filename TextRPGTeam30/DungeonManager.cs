@@ -63,7 +63,6 @@
                     return;
                 }
             }
-
             //출력
             PrintReward();
 
@@ -156,7 +155,7 @@
             switch (con)
             {
                 case 1:
-                    SelectTarget();
+                    SelectTarget(player.Attack, false);
                     break;
                 case 2:
                     SkillMenu();
@@ -167,24 +166,49 @@
         public void SkillMenu()
         {
             PrintDungeonUI();
-
             //스킬 출력
-            Console.WriteLine("0. 취소");
-            GameManager.CheckWrongInput(out int con, 0, 2);
-
-            switch (con)
+            int num = 0;
+            foreach (var skill in player.job.skills)
             {
-                case 0:
-                    AttackMenu();
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
+                Console.WriteLine($"{++num}. {skill.name} - MP {skill.cost}");
+                if(skill is OffensiveSkill offensive1)
+                {
+                    Console.WriteLine($"공격력 * {offensive1.damageModifier}");
+                }
             }
+
+            Console.WriteLine("0. 취소");
+            GameManager.CheckWrongInput(out int con, 0, num);
+
+            if(con == 0)
+            {
+                AttackMenu();
+                return;
+            }
+
+            if (player.job.skills[con - 1] is OffensiveSkill offensive2)
+            {
+                if (player.mp >= player.job.skills[con - 1].cost)
+                {
+                    player.mp -= player.job.skills[con - 1].cost;
+                    SelectTarget(offensive2.UseSkill(player.Attack), true);
+                }
+                else
+                {
+                    Console.WriteLine("mp가 부족합니다.");
+                    Thread.Sleep(500);
+                    SkillMenu();
+                    return;
+                }
+            }
+            else if (player.job.skills[con - 1] is UtilitySkill utility)
+            {
+
+            }
+
         }
 
-        public void SelectTarget()
+        public void SelectTarget(float _attack, bool isSkill)
         {
             PrintTitle();
 
@@ -234,7 +258,7 @@
             PrintTitle();
             Console.WriteLine($"{player.Name}의 공격!");
 
-            target.TakeDamage(player.Attack, player.CritRate, false);
+            target.TakeDamage(_attack, player.CritRate, isSkill);
 
             Console.Write("Lv.");
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
