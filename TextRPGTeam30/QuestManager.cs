@@ -152,13 +152,16 @@ namespace TextRPGTeam30
             try
             {
                 string jsonData = File.ReadAllText(QuestFilePath);
-                var loadedData = JsonConvert.DeserializeObject<Dictionary<string, List<Quest>>>(jsonData);
-                if (loadedData == null || loadedData.Count == 0)
+                var loadedQuests = JsonConvert.DeserializeObject<Dictionary<string, List<Quest>>>(jsonData);
+
+                // 🔥 JSON 로딩 후, null 체크 추가
+                if (loadedQuests == null)
                 {
-                    Console.WriteLine("퀘스트 데이터가 유효하지 않거나 비어있습니다. 기본 퀘스트로 초기화합니다.");
-                    return GetDefaultQuests(); // 데이터가 비어있다면 기본 퀘스트로 초기화
+                    Console.WriteLine("⚠️ 퀘스트 데이터를 불러오는 데 실패했습니다. 기본 퀘스트를 생성합니다.");
+                    return GetDefaultQuests();
                 }
-                return loadedData;
+
+                return loadedQuests;
             }
             catch (Exception e)
             {
@@ -217,6 +220,14 @@ namespace TextRPGTeam30
                 File.WriteAllText(QuestFilePath, jsonData);
                 Console.WriteLine($"✅ {QuestFilePath} 저장 완료!");
             }
+            catch (IOException)
+            {
+                Console.WriteLine($"⚠️ {QuestFilePath} 파일이 사용 중입니다. 나중에 다시 시도하세요.");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine($"⚠️ {QuestFilePath}에 대한 쓰기 권한이 없습니다. 관리자 권한으로 실행하세요.");
+            }
             catch (Exception e)
             {
 <<<<<<< Updated upstream
@@ -267,6 +278,11 @@ namespace TextRPGTeam30
                     _ => "레벨업"
                 };
 
+                if (!QuestCategories.ContainsKey(category))
+                {
+                    Console.WriteLine($"⚠️ '{category}' 카테고리를 찾을 수 없습니다.");
+                    return;
+                }
                 ShowQuestList(category, QuestCategories[category]);
             }
         }
