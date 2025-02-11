@@ -1,4 +1,9 @@
 using Newtonsoft.Json;
+<<<<<<< Updated upstream
+=======
+
+namespace TextRPGTeam30;
+>>>>>>> Stashed changes
 
 namespace TextRPGTeam30
 {
@@ -33,7 +38,7 @@ namespace TextRPGTeam30
             this.questManager = questManager;
         }
 
-        public void ShowQuestDetails()
+        public void ShowQuestDetails()         // 퀘스트 상세정보 페이지
         {
             Console.Clear();
             Console.WriteLine("============= [퀘스트 상세 정보] =============");
@@ -117,11 +122,32 @@ namespace TextRPGTeam30
         // JSON에서 퀘스트 불러오기
         private Dictionary<string, List<Quest>> LoadQuestsFromJson()
         {
+<<<<<<< Updated upstream
             if (!File.Exists(QuestFilePath))
             {
                 Console.WriteLine($"{QuestFilePath} 퀘스트 파일을 찾을 수 없습니다. 기본 퀘스트를 생성합니다.");
                 return GetDefaultQuests();
             }
+=======
+            string jsonData = File.ReadAllText(QuestFilePath);
+            var loadedQuests = JsonConvert.DeserializeObject<Dictionary<string, List<Quest>>>(jsonData);
+
+            // 🔥 JSON 로딩 후, null 체크 추가
+            if (loadedQuests == null)
+            {
+                Console.WriteLine("⚠️ 퀘스트 데이터를 불러오는 데 실패했습니다. 기본 퀘스트를 생성합니다.");
+                return GetDefaultQuests();
+            }
+
+            return loadedQuests;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"퀘스트 로딩 중 오류 발생: {e.Message}");
+            return GetDefaultQuests();
+        }
+    }
+>>>>>>> Stashed changes
 
             try
             {
@@ -169,9 +195,21 @@ namespace TextRPGTeam30
             SaveQuestsToJson();
             return defaultQuests;
         }
+<<<<<<< Updated upstream
 
         // JSON으로 퀘스트 저장
         public void SaveQuestsToJson()
+=======
+        catch (IOException)
+        {
+            Console.WriteLine($"⚠️ {QuestFilePath} 파일이 사용 중입니다. 나중에 다시 시도하세요.");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Console.WriteLine($"⚠️ {QuestFilePath}에 대한 쓰기 권한이 없습니다. 관리자 권한으로 실행하세요.");
+        }
+        catch (Exception e)
+>>>>>>> Stashed changes
         {
             try
             {
@@ -181,8 +219,22 @@ namespace TextRPGTeam30
             }
             catch (Exception e)
             {
+<<<<<<< Updated upstream
                 Console.WriteLine($"퀘스트 저장 중 오류 발생: {e.Message}");
             }
+=======
+                1 => "몬스터",
+                2 => "장비",
+                _ => "레벨업"
+            };
+
+            if (!QuestCategories.ContainsKey(category))
+            {
+                Console.WriteLine($"⚠️ '{category}' 카테고리를 찾을 수 없습니다.");
+                return;
+            }
+            ShowQuestList(category, QuestCategories[category]);
+>>>>>>> Stashed changes
         }
 
         //표시 메뉴 선택
