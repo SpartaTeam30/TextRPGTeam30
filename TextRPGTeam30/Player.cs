@@ -11,8 +11,6 @@ namespace TextRPGTeam30
         public int gold;
         public int exp;
         public Job job;
-        public List<Equipable> equipment { get; set; }
-        public List<Consumable> consumables { get; set; }
         public Weapon? equipWeapon { get; set; }
         public Armor? equipArmor { get; set; }
         public string Name { get; set; }
@@ -38,8 +36,6 @@ namespace TextRPGTeam30
         {
             this.Name = name;
             this.job = job;
-            job.ResetStat(this);
-
             this.Level = 1;
             this.Hp = 100;
             MaxHP = Hp;
@@ -50,11 +46,11 @@ namespace TextRPGTeam30
             this.exp = 0;
             this.CritRate = 15;
             this.Attack = 10;
-            equipment = new List<Equipable>();  // 장비 가능 리스트
-            consumables = new List<Consumable>(); // 소모품 리스트 
             this.Evasion = 10;
             this.equipWeapon = null;
             this.equipArmor = null;
+            this.DAttack = 0;
+            this.DDefense = 0;
             job.ResetStat(this);
         }
 
@@ -74,14 +70,19 @@ namespace TextRPGTeam30
             this.Stage = stage;
             this.JobType = jobType; //타입 0전사 1마법사
             this.job = ConvertJob(jobType, hp, attack, defense);//직업변환
-            equipment = new List<Equipable>();  // 장비 가능 리스트
-            consumables = new List<Consumable>(); // 소모품 리스트 
             this.equipWeapon = null;
             this.equipArmor = null;
+            this.DAttack = 0;
+            this.DDefense = 0;
             job.ResetStat(this);
-
             inventory = new List<Item>()
             {
+                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 20, 100),
+                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 30, 100),
+                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 25, 100),
+                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 15, 100),
+                new HealingPotion("체력 물약", 30,"체력 회복","마시면 체력이 회복된다.",100, 2),
+                new ManaPotion("마나 물약", 30,"마나 회복","마시면 마나가 회복된다.",100 ,1)
             };
         }
 
@@ -106,7 +107,7 @@ namespace TextRPGTeam30
             if (equipWeapon != null)
             {
                 Console.Write($"공격력 : ");
-                GameManager.PrintColoredLine($"{Attack - equipWeapon.attack} (+{equipWeapon.attack})", ConsoleColor.Magenta);
+                GameManager.PrintColoredLine($"{Attack} (+{equipWeapon.attack})", ConsoleColor.Magenta);
             }
             else
             {
@@ -116,7 +117,7 @@ namespace TextRPGTeam30
             if (equipArmor != null)
             {
                 Console.Write("방어력 : ");
-                GameManager.PrintColoredLine($"{Defense - equipArmor.defense} (+{equipArmor.defense})", ConsoleColor.Magenta);
+                GameManager.PrintColoredLine($"{Defense} (+{equipArmor.defense})", ConsoleColor.Magenta);
             }
             else
             {
@@ -184,7 +185,7 @@ namespace TextRPGTeam30
                 damage *= 1.6f;
             }
 
-            damage *= 200f / (200 + Defense);
+            damage *= 200f / (200 + GetDefense());
 
             int finalDamage = (int)Math.Round(damage);
 
@@ -271,18 +272,15 @@ namespace TextRPGTeam30
         {
             if (equipArmor == armor)//장착해제
             {
-                this.Defense -= equipArmor.defense;
                 equipArmor = null;
             }
             else//장착
             {
                 if (equipArmor != null)
                 {
-                    this.Defense -= equipArmor.defense;
                     equipArmor.Toggle();
                 }
                 equipArmor = armor;
-                this.Defense += equipArmor.defense;
             }
         }
 
@@ -325,17 +323,23 @@ namespace TextRPGTeam30
                 {
                     Console.Write($"{++num}. ");
 
-                    // 착용 여부 확인 후 [E] 표시
-                    if (equipWeapon == item || equipArmor == item)
+                    if (item is Equipable)
                     {
-                        GameManager.PrintColored("[E] ", ConsoleColor.Magenta);
+                        // 착용 여부 확인 후 [E] 표시
+                        if (equipWeapon == item || equipArmor == item)
+                        {
+                            GameManager.PrintColored("[E] ", ConsoleColor.Magenta);
+                        }
+                        else
+                        {
+                            Console.Write("    ");
+                        }
+                        Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
                     }
-                    else
+                    else if (item is Consumable consumable) 
                     {
-                        Console.Write("    ");
+                        Console.WriteLine($"    이름: {item.itName}, 남은 갯수: {consumable.itemCount}, 설명: {item.itInfo}");
                     }
-
-                    Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
                 }
                 Console.WriteLine();
                 Console.WriteLine("=================================================");
@@ -358,6 +362,11 @@ namespace TextRPGTeam30
                 {
                     Equip(equipableItem);
                     break; // ✅ 정상적으로 장비했으면 루프 탈출
+                }
+                else if(selectedItem is Consumable consumableItem)
+                {
+                    UsePotion(consumableItem);
+                    break;
                 }
                 else
                 {
@@ -395,6 +404,10 @@ namespace TextRPGTeam30
                 Hp = Math.Min(MaxHP, Hp + recovery);
                 Console.WriteLine($"회복! 남은 포션: {--HPotion.itemCount}");
                 Console.WriteLine($"현재 체력: {Hp}/{MaxHP}");
+                if(HPotion.itemCount == 0)
+                {
+                    inventory.Remove(HPotion);
+                }
             }
             else if (consumable is ManaPotion MPotion && MPotion.itemCount > 0)
             {
@@ -403,11 +416,33 @@ namespace TextRPGTeam30
                 mp = Math.Min(maxMp, mp + recovery);
                 Console.WriteLine($"회복! 남은 포션: {--MPotion.itemCount}");
                 Console.WriteLine($"현재 체력: {mp}/{maxMp}");
+                if (MPotion.itemCount == 0)
+                {
+                    inventory.Remove(MPotion);
+                }
             }             
             else
             {
                 Console.WriteLine("포션이 부족합니다.");
             }
-        }        
+        }
+        
+        public float GetAttack()
+        {
+            if (equipWeapon != null)
+            {
+                return Attack + equipWeapon.attack + DAttack;
+            }
+            return Attack + DAttack;
+        }
+
+        public float GetDefense()
+        {
+            if (equipArmor != null)
+            {
+                return Defense + equipArmor.defense + DDefense;
+            }
+            return Defense + DDefense;
+        }
     }
 }
