@@ -3,17 +3,17 @@
     public class Quest
     //클래스 퀘스트 변수
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int Condition { get; set; }
-        public int Progress { get; set; }
-        public string RewardItem { get; set; }
-        public int RewardGold { get; set; }
-        public int RewardExp { get; set; }
-        public int Status { get; set; }
+        public int Id { get; set; }                            // 퀘스트 아이디
+        public string Name { get; set; }                       // 퀘스트 명칭
+        public string Description { get; set; }                // 퀘스트 설명
+        public int Condition { get; set; }                     //완료조건
+        public int Progress { get; set; }                      //진행 상황
+        public string RewardItem { get; set; }                 //보상 아이템
+        public int RewardGold { get; set; }                    //보상 골드
+        public int RewardExp { get; set; }                     //보상 경험치
+        public int Status { get; set; }                        //퀘스트 상태 0=미수락,1=진행중,2=완료,3=보상수령완료
 
-        public int Type { get; set; }
+        public int Type { get; set; }                          //퀘스트 타입 0=일반 몬스터, 1 = 보스몬스터, 3= 무기 장착, 4= 방어구 장착, 5= 레벨링 
 
         public Quest(int id, string name, string description, int condition, int progress, string rewardItem, int rewardGold, int rewardExp, int status, int type)
         {
