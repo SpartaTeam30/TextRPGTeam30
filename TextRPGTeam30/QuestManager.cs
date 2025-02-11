@@ -9,6 +9,7 @@ namespace TextRPGTeam30
         Dictionary<string, List<Quest>> QuestCategories;
 
         public QuestManager()
+
         {
             QuestCategories = new Dictionary<string, List<Quest>>()
             {
@@ -249,6 +250,40 @@ namespace TextRPGTeam30
                 return;
             }
         }
+    }
+}
+
+
+
+// 퀘스트 클래스
+public class Quest
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Condition { get; set; }
+    public int Progress { get; set; }
+    public string Description { get; set; }
+    public string RewardItem { get; set; }
+    public int RewardGold { get; set; }
+    public int RewardExp { get; set; }
+    public int Status { get; set; }
+
+    public Quest(int id, string name, string description, int condition, int progress, string rewarditem, int rewardgold, int rewardexp, int status)
+    {
+        Id = id;
+        Name = name;
+        Description = description;
+        Condition = condition;
+        Progress = progress;
+        RewardItem = rewarditem;
+        RewardGold = rewardgold;
+        RewardExp = rewardexp;
+        Status = status;
+    }
+    public void GiveReward()     // 보상을 지급하는 함수 (181번줄 사용)
+    {
+        Console.WriteLine($"[보상 지급] {RewardGold} G, {RewardExp} EXP 획득!");
+        if (!string.IsNullOrEmpty(RewardItem)) { }
         /*
         // JSON에서 퀘스트 불러오기 (파일이 없으면 빈 리스트 반환)
         public List<Quest> LoadQuests()
@@ -271,22 +306,22 @@ namespace TextRPGTeam30
             Console.WriteLine("퀘스트 데이터가 저장되었습니다.");
         }
         */
-        // 특정 퀘스트의 진행 상태 업데이트
-        public void UpdateQuestProgress(Quest quest, int progressIncrease)
+     }
+    // 특정 퀘스트의 진행 상태 업데이트
+    public void UpdateQuestProgress(Quest quest, int progressIncrease)
+    {
+        if (quest.Status != 1)
         {
-            if (quest.Status != 1)
-            {
-                Console.WriteLine("진행 중인 퀘스트가 아닙니다.");
-                return;
-            }
+            Console.WriteLine("진행 중인 퀘스트가 아닙니다.");
+            return;
+        }
 
-            quest.Progress = Math.Min(quest.Condition, quest.Progress + progressIncrease);
+        quest.Progress = Math.Min(quest.Condition, quest.Progress + progressIncrease);
 
-            if (quest.Progress >= quest.Condition)
-            {
-                quest.Status = 2; // 완료 상태 변경
-                Console.WriteLine($"{quest.Name} 퀘스트를 완료했습니다!");
-            }
+        if (quest.Progress >= quest.Condition)
+        {
+            quest.Status = 2; // 완료 상태 변경
+            Console.WriteLine($"{quest.Name} 퀘스트를 완료했습니다!");
         }
     }
 }

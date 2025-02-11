@@ -8,8 +8,8 @@
         public int Hp { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
-        public float DAttack { get; set; }
         public int Defense { get; set; }
+        public float DAttack { get; set; }
         public int DDefense { get; set; }
         public int CritDamage { get; set; }
         public int Evasion { get; set; }

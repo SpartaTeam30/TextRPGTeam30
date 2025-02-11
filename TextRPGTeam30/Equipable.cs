@@ -9,9 +9,9 @@
 
         }
 
-        public void Toggle(Player player)
+        public void Toggle()
         {
-
+            isEquip = !isEquip;
         }
     }
 }

@@ -12,12 +12,10 @@
         int CritRate { get; set; }       
         int Evasion { get; set; }
 
+
         void TakeDamage(float attack, int crit, bool isSkill = false);
         
-        void ResetdStat()
-        {
-
-        }
+        void ResetdStat();
 
         void ApplydStat(UtilitySkill s);
 

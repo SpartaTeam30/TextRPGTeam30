@@ -12,6 +12,11 @@
             PrintStartScene();
         }
 
+        public GameManager(Player player, QuestManager questManager)
+        {
+            PrintStartScene();
+        }
+
         public static void CheckWrongInput(out int select, int minN, int maxN)//입력 예외처리
         {
             while (true)
@@ -64,8 +69,8 @@
 
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
-            dManager = new DungeonManager(this.player);
-            QuestManager questManager = new QuestManager();
+            dManager = new DungeonManager(player);
+            questManager = new QuestManager();
             shop = new Shop(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");

@@ -1,4 +1,6 @@
-﻿namespace TextRPGTeam30
+﻿using System.Xml.Serialization;
+
+namespace TextRPGTeam30
 {
     public class Job
     {
@@ -10,7 +12,7 @@
 
         public Job()
         {
-
+            
         }
 
         public Job(Skill skill, int hp, float attack, float defense)
