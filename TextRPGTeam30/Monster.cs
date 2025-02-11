@@ -6,6 +6,7 @@
         public int Level { get; set; }
         public string Name { get; set; }
         public int Hp { get; set; }
+        public int MaxHP { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public int Defense { get; set; }
@@ -19,6 +20,7 @@
             Name = _name;
             Level = _level;
             Hp = _hp;
+            MaxHP = Hp;
             Attack = _attack;
             Evasion = 10;
         }

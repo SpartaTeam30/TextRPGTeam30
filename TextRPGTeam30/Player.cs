@@ -3,6 +3,7 @@ namespace TextRPGTeam30
     public class Player : ICharacter
     {
         public int mp;
+        public int maxMp;
         public int gold;
         public int exp;
         public Job job;
@@ -15,6 +16,7 @@ namespace TextRPGTeam30
         public int Defense { get; set; }
         public int DDefense { get; set; }
         public int Hp { get; set; }
+        public int MaxHP { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public float DAttack { get; set; }
@@ -40,8 +42,10 @@ namespace TextRPGTeam30
 
             this.Level = 1;
             this.Hp = 100;
+            MaxHP = Hp;
             this.Defense = 5;
             this.mp = 50;
+            maxMp = mp;
             this.gold = 100;
             this.exp = 0;
             this.CritRate = 15;
@@ -59,7 +63,9 @@ namespace TextRPGTeam30
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
+            MaxHP = Hp;
             this.mp = mp;
+            maxMp = mp;
             this.gold = gold;
             this.exp = exp;
             this.CritRate = critRate;
@@ -160,14 +166,22 @@ namespace TextRPGTeam30
         {
             int requiredAmount = Level == 1 ? 10 : Level * 5 + 25;
             exp += e;
+
             if (exp >= requiredAmount)
             {
                 int levelAdd = exp / requiredAmount;
+
                 Console.WriteLine($"축하합니다! 레벨이 {levelAdd} 올랐습니다!");
+                Console.WriteLine("체력과 마나가 회복되었습니다!");
+                
                 Level += levelAdd;
                 exp = e % requiredAmount;
-                Attack += 0.5f * levelAdd;
-                Defense += 1 * levelAdd;
+                Attack += levelAdd * 0.5f;
+                Defense += levelAdd * 1;
+                Hp = MaxHP += levelAdd * 5;
+                mp = maxMp += levelAdd * 2;
+
+                Thread.Sleep(500);
             }
         }
 
