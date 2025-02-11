@@ -4,7 +4,7 @@ namespace TextRPGTeam30
     {
         public Player player;
         public DungeonManager dManager;
-        public QuestManager questManager;
+      // public QuestManager questManager;
         public Shop shop;
 
         public GameManager()
