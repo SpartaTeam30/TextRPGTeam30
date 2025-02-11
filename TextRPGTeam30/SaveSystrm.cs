@@ -28,43 +28,29 @@ namespace TextRPGTeam30
         {
             string saveFilePath = $"{player.Name}.json";
 
-            PlayerData playerData;
-            if (File.Exists(saveFilePath))
+            PlayerData playerData = new PlayerData
             {
-                string jsonData = File.ReadAllText(saveFilePath);
-                playerData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
+                Name = player.Name,
+                JobType = player.JobType,
+                Level = player.Level,
+                Hp = player.Hp,
+                Mp = player.mp,
+                Attack = (float)Math.Round(player.Attack, 1),
+                Defense = player.Defense,
+                CritRate = player.CritRate,
+                Evasion = player.Evasion,
+                Gold = player.gold,
+                Exp = player.exp,
+                LastLogin = DateTime.Now,
+                Stage = player.Stage,
+                //Inventory = player.inventory.Select(item => item.itName).ToList(),
+                //EquippedWeapon = player.equipWeapon?.itName,
+                //EquippedArmor = player.equipArmor?.itName
+            };
 
-                // ✅ 기존 저장된 체력 & 마나 값을 유지하면서 업데이트
-                playerData.Hp = playerData.Hp > 0 ? playerData.Hp : player.Hp;
-                playerData.Mp = playerData.Mp > 0 ? playerData.Mp : player.mp;
-                playerData.Stage = player.Stage;
-                playerData.LastLogin = DateTime.Now;
-            }
-            else
-            {
-                playerData = new PlayerData
-                {
-                    Name = player.Name,
-                    JobType = player.JobType,
-                    Level = player.Level,
-                    Hp = player.Hp,
-                    Mp = player.mp,
-                    Attack = player.Attack,
-                    Defense = player.Defense,
-                    CritRate = player.CritRate,
-                    Evasion = player.Evasion,
-                    Gold = player.gold,
-                    Exp = player.exp,
-                    LastLogin = DateTime.Now,
-                    Stage = player.Stage
-                };
-            }
-
-            string updatedJsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
-            File.WriteAllText(saveFilePath, updatedJsonData);
-            Console.WriteLine($"✅ {player.Name}의 데이터가 저장되었습니다. (스테이지: {player.Stage}, 체력: {playerData.Hp}, 마나: {playerData.Mp})");
+            string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
+            File.WriteAllText(saveFilePath, jsonData);
         }
-
 
         //로드캐릭터 불러오기
         public Player LoadCharacter()
@@ -73,7 +59,7 @@ namespace TextRPGTeam30
 
             if (characters.Count > 0)
             {
-                Console.WriteLine("🔹 기존 캐릭터 목록:");
+                Console.WriteLine("기존 캐릭터 목록:");
                 for (int i = 0; i < characters.Count; i++)
                 {
                     string jobName = characters[i].JobType == 0 ? "전사" : "마법사";
@@ -116,7 +102,7 @@ namespace TextRPGTeam30
             }
             else
             {
-                Console.WriteLine("✅ 저장된 캐릭터가 없습니다. 새로운 캐릭터를 생성합니다.");
+                Console.WriteLine("저장된 캐릭터가 없습니다. 새로운 캐릭터를 생성합니다.");
                 return CreateNewCharacter();
             }
         }
@@ -151,7 +137,7 @@ namespace TextRPGTeam30
             if (File.Exists(CharacterListFile))
             {
                 string json = File.ReadAllText(CharacterListFile);
-                List<string> characterList = JsonConvert.DeserializeObject<List<string>>(json);
+                List<string> characterList = JsonConvert.DeserializeObject<List<string>>(json) ?? new List<string>();
 
                 foreach (string entry in characterList)
                 {
@@ -172,6 +158,7 @@ namespace TextRPGTeam30
             return characters;
         }
 
+
         //기존 캐릭터 로드
         private Player LoadExistingCharacter(string playerName)
         {
@@ -181,17 +168,17 @@ namespace TextRPGTeam30
             {
                 string jsonData = File.ReadAllText(filePath);
                 PlayerData characterData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
-                Console.WriteLine($"{characterData.Name} 캐릭터를 불러왔습니다. (현재 스테이지: {characterData.Stage})");
+               // Console.WriteLine($"{characterData.Name} 캐릭터를 불러왔습니다. (현재 스테이지: {characterData.Stage})");
 
                 return new Player(
                     characterData.Name,
                     characterData.Level,
-                    characterData.Hp,
+                    characterData.Hp, // ✅ 체력 그대로 유지
                     characterData.Mp,
                     characterData.Gold,
                     characterData.Exp,
                     characterData.CritRate,
-                    characterData.Attack,
+                    (float)characterData.Attack, // ✅ 공격력 소수점 유지
                     characterData.JobType,
                     characterData.Defense,
                     characterData.Stage
@@ -230,9 +217,12 @@ namespace TextRPGTeam30
                 jobType == 0 ? 10 : 5
             );
 
-            SaveGame(newPlayer);
+            SaveGame(newPlayer); // ✅ 새로운 캐릭터 저장
+            SaveCharacterList(name, jobType); // ✅ 캐릭터 슬롯 추가
+
             return newPlayer;
         }
+
 
         // 마지막 접속시간 변환
         private string FormatTimeAgo(DateTime lastLogin)
@@ -258,14 +248,14 @@ namespace TextRPGTeam30
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
-                Console.WriteLine($"캐릭터 {playerName}의 저장 데이터를 삭제했습니다.");
+                Console.WriteLine($"🗑 캐릭터 {playerName}의 저장 데이터를 삭제했습니다.");
             }
             else
             {
-                Console.WriteLine($"{playerName}의 저장 데이터를 찾을 수 없습니다.");
+                Console.WriteLine($"❌ {playerName}의 저장 데이터를 찾을 수 없습니다.");
             }
 
-            // `characters.json`에서도 삭제
+            // ✅ 캐릭터 목록에서도 삭제
             if (File.Exists(CharacterListFile))
             {
                 string json = File.ReadAllText(CharacterListFile);
@@ -274,8 +264,13 @@ namespace TextRPGTeam30
                 characterList.RemoveAll(entry => entry.StartsWith(playerName + ",")); // 이름이 일치하는 캐릭터 제거
 
                 File.WriteAllText(CharacterListFile, JsonConvert.SerializeObject(characterList, Formatting.Indented));
+                Console.WriteLine($"✅ {playerName}이(가) 캐릭터 목록에서 삭제되었습니다.");
             }
+
+            // ✅ 최신 캐릭터 리스트 로드
+            LoadCharacterList();
         }
+
 
         //던전 저장
         public void SaveDungeonClearData(Player player)

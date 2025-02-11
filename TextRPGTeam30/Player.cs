@@ -80,7 +80,7 @@ namespace TextRPGTeam30
             this.Defense = defense; 
             this.Stage = stage;
             this.JobType = jobType; //타입 0전사 1마법사
-            this.job = ConvertJob(JobType);  // 직업 변환
+            this.job = ConvertJob(jobType, hp, attack, defense);//직업변환
             equipment = new List<Equipable>();  // 장비 가능 리스트
             consumables = new List<Consumable>(); // 소모품 리스트 
             this.equipWeapon = null;
@@ -96,18 +96,16 @@ namespace TextRPGTeam30
                 new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7, 100),
                 new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100)
             };
-
-            this.Defense = defense;
-            this.JobType = jobType; //타입 0전사 1마법사
-            this.job = ConvertJob(jobType);  // 직업 변환
-            job.ResetStat(this);
         }
 
         //직업 변환
-        private Job ConvertJob(int jobType)
+        private Job ConvertJob(int jobType, int savedHp, float savedAttack, int savedDefense)
         {
-            return jobType == 0 ? new Warrior() : new Mage();
+            return jobType == 0
+                ? new Warrior(null, savedHp, savedAttack, savedDefense)
+                : new Mage(null, savedHp, savedAttack, savedDefense);
         }
+
 
         public void DisplayStatus()
         {
