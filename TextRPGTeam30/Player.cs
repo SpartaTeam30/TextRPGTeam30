@@ -114,7 +114,6 @@ namespace TextRPGTeam30
         public void TakeDamage(float attack, int crit, bool isSkill = false)
         {
             int evasion_probability = new Random().Next(1, 101);
-
             if (evasion_probability <= Evasion && isSkill == false)
             {
                 Console.Write("Lv.");
@@ -122,23 +121,27 @@ namespace TextRPGTeam30
                 Console.WriteLine($" {Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다.\n");
                 return;
             }
+
             float damage;
+
             if (isSkill)
             {
                 damage = attack;
             }
             else
             {
-                damage = (float)new Random().NextDouble() * 0.1f * attack + attack;
+                damage = (new Random().NextSingle() * 2 - 1) * attack + attack;
             }
+
             int critical_probabiliy = new Random().Next(1, 101);
             bool isCrit = false;
-
             if (critical_probabiliy <= crit)
             {
                 isCrit = true;
                 damage *= 1.6f;
             }
+
+            damage *= 200f / (200 + Defense);
 
             int finalDamage = (int)Math.Round(damage);
 
