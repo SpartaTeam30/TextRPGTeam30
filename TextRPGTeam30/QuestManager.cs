@@ -283,7 +283,7 @@ public class Quest
     public void GiveReward()     // 보상을 지급하는 함수 (181번줄 사용)
     {
         Console.WriteLine($"[보상 지급] {RewardGold} G, {RewardExp} EXP 획득!");
-        if (!string.IsNullOrEmpty(RewardItem))
+        if (!string.IsNullOrEmpty(RewardItem)) { }
         /*
         // JSON에서 퀘스트 불러오기 (파일이 없으면 빈 리스트 반환)
         public List<Quest> LoadQuests()

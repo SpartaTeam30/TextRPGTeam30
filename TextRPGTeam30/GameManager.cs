@@ -11,6 +11,11 @@
             PrintStartScene();
         }
 
+        public GameManager(Player player, QuestManager questManager)
+        {
+            PrintStartScene();
+        }
+
         public static void CheckWrongInput(out int select, int minN, int maxN)//입력 예외처리
         {
             while (true)

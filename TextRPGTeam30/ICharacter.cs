@@ -17,10 +17,6 @@
         
         void ResetdStat();
 
-        void TakeDamage(float attack, int crit, bool isSkill);
-        
-        void ResetdStat();
-
         void ApplydStat(UtilitySkill s);
 
         void Dead();
