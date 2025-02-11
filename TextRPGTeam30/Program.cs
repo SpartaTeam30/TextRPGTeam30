@@ -4,9 +4,9 @@
     {
         static void Main(string[] args)
         {
-            string characterName = "Player1";
-            QuestManager questManager = new QuestManager(characterName);
             Player player = new Player();
+            string characterName =player.Name ;
+            QuestManager questManager = new QuestManager(characterName);  
             GameManager gameManager = new GameManager(player, questManager);
 
             gameManager.PrintStartScene();
