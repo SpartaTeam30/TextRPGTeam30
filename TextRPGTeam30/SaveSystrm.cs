@@ -18,8 +18,9 @@ namespace TextRPGTeam30
         public int Exp { get; set; }
         public int Evasion { get; set; }
         public int Stage { get; set; } = 1;
-
+        public List<string> Skills { get; set; }
         public List<string> Inventory { get; set; } = new List<string>();
+
 
         public DateTime LastLogin { get; set; } //시간 관련 변수
     }
@@ -45,6 +46,7 @@ namespace TextRPGTeam30
                 Exp = player.exp,
                 LastLogin = DateTime.Now,
                 Stage = player.Stage,
+                Skills = player.job.skills.Select(skill => skill.name).ToList(),
                 Inventory = player.inventory.Select(item =>
                 $"{item.itName},{(player.equipWeapon == item || player.equipArmor == item ? 1 : 0)}" ).ToList()
             };
@@ -184,10 +186,8 @@ namespace TextRPGTeam30
                     characterData.Stage
                 );
 
-                // ✅ 기존 인벤토리 초기화
+                // 기존 인벤토리 초기화 후 로드
                 player.inventory.Clear();
-
-                // ✅ 저장된 인벤토리 불러오기
                 foreach (var itemData in characterData.Inventory)
                 {
                     string[] itemInfo = itemData.Split(',');
@@ -200,21 +200,21 @@ namespace TextRPGTeam30
                         if (item != null)
                         {
                             player.inventory.Add(item);
-
-                            // ✅ 착용 상태인 경우, 장비로 설정
                             if (isEquipped)
                             {
-                                if (item is Weapon)
-                                {
-                                    player.equipWeapon = (Weapon)item;
-                                }
-                                else if (item is Armor)
-                                {
-                                    player.equipArmor = (Armor)item;
-                                }
+                                if (item is Weapon) player.equipWeapon = (Weapon)item;
+                                else if (item is Armor) player.equipArmor = (Armor)item;
                             }
                         }
                     }
+                }
+
+                // 스킬 초기화 후 로드
+                player.job.skills.Clear();
+                foreach (var skillName in characterData.Skills)
+                {
+                    Skill skill = CreateSkillFromName(skillName);
+                    if (skill != null) player.job.skills.Add(skill);
                 }
 
                 return player;
@@ -225,8 +225,6 @@ namespace TextRPGTeam30
                 return CreateNewCharacter();
             }
         }
-
-
 
         //캐릭터 생성
         private Player CreateNewCharacter()
@@ -260,6 +258,20 @@ namespace TextRPGTeam30
             return newPlayer;
         }
 
+        //스킬생성
+        private Skill CreateSkillFromName(string skillName)
+        {
+            switch (skillName)
+            {
+                case "베기":
+                    return new Slash();
+                case "화염구":
+                    return new Fireball();
+                default:
+                    Console.WriteLine($"알 수 없는 스킬: {skillName}");
+                    return null;
+            }
+        }
 
         // 마지막 접속시간 변환
         private string FormatTimeAgo(DateTime lastLogin)

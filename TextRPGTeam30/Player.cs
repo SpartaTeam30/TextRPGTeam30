@@ -353,11 +353,11 @@ namespace TextRPGTeam30
 
                 Item selectedItem = inventory[select - 1];
 
-                // ✅ 선택한 아이템이 장비 가능한 경우에만 캐스팅
+                // 선택한 아이템이 장비 가능한 경우에만 캐스팅
                 if (selectedItem is Equipable equipableItem)
                 {
                     Equip(equipableItem);
-                    break; // ✅ 정상적으로 장비했으면 루프 탈출
+                    break; // 정상적으로 장비했으면 루프 탈출
                 }
                 else
                 {
