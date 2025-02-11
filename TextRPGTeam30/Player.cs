@@ -20,8 +20,8 @@ namespace TextRPGTeam30
         public float DAttack {  get; set; }
         public int Evasion { get; set; }
         public int JobType { get; set; }
+
         public List<Item> inventory = new List<Item>();
-        public int JobType { get; set; }
 
         public Player() 
         {

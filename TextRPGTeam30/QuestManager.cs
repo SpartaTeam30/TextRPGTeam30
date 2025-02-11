@@ -306,22 +306,22 @@ public class Quest
             Console.WriteLine("퀘스트 데이터가 저장되었습니다.");
         }
         */
-        // 특정 퀘스트의 진행 상태 업데이트
-        public void UpdateQuestProgress(Quest quest, int progressIncrease)
+     }
+    // 특정 퀘스트의 진행 상태 업데이트
+    public void UpdateQuestProgress(Quest quest, int progressIncrease)
+    {
+        if (quest.Status != 1)
         {
-            if (quest.Status != 1)
-            {
-                Console.WriteLine("진행 중인 퀘스트가 아닙니다.");
-                return;
-            }
+            Console.WriteLine("진행 중인 퀘스트가 아닙니다.");
+            return;
+        }
 
-            quest.Progress = Math.Min(quest.Condition, quest.Progress + progressIncrease);
+        quest.Progress = Math.Min(quest.Condition, quest.Progress + progressIncrease);
 
-            if (quest.Progress >= quest.Condition)
-            {
-                quest.Status = 2; // 완료 상태 변경
-                Console.WriteLine($"{quest.Name} 퀘스트를 완료했습니다!");
-            }
+        if (quest.Progress >= quest.Condition)
+        {
+            quest.Status = 2; // 완료 상태 변경
+            Console.WriteLine($"{quest.Name} 퀘스트를 완료했습니다!");
         }
     }
 }
