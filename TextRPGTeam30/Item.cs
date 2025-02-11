@@ -3,7 +3,7 @@ using System.Runtime;
 
 namespace TextRPGTeam30
 {
-    internal interface IItem
+    internal interface Item
     {
         int ID { get; set; }
         string Name { get; set; }
