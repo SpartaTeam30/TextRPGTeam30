@@ -86,6 +86,11 @@ namespace TextRPGTeam30
                 new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7),
                 new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20)
             };
+
+            this.Defense = defense;
+            this.JobType = jobType; //타입 0전사 1마법사
+            this.job = ConvertJob(jobType);  // 직업 변환
+            job.ResetStat(this);
         }
 
         //직업 변환
@@ -307,6 +312,23 @@ namespace TextRPGTeam30
 
             Equip((Equipable)inventory[select - 1]);
             DisplayInventory();
+        }
+
+        public bool UseGold(int price)
+        {
+            if (price > gold)
+            {
+                Console.WriteLine("Gold가 부족합니다.");
+                Thread.Sleep(500);
+                return false;
+            }
+            else
+            {
+                gold -= price;
+                Console.WriteLine($"{price} Gold를 지불했습니다.");
+                Thread.Sleep(500);
+                return true;
+            }
         }
     }
 }
