@@ -12,14 +12,17 @@ namespace TextRPGTeam30
         public int Level { get; set; }
         public int Defense { get; set; }
         public int Hp { get; set; }
+        public int MaxHP { get; set; }
         public int Mp { get; set; }
+        public int MaxMP { get; set; }
         public int CritRate { get; set; }
         public int Gold { get; set; }
         public int Exp { get; set; }
         public int Evasion { get; set; }
         public int Stage { get; set; } = 1;
-
+        public List<string> Skills { get; set; }
         public List<string> Inventory { get; set; } = new List<string>();
+
 
         public DateTime LastLogin { get; set; } //시간 관련 변수
     }
@@ -35,8 +38,10 @@ namespace TextRPGTeam30
                 Name = player.Name,
                 JobType = player.JobType,
                 Level = player.Level,
-                Hp = player.Hp,
-                Mp = player.mp,
+                Hp = player.Hp,       //  현재 체력 유지
+                MaxHP = player.MaxHP, //  최대 체력 유지 (레벨업할 때만 변경)
+                Mp = player.mp,       //  현재 마나 유지
+                MaxMP = player.maxMp, // 최대 마나 유지 (레벨업할 때만 변경)
                 Attack = (float)Math.Round(player.Attack, 1),
                 Defense = player.Defense,
                 CritRate = player.CritRate,
@@ -45,13 +50,15 @@ namespace TextRPGTeam30
                 Exp = player.exp,
                 LastLogin = DateTime.Now,
                 Stage = player.Stage,
+                Skills = player.job.skills.Select(skill => skill.name).ToList(),
                 Inventory = player.inventory.Select(item =>
-                $"{item.itName},{(player.equipWeapon == item || player.equipArmor == item ? 1 : 0)}" ).ToList()
+                    $"{item.itName},{(player.equipWeapon == item || player.equipArmor == item ? 1 : 0)}").ToList()
             };
 
             string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
             File.WriteAllText(saveFilePath, jsonData);
         }
+
 
         //로드캐릭터 불러오기
         public Player LoadCharacter()
@@ -170,11 +177,14 @@ namespace TextRPGTeam30
                 string jsonData = File.ReadAllText(filePath);
                 PlayerData characterData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
 
+                // ✅ 기존 HP & MP 유지 (던전 진행 후 깎인 상태 반영)
                 Player player = new Player(
                     characterData.Name,
                     characterData.Level,
-                    characterData.Hp,
-                    characterData.Mp,
+                    characterData.Hp,    
+                    characterData.MaxHP, 
+                    characterData.Mp,    
+                    characterData.MaxMP, 
                     characterData.Gold,
                     characterData.Exp,
                     characterData.CritRate,
@@ -184,10 +194,7 @@ namespace TextRPGTeam30
                     characterData.Stage
                 );
 
-                // ✅ 기존 인벤토리 초기화
                 player.inventory.Clear();
-
-                // ✅ 저장된 인벤토리 불러오기
                 foreach (var itemData in characterData.Inventory)
                 {
                     string[] itemInfo = itemData.Split(',');
@@ -200,21 +207,21 @@ namespace TextRPGTeam30
                         if (item != null)
                         {
                             player.inventory.Add(item);
-
-                            // ✅ 착용 상태인 경우, 장비로 설정
                             if (isEquipped)
                             {
-                                if (item is Weapon)
-                                {
-                                    player.equipWeapon = (Weapon)item;
-                                }
-                                else if (item is Armor)
-                                {
-                                    player.equipArmor = (Armor)item;
-                                }
+                                if (item is Weapon) player.equipWeapon = (Weapon)item;
+                                else if (item is Armor) player.equipArmor = (Armor)item;
                             }
                         }
                     }
+                }
+
+                // ✅ 기존 스킬 초기화 후 로드
+                player.job.skills.Clear();
+                foreach (var skillName in characterData.Skills)
+                {
+                    Skill skill = CreateSkillFromName(skillName);
+                    if (skill != null) player.job.skills.Add(skill);
                 }
 
                 return player;
@@ -225,8 +232,6 @@ namespace TextRPGTeam30
                 return CreateNewCharacter();
             }
         }
-
-
 
         //캐릭터 생성
         private Player CreateNewCharacter()
@@ -241,17 +246,25 @@ namespace TextRPGTeam30
                 Console.WriteLine("올바른 숫자를 입력하세요. (0: 전사, 1: 마법사)");
             }
 
+            int baseHp = jobType == 0 ? 150 : 75;
+            int baseMp = jobType == 0 ? 50 : 150;
+            int baseAttack = jobType == 0 ? 10 : 20;
+            int baseDefense = jobType == 0 ? 10 : 5;
+
             Player newPlayer = new Player(
                 name,
-                1,
-                jobType == 0 ? 150 : 75,
-                jobType == 0 ? 50 : 150,
-                100,
-                0,
-                jobType == 0 ? 10 : 20,
-                jobType == 0 ? 10.0f : 15.0f,
-                jobType,
-                jobType == 0 ? 10 : 5
+                1,             // Level
+                baseHp,        // Hp
+                baseHp,        // MaxHP  최대 체력 추가
+                baseMp,        // Mp
+                baseMp,        // MaxMP  최대 마나 추가
+                100,           // Gold
+                0,             // Exp
+                10,            // CritRate
+                baseAttack,    // Attack
+                baseDefense,   // Defense
+                jobType,       // JobType
+                1              // Stage  기본 스테이지 추가
             );
 
             SaveGame(newPlayer); // ✅ 새로운 캐릭터 저장
@@ -260,6 +273,21 @@ namespace TextRPGTeam30
             return newPlayer;
         }
 
+
+        //스킬생성
+        private Skill CreateSkillFromName(string skillName)
+        {
+            switch (skillName)
+            {
+                case "베기":
+                    return new Slash();
+                case "화염구":
+                    return new Fireball();
+                default:
+                    Console.WriteLine($"알 수 없는 스킬: {skillName}");
+                    return null;
+            }
+        }
 
         // 마지막 접속시간 변환
         private string FormatTimeAgo(DateTime lastLogin)
@@ -280,16 +308,29 @@ namespace TextRPGTeam30
         //캐릭터 삭제 기능
         public void DeleteCharacter(string playerName)
         {
-            string filePath = $"{playerName}.json";
+            string playerFilePath = $"{playerName}.json";
+            string questFilePath = $"{playerName}_Quest.json"; // ✅ 퀘스트 데이터 파일 경로
 
-            if (File.Exists(filePath))
+            // ✅ 캐릭터 저장 데이터 삭제
+            if (File.Exists(playerFilePath))
             {
-                File.Delete(filePath);
+                File.Delete(playerFilePath);
                 Console.WriteLine($"캐릭터 {playerName}의 저장 데이터를 삭제했습니다.");
             }
             else
             {
                 Console.WriteLine($"{playerName}의 저장 데이터를 찾을 수 없습니다.");
+            }
+
+            // ✅ 퀘스트 데이터 삭제
+            if (File.Exists(questFilePath))
+            {
+                File.Delete(questFilePath);
+                Console.WriteLine($"{playerName}의 퀘스트 데이터를 삭제했습니다.");
+            }
+            else
+            {
+                Console.WriteLine($"{playerName}의 퀘스트 데이터를 찾을 수 없습니다.");
             }
 
             // ✅ 캐릭터 목록에서도 삭제
@@ -303,11 +344,8 @@ namespace TextRPGTeam30
                 File.WriteAllText(CharacterListFile, JsonConvert.SerializeObject(characterList, Formatting.Indented));
                 Console.WriteLine($"{playerName}이(가) 캐릭터 목록에서 삭제되었습니다.");
             }
-
-            // ✅ 최신 캐릭터 리스트 로드
             LoadCharacterList();
         }
-
 
         //던전 저장
         public void SaveDungeonClearData(Player player)
@@ -354,6 +392,24 @@ namespace TextRPGTeam30
                     return null;
             }
         }
+        //최대 체력마나 저장
+        public void SaveMaxHPMP(Player player)
+        {
+            string saveFilePath = $"{player.Name}.json";
+
+            if (File.Exists(saveFilePath))
+            {
+                string jsonData = File.ReadAllText(saveFilePath);
+                PlayerData playerData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
+
+                playerData.MaxHP = player.MaxHP; // 레벨업한 최대 체력 저장
+                playerData.MaxMP = player.maxMp; // 레벨업한 최대 마나 저장
+
+                jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
+                File.WriteAllText(saveFilePath, jsonData);
+            }
+        }
+
 
     }
 }

@@ -13,12 +13,15 @@
         }
 
         // 저장된 값으로 초기화하는 생성자 추가
-        public Mage(Skill skill, int savedHp, float savedAttack, int savedDefense) : base(skill, savedHp, savedAttack, savedDefense)
+        public Mage(List<Skill> savedSkills, int savedHp, float savedAttack, int savedDefense)
         {
-            name = "마법사"; // 직업명 유지
+            name = "마법사";
             this.hp = savedHp;
             this.attack = savedAttack;
             this.defense = savedDefense;
+
+            skills = savedSkills ?? new List<Skill> { new Fireball() }; // 저장된 스킬이 없으면 기본 스킬 추가
         }
+
     }
 }
