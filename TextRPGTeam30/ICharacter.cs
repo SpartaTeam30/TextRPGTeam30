@@ -13,6 +13,10 @@
         int Evasion { get; set; }
 
 
+        void TakeDamage(float attack, int crit, bool isSkill = false);
+        
+        void ResetdStat();
+
         void TakeDamage(float attack, int crit, bool isSkill);
         
         void ResetdStat();

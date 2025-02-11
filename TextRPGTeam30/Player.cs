@@ -1,6 +1,3 @@
-using System;
-using System.Numerics;
-
 namespace TextRPGTeam30
 {
     public class Player : ICharacter
@@ -23,8 +20,9 @@ namespace TextRPGTeam30
         public float DAttack {  get; set; }
         public int Evasion { get; set; }
         public int JobType { get; set; }
-
         public List<Item> inventory = new List<Item>();
+        public int JobType { get; set; }
+
         public Player() 
         {
             inventory = new List<Item>()
@@ -37,13 +35,16 @@ namespace TextRPGTeam30
                     new Item("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.")
             };
         }
+
         public Player(string name, Job job)
         {
             this.Name = name;
+            this.job = job;
+            job.ResetStat(this);
+
             this.Level = 1;
             this.Hp = 100;
             this.Defense = 5;
-            this.job = job;
             this.mp = 50;
             this.gold = 100;
             this.exp = 0;
@@ -56,6 +57,7 @@ namespace TextRPGTeam30
             this.equipArmor = null;
             job.ResetStat(this);
         }
+
         public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
         {
             this.Name = name;
@@ -75,7 +77,6 @@ namespace TextRPGTeam30
             this.equipArmor = null;
             job.ResetStat(this);
 
-
             inventory = new List<Item>()
             {
                 new Item("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구."),
@@ -85,7 +86,6 @@ namespace TextRPGTeam30
                     new Item("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠."),
                     new Item("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.")
             };
-
         }
 
         //직업 변환
@@ -103,14 +103,9 @@ namespace TextRPGTeam30
             Console.WriteLine($"방어력 : {Defense}");
             Console.WriteLine($"체력 : {Hp}");
             Console.WriteLine($"Gold : {gold} G");
-            Console.WriteLine("\n0. 취소");
-            GameManager.CheckWrongInput(out int con, 0, 0);
-
-            switch (con)
-            {
-                case 0:
-                    break;
-            }
+            Console.WriteLine("0. 돌아가기");
+            GameManager.CheckWrongInput(out int select, 0, 0);
+            return;
         }
 
         public void TakeDamage(float attack, int crit, bool isSkill = false)
@@ -264,7 +259,9 @@ namespace TextRPGTeam30
                 Console.WriteLine("=================================================");       
             }
 
-            
+            Console.WriteLine("0. 돌아가기");
+            GameManager.CheckWrongInput(out int select, 0, 0);
+            return;
         }
     }
 }

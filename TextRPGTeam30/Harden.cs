@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Harden : UtilitySkill
+    public class Harden : UtilitySkill
     {
         public string name = "단단해지기";
         public Harden()

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Runtime;
-using System.Security.Cryptography.X509Certificates;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
     public class Item
     {

@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Fireball : OffensiveSkill
+    public class Fireball : OffensiveSkill
     {
         public string name = "화염구";
         public Fireball()

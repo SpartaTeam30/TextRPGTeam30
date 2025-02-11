@@ -1,8 +1,6 @@
-using System.Threading;
-
 namespace TextRPGTeam30
 {
-    internal class Dungeon
+    public class Dungeon
     {
         public int stage;
         public int rewardExp;

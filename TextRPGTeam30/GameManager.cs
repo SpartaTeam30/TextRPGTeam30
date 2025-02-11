@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class GameManager
+    public class GameManager
     {
         public Player player;
         public DungeonManager dManager;
@@ -8,14 +8,7 @@
 
         public GameManager()
         {
-
-        }
-
-        public GameManager(Player player, QuestManager questManager)
-        {
-            this.player = player;
-            dManager = new DungeonManager(this.player);
-            this.questManager = questManager;
+            PrintStartScene();
         }
 
         public static void CheckWrongInput(out int select, int minN, int maxN)//입력 예외처리
@@ -70,12 +63,12 @@
 
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
+            dManager = new DungeonManager(this.player);
             QuestManager questManager = new QuestManager();
             dManager = new DungeonManager(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
-
-            StartSelect();
+            Thread.Sleep(500);
         }
 
         public void StartSelect()
@@ -85,9 +78,10 @@
             Console.WriteLine("이곳에서는 다양한 활동을 할 수 있습니다.\n");
 
             Console.WriteLine("1. 상태 보기");
-            Console.WriteLine("2. 전투 시작");
-            Console.WriteLine("3. 퀘스트");
-            CheckWrongInput(out int select, 1, 3);
+            Console.WriteLine("2. 인벤토리 보기");
+            Console.WriteLine("3. 전투 시작");
+            Console.WriteLine("4. 퀘스트");
+            CheckWrongInput(out int select, 1, 4);
 
             switch (select)
             {
@@ -95,12 +89,13 @@
                     player.DisplayStatus();
                     break;
                 case 2:
-                    dManager.DungeonStart();
+                    player.DisplayInventory();
                     break;
                 case 3:
-                    questManager.Questscreen();
+                    dManager.DungeonStart();
                     break;
-                default:
+                case 4:
+                    questManager.Questscreen();
                     break;
             }
         }

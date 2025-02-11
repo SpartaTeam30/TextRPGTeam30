@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Slash : OffensiveSkill
+    public class Slash : OffensiveSkill
     {
         public string name = "베기";
 

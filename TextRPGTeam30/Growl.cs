@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Growl : UtilitySkill
+    public class Growl : UtilitySkill
     {
         public string name = "울부짖기";
         public Growl()

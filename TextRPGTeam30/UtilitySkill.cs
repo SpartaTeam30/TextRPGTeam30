@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
     public class UtilitySkill : Skill
     {

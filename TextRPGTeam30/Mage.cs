@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Mage : Job
+    public class Mage : Job
     {
         public Mage()
         {
