@@ -79,7 +79,11 @@ namespace TextRPGTeam30
 
         public void DungeonFail()
         {
-            
+            Console.Clear();
+            GameManager.PrintColoredLine("Game Over");
+            Console.WriteLine($"{player.Name}가 죽었습니다.");
+            GameSaveManager gameSaveManager = new GameSaveManager();
+            gameSaveManager.DeleteCharacter(player.Name);
         }
     }
 }

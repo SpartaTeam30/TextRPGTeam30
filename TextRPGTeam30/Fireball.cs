@@ -2,9 +2,9 @@
 {
     public class Fireball : OffensiveSkill
     {
-        public string name = "화염구";
         public Fireball()
         {
+            name = "화염구";
             damageModifier = 2.5f;
             cost = 25;
         }

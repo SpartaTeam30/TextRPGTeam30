@@ -14,7 +14,7 @@
             this.damageModifier = damageModifier;
         }
 
-        public int UseSkill(int damage)
+        public float UseSkill(float damage)
         {
             base.UseSkill();
 
