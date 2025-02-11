@@ -1,17 +1,13 @@
-﻿namespace TextRPGTeam30
+namespace TextRPGTeam30
 {
     public class GameManager
     {
         public Player player;
         public DungeonManager dManager;
         public QuestManager questManager;
+        public Shop shop;
 
         public GameManager()
-        {
-            PrintStartScene();
-        }
-
-        public GameManager(Player player, QuestManager questManager)
         {
             PrintStartScene();
         }
@@ -68,9 +64,9 @@
 
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
-            dManager = new DungeonManager(this.player);
-            QuestManager questManager = new QuestManager();
             dManager = new DungeonManager(player);
+            questManager = new QuestManager();
+            shop = new Shop(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
             Thread.Sleep(500);
@@ -91,6 +87,8 @@
 
             GameSaveManager saveManager = new GameSaveManager();
             saveManager.SaveGame(player);
+            Console.WriteLine("5. 상점");
+            CheckWrongInput(out int select, 1, 5);
 
             switch (select)
             {
@@ -110,6 +108,8 @@
                     Console.WriteLine("게임을 저장하고 종료합니다...");
                     saveManager.SaveGame(player);
                     Environment.Exit(0);
+                case 5:
+                    shop.PrintShop();
                     break;
             }
         }

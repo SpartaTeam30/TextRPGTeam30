@@ -2,18 +2,18 @@
 {
     public class Weapon : Equipable
     {
-        public Weapon(string _ItName, int _ItAbility, string _ItType, string _ItInfo) : base(_ItName, _ItAbility, _ItType, _ItInfo)
+        public float attack;
+
+        public Weapon(string itName, int itAbility, string itType, string itInfo, float _attack, int price) : base(itName, itAbility, itType, itInfo, price)
         {
-
+            attack = _attack;
         }
-
-        public float Attack;
 
         // public Weapon()
         
         public void Toggle()
         {
-
+            isEquip = !isEquip;
         }
     }
 }

@@ -4,9 +4,7 @@
     {
         static void Main(string[] args)
         {
-            QuestManager questManager = new QuestManager();
-            Player player = new Player();
-            GameManager gameManager = new GameManager(player, questManager);
+            GameManager gameManager = new GameManager();
 
             while (true) gameManager.StartSelect();
         }

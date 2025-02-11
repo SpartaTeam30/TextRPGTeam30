@@ -7,6 +7,7 @@
         float Attack { get; set; }
         float DAttack {  get; set; }
         int Hp { get; set; }
+        int MaxHP { get; set; }
         int Defense { get; set; }
         int DDefense {  get; set; } 
         int CritRate { get; set; }       

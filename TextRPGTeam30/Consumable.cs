@@ -7,15 +7,10 @@ using System.Threading.Tasks;
 namespace TextRPGTeam30
 {
     public class Consumable : Item 
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        // public int Price { get; set; }
-        public string IDescription { get; set; } // 변수 설명용      
-
+    {   
         public int itemCount;
 
-        public Consumable(string itName, int itAbility, string itType, string itInfo) : base(itName, itAbility, itType, itInfo)
+        public Consumable(string itName, int itAbility, string itType, string itInfo, int price) : base(itName, itAbility, itType, itInfo, price)
         {
 
         }
