@@ -65,7 +65,7 @@ namespace TextRPGTeam30
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
             dManager = new DungeonManager(player);
-            questManager = new QuestManager();
+            questManager = new QuestManager(player.Name);
             shop = new Shop(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
