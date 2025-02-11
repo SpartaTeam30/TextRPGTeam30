@@ -117,7 +117,7 @@
             {
                 Item item = player.inventory[i];
                 Console.Write($"- {i + 1} ");
-                //if (player.CheckEquip(item)) Console.Write("[E]");
+                if (item is Equipable equip && equip.isEquip) Console.Write("[E]");
                 Console.Write($"{item.itName,-10} | ");
                 if (item is Weapon) Console.Write($"공격력 +{item.itAbility} | ");
                 else Console.Write($"방어력 +{item.itAbility} | ");
@@ -135,11 +135,8 @@
         public void SellItem(int select)//아이템 판매
         {
             Item item = player.inventory[select - 1];
-            //if (player.CheckEquip(item))
-            //{
-            //    if (item is Weapon) player.weapon = null;
-            //    if (item is Armor) player.armor = null;
-            //}
+            if (player.equipWeapon is not null && player.equipWeapon.itName == item.itName) player.equipWeapon = null;
+            if (player.equipArmor is not null && player.equipArmor.itName == item.itName) player.equipArmor = null;
             //판매
             player.gold += item.Price;
             player.inventory.Remove(item);

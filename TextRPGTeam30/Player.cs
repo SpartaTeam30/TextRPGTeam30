@@ -241,27 +241,10 @@ namespace TextRPGTeam30
             DDefense += s.dDefense;
         }
 
-        //public void attack(float Attack)
-        //{
-        //    //   if (equipWeapon != null)
-        //    // {
-        //    //      Console.WriteLine($"{Name} 공격 시 {equipWeapon.Name}, Power: {equipWeapon.AttackPower}");
-        //    //  }
-        //    //  else
-        //    {
-        //        Console.WriteLine($"{Name} 가 공격합니다!");
-        //    }
-        //}
-
         public void Dead()
         {
             Console.WriteLine($"{Name} 가 죽었습니다.");
         }
-
-        //public void DisplayInfo()
-        //{
-        //    Console.WriteLine($"Name: {Name}, Level: {Level}, HP: {Hp}");
-        //}
 
         public void EquipWeapon(Weapon weapon)
         {
