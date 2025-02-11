@@ -4,99 +4,6 @@ namespace TextRPGTeam30;
 
 internal class QuestManager
 {
-    //클래스 퀘스트 변수
-    public class Quest
-    {
-        private QuestManager questManager;
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int Condition { get; set; }
-        public int Progress { get; set; }
-        public string RewardItem { get; set; }
-        public int RewardGold { get; set; }
-        public int RewardExp { get; set; }
-        public int Status { get; set; }
-
-        public int Type { get; set; }
-
-        public Quest(QuestManager questManager, int id, string name, string description, int condition, int progress, string rewardItem, int rewardGold, int rewardExp, int status, int type)
-        {
-            this.questManager = questManager;
-            Id = id;
-            Name = name;
-            Description = description;
-            Condition = condition;
-            Progress = progress;
-            RewardItem = rewardItem;
-            RewardGold = rewardGold;
-            RewardExp = rewardExp;
-            Status = status;
-            Type = type;
-        }
-
-        public void ShowQuestDetails()
-        {
-            Console.Clear();
-            Console.WriteLine("============= [퀘스트 상세 정보] =============");
-            Console.WriteLine($"퀘스트 이름: {Name}");
-            Console.WriteLine($"설명: {Description}");
-            Console.WriteLine($"진행도: {Progress}/{Condition}");
-
-            // 목표 달성 여부 자동 업데이트
-            if (Progress >= Condition && Status == 1)
-            {
-                Console.WriteLine("\n[!] 퀘스트 목표를 달성했습니다!");
-                Status = 2; // 완료 상태로 변경
-                this.questManager.SaveQuestsToJson(); // 🔥 변경 즉시 저장
-            }
-
-            Console.WriteLine("\n보상");
-            Console.WriteLine($"아이템: {RewardItem ?? "없음"}");
-            Console.WriteLine($"골드: {RewardGold} G");
-            Console.WriteLine($"경험치: {RewardExp} EXP");
-            Console.WriteLine("==============================================");
-
-            if (Status == 0)
-                Console.WriteLine("1. 수락\n2. 거절");
-            else if (Status == 1)
-                Console.WriteLine("1. 포기하기\n2. 돌아가기");
-            else if (Status == 2)
-                Console.WriteLine("1. 보상받기\n2. 나중에 받기");
-            else
-                Console.WriteLine("[보상을 이미 받았습니다.]\n1. 돌아가기");
-
-            Console.Write(">> ");
-            GameManager.CheckWrongInput(out int choice, 1, 2);
-
-            bool isUpdated = false; // 변경 여부 체크
-
-            if (Status == 0 && choice == 1)
-            {
-                Status = 1; // 퀘스트 수락
-                isUpdated = true;
-            }
-            else if (Status == 1 && choice == 1)
-            {
-                Status = 0; // 퀘스트 포기
-                isUpdated = true;
-            }
-            else if (Status == 2 && choice == 1)
-            {
-                Status = 3; // 보상 수령 완료
-                Console.WriteLine("보상을 받았습니다!");
-                isUpdated = true;
-            }
-
-            // 🔥 변경 사항이 있을 경우만 저장
-            if (isUpdated)
-            {
-                questManager.SaveQuestsToJson();
-            }
-        }
-
-    }
-
     private readonly string QuestFilePath;
     private Dictionary<string, List<Quest>> QuestCategories;
     private string CharacterName; // 캐릭터 이름 저장
@@ -145,20 +52,20 @@ internal class QuestManager
         {
             { "몬스터", new List<Quest>
                 {
-                    new Quest(this, 1, "미니언 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 5, 3, 0, 0),
-                    new Quest(this, 2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0, 1)
+                    new Quest(1, "미니언 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 5, 3, 0, 0),
+                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0, 1)
                 }
             },
             { "장비", new List<Quest>
                 {
-                    new Quest(this, 3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0, 2),
-                    new Quest(this, 4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0, 3)
+                    new Quest(3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0, 2),
+                    new Quest(4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0, 3)
                 }
             },
             { "레벨업", new List<Quest>
                 {
-                    new Quest(this, 5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 0, "목장갑", 15, 0, 0, 5),
-                    new Quest(this, 6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 0, "나무견갑", 15, 0, 0, 5)
+                    new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 0, "목장갑", 15, 0, 0, 5),
+                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 0, "나무견갑", 15, 0, 0, 5)
                 }
             }
         };
@@ -177,17 +84,17 @@ internal class QuestManager
             Console.WriteLine($"✅ {QuestFilePath} 저장 완료!");
         }
         catch (IOException)
-        {
-            Console.WriteLine($"⚠️ {QuestFilePath} 파일이 사용 중입니다. 나중에 다시 시도하세요.");
-        }
-        catch (UnauthorizedAccessException)
-        {
-            Console.WriteLine($"⚠️ {QuestFilePath}에 대한 쓰기 권한이 없습니다. 관리자 권한으로 실행하세요.");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"퀘스트 저장 중 오류 발생: {e.Message}");
-        }
+    {
+        Console.WriteLine($"⚠️ {QuestFilePath} 파일이 사용 중입니다. 나중에 다시 시도하세요.");
+    }
+    catch (UnauthorizedAccessException)
+    {
+        Console.WriteLine($"⚠️ {QuestFilePath}에 대한 쓰기 권한이 없습니다. 관리자 권한으로 실행하세요.");
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine($"퀘스트 저장 중 오류 발생: {e.Message}");
+    }
     }
 
     //표시 메뉴 선택
@@ -264,9 +171,12 @@ internal class QuestManager
             }
 
             Quest selectedQuest = quests[select - 1];
-            selectedQuest.ShowQuestDetails();
+            bool isupdate = selectedQuest.ShowQuestDetails();
 
-            SaveQuestsToJson(); // 🔥 퀘스트 진행 후 상태를 저장
+            if (isupdate == true)
+            {
+                SaveQuestsToJson(); // 🔥 퀘스트 진행 후 상태를 저장
+            }
         }
     }
 
