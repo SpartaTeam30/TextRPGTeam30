@@ -1,8 +1,11 @@
+using System;
+
 namespace TextRPGTeam30
 {
     public class Player : ICharacter
     {
         public int mp;
+        public int maxMp;
         public int gold;
         public int exp;
         public Job job;
@@ -15,6 +18,7 @@ namespace TextRPGTeam30
         public int Defense { get; set; }
         public int DDefense { get; set; }
         public int Hp { get; set; }
+        public int MaxHP { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
         public float DAttack { get; set; }
@@ -44,8 +48,10 @@ namespace TextRPGTeam30
 
             this.Level = 1;
             this.Hp = 100;
+            MaxHP = Hp;
             this.Defense = 5;
             this.mp = 50;
+            maxMp = mp;
             this.gold = 100;
             this.exp = 0;
             this.CritRate = 15;
@@ -63,7 +69,9 @@ namespace TextRPGTeam30
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
+            MaxHP = Hp;
             this.mp = mp;
+            maxMp = mp;
             this.gold = gold;
             this.exp = exp;
             this.CritRate = critRate;
@@ -129,7 +137,9 @@ namespace TextRPGTeam30
                 GameManager.PrintColoredLine($"{Defense}", ConsoleColor.Magenta);
             }
             Console.Write($"체력 : ");
-            GameManager.PrintColoredLine($"{Hp}", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{Hp}/{MaxHP}", ConsoleColor.Magenta);
+            Console.Write($"마나 : ");
+            GameManager.PrintColoredLine($"{mp}/{maxMp}", ConsoleColor.Magenta);
             Console.Write($"Gold : ");
             GameManager.PrintColoredLine($"{gold} G", ConsoleColor.Magenta);
             Console.Write("장착 무기 : ");
@@ -160,7 +170,6 @@ namespace TextRPGTeam30
         public void TakeDamage(float attack, int crit, bool isSkill = false)
         {
             int evasion_probability = new Random().Next(1, 101);
-
             if (evasion_probability <= Evasion && isSkill == false)
             {
                 Console.Write("Lv.");
@@ -168,23 +177,27 @@ namespace TextRPGTeam30
                 Console.WriteLine($" {Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다.\n");
                 return;
             }
+
             float damage;
+
             if (isSkill)
             {
                 damage = attack;
             }
             else
             {
-                damage = (float)new Random().NextDouble() * 0.1f * attack + attack;
+                damage = (new Random().NextSingle() * 2 - 1) * attack + attack;
             }
+
             int critical_probabiliy = new Random().Next(1, 101);
             bool isCrit = false;
-
             if (critical_probabiliy <= crit)
             {
                 isCrit = true;
                 damage *= 1.6f;
             }
+
+            damage *= 200f / (200 + Defense);
 
             int finalDamage = (int)Math.Round(damage);
 
@@ -205,6 +218,29 @@ namespace TextRPGTeam30
             else
             {
                 Console.WriteLine("\n");
+            }
+        }
+
+        public void LevelUp(int e)
+        {
+            int requiredAmount = Level == 1 ? 10 : Level * 5 + 25;
+            exp += e;
+
+            if (exp >= requiredAmount)
+            {
+                int levelAdd = exp / requiredAmount;
+
+                Console.WriteLine($"축하합니다! 레벨이 {levelAdd} 올랐습니다!");
+                Console.WriteLine("체력과 마나가 회복되었습니다!");
+                
+                Level += levelAdd;
+                exp = e % requiredAmount;
+                Attack += levelAdd * 0.5f;
+                Defense += levelAdd * 1;
+                Hp = MaxHP += levelAdd * 5;
+                mp = maxMp += levelAdd * 2;
+
+                Thread.Sleep(500);
             }
         }
 
