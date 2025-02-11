@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
-    internal class DungeonManager
+    public class DungeonManager
     {
         int stage;//현재 스테이지
         int deadMonster;//죽은 몬스터
@@ -14,7 +12,7 @@ namespace TextRPGTeam30
         public DungeonManager(Player player)//생성자 함수
         {
             this.player = player;
-            stage = 1;
+            stage = player.Stage;
             monsters = new List<Monster>()
             {
                 new Monster("슬라임", 1, 10, 3), new Monster("고블린", 1, 15, 5), new Monster("코볼트", 1, 20, 7), new Monster("고스트", 1, 15, 13),
@@ -38,7 +36,7 @@ namespace TextRPGTeam30
                 maxRangeMonster = monsters.Count - 1;
             }
             //던전 생성
-            dungeon = new Dungeon(stage, monsters.GetRange(minRangeMonster, maxRangeMonster), bossMonsters[randomBoss]);
+            dungeon = new Dungeon(player, stage, monsters.GetRange(minRangeMonster, maxRangeMonster), bossMonsters[randomBoss]);
         }
 
         public void DungeonStart()//던전 시작화면
@@ -53,6 +51,8 @@ namespace TextRPGTeam30
                 if (deadMonster == dungeon.monsters.Count)//죽은 몬스터 수와 던전의 몬스터수가 같을 때
                 {
                     dungeon.DungeonSuccess();//던전클리어
+                    GameSaveManager saveManager = new GameSaveManager();
+                    saveManager.SaveDungeonClearData(player);
                     break;
                 }
 
@@ -65,11 +65,8 @@ namespace TextRPGTeam30
                     return;
                 }
             }
-
             //출력
             PrintReward();
-
-            stage++;//스테이지 값 증가
         }
 
         public void PrintTitle()
@@ -111,9 +108,9 @@ namespace TextRPGTeam30
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
             Console.WriteLine($"  {player.Name} ({player.job.name})");
             Console.Write("HP ");
-            GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.Hp}/{player.MaxHP}", ConsoleColor.Magenta);
             Console.Write("MP ");
-            GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.mp}/{player.maxMp}\n", ConsoleColor.Magenta);
         }
 
         public void PrintMonster(Monster monster)
@@ -141,9 +138,9 @@ namespace TextRPGTeam30
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
             Console.WriteLine($"  {player.Name} ()");
             Console.Write("HP ");
-            GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.Hp}/{player.MaxHP}", ConsoleColor.Magenta);
             Console.Write("MP ");
-            GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.mp}/{player.maxMp}\n", ConsoleColor.Magenta);
         }
 
         public void AttackMenu()
@@ -158,7 +155,7 @@ namespace TextRPGTeam30
             switch (con)
             {
                 case 1:
-                    SelectTarget();
+                    SelectTarget(player.Attack, false);
                     break;
                 case 2:
                     SkillMenu();
@@ -170,22 +167,48 @@ namespace TextRPGTeam30
         {
             PrintDungeonUI();
             //스킬 출력
-            Console.WriteLine("0. 취소");
-            GameManager.CheckWrongInput(out int con, 0, 2);
-
-            switch (con)
+            int num = 0;
+            foreach (var skill in player.job.skills)
             {
-                case 0:
-                    AttackMenu();
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
+                Console.WriteLine($"{++num}. {skill.name} - MP {skill.cost}");
+                if(skill is OffensiveSkill offensive1)
+                {
+                    Console.WriteLine($"공격력 * {offensive1.damageModifier}");
+                }
             }
+
+            Console.WriteLine("0. 취소");
+            GameManager.CheckWrongInput(out int con, 0, num);
+
+            if(con == 0)
+            {
+                AttackMenu();
+                return;
+            }
+
+            if (player.job.skills[con - 1] is OffensiveSkill offensive2)
+            {
+                if (player.mp >= player.job.skills[con - 1].cost)
+                {
+                    player.mp -= player.job.skills[con - 1].cost;
+                    SelectTarget(offensive2.UseSkill(player.Attack), true);
+                }
+                else
+                {
+                    Console.WriteLine("mp가 부족합니다.");
+                    Thread.Sleep(500);
+                    SkillMenu();
+                    return;
+                }
+            }
+            else if (player.job.skills[con - 1] is UtilitySkill utility)
+            {
+
+            }
+
         }
 
-        public void SelectTarget()
+        public void SelectTarget(float _attack, bool isSkill)
         {
             PrintTitle();
 
@@ -235,7 +258,7 @@ namespace TextRPGTeam30
             PrintTitle();
             Console.WriteLine($"{player.Name}의 공격!");
 
-            target.TakeDamage(player.Attack, player.CritRate, false);
+            target.TakeDamage(_attack, player.CritRate, isSkill);
 
             Console.Write("Lv.");
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
@@ -284,10 +307,10 @@ namespace TextRPGTeam30
                     }
 
                     Console.WriteLine($"Lv. {player.Level} {player.Name}");
-                    Console.Write("HP");
+                    Console.Write("HP ");
                     GameManager.PrintColored($"{playerHp}", ConsoleColor.Magenta);
                     Console.Write(" -> ");
-                    GameManager.PrintColored($"{playerHp}\n", ConsoleColor.Magenta);
+                    GameManager.PrintColored($"{player.Hp}\n", ConsoleColor.Magenta);
                     Console.WriteLine("0. 다음\n");
                     GameManager.CheckWrongInput(out int con, 0, 0);
                 }

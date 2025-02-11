@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
-    internal class Equipable : IItem
+    public class Equipable : Item
     {
         public int ID { get; set; }
-        public string Name { get; set; }
         // public int Price { get; set; }
         public string IDescription { get; set; } // 변수 설명용
+        public bool isEquip = false;
 
-        public bool isEquip;
-
-        public void Toggle(Player player)
+        public Equipable(string Name, int ItAbility, string ItType, string ItInfo, int price) : base(Name, ItAbility, ItType, ItInfo, price)
         {
 
+        }
+
+        public void Toggle()
+        {
+            isEquip = !isEquip;
         }
     }
 }

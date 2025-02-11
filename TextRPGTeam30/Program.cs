@@ -1,19 +1,12 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            QuestManager questManager = new QuestManager();
-            Player player = new Player();
-            GameManager gameManager = new GameManager(player, questManager);
+            GameManager gameManager = new GameManager();
 
-            gameManager.PrintStartScene();
-
-            while (true)
-            {
-                gameManager.StartSelect();
-            }
+            while (gameManager.player.Hp > 0) gameManager.StartSelect();
         }
     }
 }
