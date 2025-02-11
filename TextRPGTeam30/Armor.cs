@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Armor : Equipable
+    public class Armor : Equipable
     {
         public int defense;
 

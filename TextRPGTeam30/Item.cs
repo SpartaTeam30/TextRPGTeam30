@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace TextRPGTeam30
 {
-    internal class Item
+    public class Item
     {
         public int ID { get; set; }
         // public int Price { get; set; }    

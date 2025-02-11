@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Weapon : Equipable
+    public class Weapon : Equipable
     {
         public Weapon(string _ItName, int _ItAbility, string _ItType, string _ItInfo) : base(_ItName, _ItAbility, _ItType, _ItInfo)
         {

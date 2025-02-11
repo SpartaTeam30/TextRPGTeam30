@@ -71,6 +71,7 @@
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
             QuestManager questManager = new QuestManager();
+            dManager = new DungeonManager(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Consumable : Item 
+    public class Consumable : Item 
     {
         public int ID { get; set; }
         public string Name { get; set; }

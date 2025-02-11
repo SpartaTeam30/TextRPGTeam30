@@ -1,10 +1,10 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Warrior : Job
+    public class Warrior : Job
     {
-        public string name = "전사";
         public Warrior()
         {
+            name = "전사";
             skills.Add(new Slash());
             hp = 100;
             attack = 10;

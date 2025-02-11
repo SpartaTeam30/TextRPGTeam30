@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Equipable : Item
+    public class Equipable : Item
     {
         public int ID { get; set; }
         public string Name { get; set; }
@@ -20,9 +20,9 @@ namespace TextRPGTeam30
 
         }
 
-        public void Toggle(Player player)
+        public void Toggle()
         {
-
+            isEquip = !isEquip;
         }
     }
 }

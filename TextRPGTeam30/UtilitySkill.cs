@@ -2,7 +2,7 @@
 
 namespace TextRPGTeam30
 {
-    internal class UtilitySkill : Skill
+    public class UtilitySkill : Skill
     {
         public int dAttack;
         public int dDefense;

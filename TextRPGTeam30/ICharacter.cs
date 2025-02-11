@@ -1,6 +1,6 @@
 ﻿namespace TextRPGTeam30
 {
-    internal interface ICharacter
+    public interface ICharacter
     {
         int Level { get; set; }
         string Name { get; set; }

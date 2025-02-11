@@ -9,10 +9,10 @@ namespace TextRPGTeam30
         public int gold;
         public int exp;
         public Job job;
-        // public List<IEquipable> equipment { get; set; } 
-        // public List<Consumable> consumables { get; set; } 
-        // public Weapon equipWeapon { get; set; }
-        // public Armor equipArmor { get; set; }
+        public List<Equipable> equipment { get; set; } 
+        public List<Consumable> consumables { get; set; } 
+        public Weapon? equipWeapon { get; set; }
+        public Armor? equipArmor { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
         public int Defense { get; set; }
@@ -23,6 +23,7 @@ namespace TextRPGTeam30
         public float DAttack {  get; set; }
         public int Evasion { get; set; }
         public int JobType { get; set; }
+
         public List<Item> inventory = new List<Item>();
         public Player() 
         {
@@ -36,11 +37,6 @@ namespace TextRPGTeam30
                     new Item("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.")
             };
         }
-
-        public Player()
-        {
-
-        }
         public Player(string name, Job job)
         {
             this.Name = name;
@@ -53,10 +49,11 @@ namespace TextRPGTeam30
             this.exp = 0;
             this.CritRate = 15;
             this.Attack = 10;
-            //equipment = new List<Equipable>();  // 장비 가능 리스트
-            //consumables = new List<Consumable>(); // 소모품 리스트 
-            this.job = job;
+            equipment = new List<Equipable>();  // 장비 가능 리스트
+            consumables = new List<Consumable>(); // 소모품 리스트 
             this.Evasion = 10;
+            this.equipWeapon = null;
+            this.equipArmor = null;
             job.ResetStat(this);
         }
         public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
@@ -71,10 +68,11 @@ namespace TextRPGTeam30
             this.Attack = attack;
             this.Defense = defense; 
             this.JobType = jobType; //타입 0전사 1마법사
-            this.job = ConvertJob(jobType);  // 직업 변환
-            //equipment = new List<Equipable>();  // 장비 가능 리스트
-            //consumables = new List<Consumable>(); // 소모품 리스트 
-            this.job = job;
+            this.job = ConvertJob(JobType);  // 직업 변환
+            equipment = new List<Equipable>();  // 장비 가능 리스트
+            consumables = new List<Consumable>(); // 소모품 리스트 
+            this.equipWeapon = null;
+            this.equipArmor = null;
             job.ResetStat(this);
 
 
@@ -98,12 +96,21 @@ namespace TextRPGTeam30
 
         public void DisplayStatus()
         {
+            Console.Clear();
             Console.WriteLine($"Lv. {Level}");
             Console.WriteLine($"{Name}, ({job.name})");
             Console.WriteLine($"공격력 : {Attack}");
             Console.WriteLine($"방어력 : {Defense}");
             Console.WriteLine($"체력 : {Hp}");
             Console.WriteLine($"Gold : {gold} G");
+            Console.WriteLine("\n0. 취소");
+            GameManager.CheckWrongInput(out int con, 0, 0);
+
+            switch (con)
+            {
+                case 0:
+                    break;
+            }
         }
 
         public void TakeDamage(float attack, int crit, bool isSkill = false)
@@ -201,10 +208,41 @@ namespace TextRPGTeam30
             Name = name;
         }
 
-        public void Equip()
+        public void Equip(Equipable equipable)
         {
-            Player EquipWeapon = this;
-            Console.WriteLine($"{Name}를 장착했습니다.");
+            equipable.Toggle();//equipable의 장착 상태 변경
+
+            if (equipable is Weapon)//무기일때
+            { 
+                if(equipWeapon == equipable)//장착해제
+                {
+                    equipWeapon = null;
+                }
+                else//장착
+                {
+                    if (equipWeapon != null)
+                    {
+                        equipWeapon.Toggle();
+                    }
+                    equipWeapon = (Weapon)equipable;
+                }
+
+            }
+            else//방어구 일때
+            {
+                if (equipArmor == equipable)//장착해제
+                {
+                    equipArmor = null;
+                }
+                else
+                {//장착
+                    if (equipArmor != null)
+                    {
+                        equipArmor.Toggle();
+                    }
+                    equipArmor = (Armor)equipable;
+                }
+            }
         }
 
         public void DisplayInventory() // 인벤토리 상태
