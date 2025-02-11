@@ -9,6 +9,7 @@ internal class QuestManager
     //클래스 퀘스트 변수
     public class Quest
     {
+        private QuestManager questManager;
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -21,8 +22,9 @@ internal class QuestManager
 
         public int Type { get; set; }
 
-        public Quest(int id, string name, string description, int condition, int progress, string rewardItem, int rewardGold, int rewardExp, int status, int type)
+        public Quest(QuestManager questManager, int id, string name, string description, int condition, int progress, string rewardItem, int rewardGold, int rewardExp, int status, int type)
         {
+            this.questManager = questManager;
             Id = id;
             Name = name;
             Description = description;
@@ -43,10 +45,12 @@ internal class QuestManager
             Console.WriteLine($"설명: {Description}");
             Console.WriteLine($"진행도: {Progress}/{Condition}");
 
+            // 목표 달성 여부 자동 업데이트
             if (Progress >= Condition && Status == 1)
             {
                 Console.WriteLine("\n[!] 퀘스트 목표를 달성했습니다!");
                 Status = 2; // 완료 상태로 변경
+                this.questManager.SaveQuestsToJson(); // 🔥 변경 즉시 저장
             }
 
             Console.WriteLine("\n보상");
@@ -67,26 +71,42 @@ internal class QuestManager
             Console.Write(">> ");
             GameManager.CheckWrongInput(out int choice, 1, 2);
 
-            if (Status == 0 && choice == 1) Status = 1;
-            else if (Status == 1 && choice == 1) Status = 0;
+            bool isUpdated = false; // 변경 여부 체크
+
+            if (Status == 0 && choice == 1)
+            {
+                Status = 1; // 퀘스트 수락
+                isUpdated = true;
+            }
+            else if (Status == 1 && choice == 1)
+            {
+                Status = 0; // 퀘스트 포기
+                isUpdated = true;
+            }
             else if (Status == 2 && choice == 1)
             {
-                Status = 3;
+                Status = 3; // 보상 수령 완료
                 Console.WriteLine("보상을 받았습니다!");
+                isUpdated = true;
             }
 
-            // 상태 변경 후 JSON 저장
-            QuestManager questManager = new QuestManager();
-            questManager.SaveQuestsToJson(questManager.QuestCategories);
+            // 🔥 변경 사항이 있을 경우만 저장
+            if (isUpdated)
+            {
+                questManager.SaveQuestsToJson();
+            }
         }
 
     }
 
-    private static readonly string QuestFilePath = "quests.json";
+    private readonly string QuestFilePath;
     private Dictionary<string, List<Quest>> QuestCategories;
+    private string CharacterName; // 캐릭터 이름 저장
 
-    public QuestManager()
+    public QuestManager(string characterName)
     {
+        CharacterName = characterName;
+        QuestFilePath = $"{CharacterName}_퀘스트.json"; // 🔥 동적 파일명 설정
         QuestCategories = LoadQuestsFromJson();
     }
 
@@ -95,7 +115,7 @@ internal class QuestManager
     {
         if (!File.Exists(QuestFilePath))
         {
-            Console.WriteLine("퀘스트 파일을 찾을 수 없습니다. 기본 퀘스트를 생성합니다.");
+            Console.WriteLine($"{QuestFilePath} 퀘스트 파일을 찾을 수 없습니다. 기본 퀘스트를 생성합니다.");
             return GetDefaultQuests();
         }
 
@@ -118,35 +138,36 @@ internal class QuestManager
         {
             { "몬스터", new List<Quest>
                 {
-                    new Quest(1, "미니언 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 5, 3, 0, 0),
-                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0, 1)
+                    new Quest(this, 1, "미니언 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 5, 3, 0, 0),
+                    new Quest(this, 2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0, 1)
                 }
             },
             { "장비", new List<Quest>
                 {
-                    new Quest(3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0, 2),
-                    new Quest(4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0, 3)
+                    new Quest(this, 3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0, 2),
+                    new Quest(this, 4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0, 3)
                 }
             },
             { "레벨업", new List<Quest>
                 {
-                    new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 0, "목장갑", 15, 0, 0, 5),
-                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 0, "나무견갑", 15, 0, 0, 5)
+                    new Quest(this, 5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 0, "목장갑", 15, 0, 0, 5),
+                    new Quest(this, 6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 0, "나무견갑", 15, 0, 0, 5)
                 }
             }
         };
 
-        SaveQuestsToJson(defaultQuests);
+        SaveQuestsToJson();
         return defaultQuests;
     }
 
     // JSON으로 퀘스트 저장
-    private void SaveQuestsToJson(Dictionary<string, List<Quest>> quests)
+    private void SaveQuestsToJson()
     {
         try
         {
-            string jsonData = JsonConvert.SerializeObject(quests, Formatting.Indented);
+            string jsonData = JsonConvert.SerializeObject(QuestCategories, Formatting.Indented);
             File.WriteAllText(QuestFilePath, jsonData);
+            Console.WriteLine($"✅ {QuestFilePath} 저장 완료!");
         }
         catch (Exception e)
         {
@@ -177,8 +198,12 @@ internal class QuestManager
                 return;
             }
 
-            string category = behavior == 1 ? "몬스터" :
-                              behavior == 2 ? "장비" : "레벨업";
+            string category = behavior switch
+            {
+                1 => "몬스터",
+                2 => "장비",
+                _ => "레벨업"
+            };
 
             ShowQuestList(category, QuestCategories[category]);
         }
@@ -200,7 +225,7 @@ internal class QuestManager
                     0 => "[미수락]",
                     1 => "[진행중]",
                     2 => "[완료]",
-                    _ => "[보상 수령 완료]"
+                    3 => "[보상 수령 완료]"
                 };
 
                 Console.WriteLine($"{i + 1}. {statusText} {q.Name} - 진행도: {q.Progress}/{q.Condition}");
@@ -213,30 +238,33 @@ internal class QuestManager
 
             if (select == 0)
             {
-                SaveQuestsToJson(QuestCategories); // 🔥 JSON에 변경 사항 저장
+                SaveQuestsToJson(); // 🔥 JSON에 변경 사항 저장
                 break;
             }
 
             Quest selectedQuest = quests[select - 1];
             selectedQuest.ShowQuestDetails();
 
-            SaveQuestsToJson(QuestCategories); // 🔥 퀘스트 진행 후 상태를 저장
+            SaveQuestsToJson(); // 🔥 퀘스트 진행 후 상태를 저장
         }
     }
 
-
-    //진행중인 퀘스트업데이트
+    // 진행 중인 퀘스트 업데이트
     public void UpdateQuestProgress(int questType, int increase)
     {
+        bool hasUpdated = false;
+
         foreach (var questList in QuestCategories.Values)
         {
             foreach (var quest in questList)
             {
-                if (quest.Type == questType && quest.Status == 1) // 🔥 진행중인 퀘스트만 업데이트
+                // 해당 타입의 퀘스트만 업데이트
+                if (quest.Status == 1 && quest.Type == questType && quest.Progress < quest.Condition)
                 {
                     quest.Progress = Math.Min(quest.Condition, quest.Progress + increase);
+                    hasUpdated = true;
 
-                    // 목표 달성 시 상태 변경
+                    // 퀘스트 완료 시 상태 변경
                     if (quest.Progress >= quest.Condition)
                     {
                         quest.Status = 2;
@@ -246,8 +274,11 @@ internal class QuestManager
             }
         }
 
-        // 🔥 변경된 퀘스트 상태 저장
-        SaveQuestsToJson(QuestCategories);
+        // 변경 사항이 있을 때만 저장
+        if (hasUpdated)
+        {
+            SaveQuestsToJson();
+        }
     }
 
 
@@ -265,19 +296,16 @@ internal class QuestManager
         }
     }
 
-    //무기 장착
     public void OnWeaponEquipped()
     {
         this.UpdateQuestProgress(3, 1); // 무기 장착 퀘스트 업데이트
     }
 
-    //방어구 장착
     public void OnArmorEquipped()
     {
         this.UpdateQuestProgress(4, 1); // 방어구 장착 퀘스트 업데이트
     }
 
-    //레벨 
     public void OnPlayerLevelUp(int newLevel)
     {
         this.UpdateQuestProgress(5, newLevel); // 현재 레벨을 증가값으로 전달

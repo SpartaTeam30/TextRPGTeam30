@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            QuestManager questManager = new QuestManager();
+            string characterName = "Player1";
+            QuestManager questManager = new QuestManager(characterName);
             Player player = new Player();
             GameManager gameManager = new GameManager(player, questManager);
 
