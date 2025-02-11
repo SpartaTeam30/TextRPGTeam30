@@ -370,47 +370,23 @@ namespace TextRPGTeam30
             if (consumable is HealingPotion HPotion && HPotion.itemCount > 0)
             {
                 int recovery = HPotion.HealAmount;
-                int CurrentHp = 100;
-                int MaxHp = 100;
-
                 // 회복 후 체력이 최대 체력을 넘지 않도록 함
-                CurrentHp = Math.Min(MaxHp, CurrentHp + recovery);
+                Hp = Math.Min(MaxHP, Hp + recovery);
                 Console.WriteLine($"회복! 남은 포션: {--HPotion.itemCount}");
-                Console.WriteLine($"현재 체력: {CurrentHp}/{MaxHp}");
+                Console.WriteLine($"현재 체력: {Hp}/{MaxHP}");
             }
             else if (consumable is ManaPotion MPotion && MPotion.itemCount > 0)
             {
-                int MaxMp = 50;
-                int CurrentMp = 50;
+     
                 int recovery = MPotion.ManaAmount;
-                CurrentMp = Math.Min(MaxMp, CurrentMp + recovery);
+                mp = Math.Min(maxMp, mp + recovery);
                 Console.WriteLine($"회복! 남은 포션: {--MPotion.itemCount}");
-                Console.WriteLine($"현재 체력: {CurrentMp}/{MaxMp}");
+                Console.WriteLine($"현재 체력: {mp}/{maxMp}");
             }             
             else
             {
                 Console.WriteLine("포션이 부족합니다.");
             }
-        }
-
-        public void DisplayInventory() // 인벤토리 상태
-        {
-            Console.WriteLine();
-            Console.WriteLine("================인벤토리===========================");
-            if (inventory.Count == 0) 
-            {
-                Console.WriteLine("인벤토리가 비어 있습니다.");
-            }
-            else
-            {
-                Console.WriteLine("\n인벤토리 아이템 목록\n");
-                foreach (var item in inventory)
-                {
-                    Console.WriteLine($"ID: {item.ID}, 이름: {item.itName}, 설명: {item.itInfo}");
-                }
-                Console.WriteLine();
-                Console.WriteLine("=================================================");       
-            }            
-        }
+        }        
     }
 }

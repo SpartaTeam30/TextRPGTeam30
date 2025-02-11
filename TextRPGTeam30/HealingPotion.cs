@@ -3,8 +3,8 @@
     public class HealingPotion : Consumable
     {
         public int HealAmount { get; set; } 
-
-        public HealingPotion(string itName, int itAbility, string itType, string itInfo) : base(itName, itAbility, itType, itInfo)
+        
+        public HealingPotion(string itName, int itAbility, string itType, string itInfo, int price) : base(itName, itAbility, itType, itInfo, price)
         {
             HealAmount = 30;
         }
