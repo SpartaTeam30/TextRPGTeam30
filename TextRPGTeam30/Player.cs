@@ -1,4 +1,6 @@
-using System;
+﻿using System;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace TextRPGTeam30
 {
@@ -383,5 +385,29 @@ namespace TextRPGTeam30
                 return true;
             }
         }
+        
+        public void UsePotion(Consumable consumable)
+        {
+            if (consumable is HealingPotion HPotion && HPotion.itemCount > 0)
+            {
+                int recovery = HPotion.HealAmount;
+                // 회복 후 체력이 최대 체력을 넘지 않도록 함
+                Hp = Math.Min(MaxHP, Hp + recovery);
+                Console.WriteLine($"회복! 남은 포션: {--HPotion.itemCount}");
+                Console.WriteLine($"현재 체력: {Hp}/{MaxHP}");
+            }
+            else if (consumable is ManaPotion MPotion && MPotion.itemCount > 0)
+            {
+     
+                int recovery = MPotion.ManaAmount;
+                mp = Math.Min(maxMp, mp + recovery);
+                Console.WriteLine($"회복! 남은 포션: {--MPotion.itemCount}");
+                Console.WriteLine($"현재 체력: {mp}/{maxMp}");
+            }             
+            else
+            {
+                Console.WriteLine("포션이 부족합니다.");
+            }
+        }        
     }
 }

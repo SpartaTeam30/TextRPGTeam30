@@ -1,4 +1,7 @@
-﻿namespace TextRPGTeam30
+﻿using System;
+using System.Runtime;
+
+namespace TextRPGTeam30
 {
     public class Item
     {
