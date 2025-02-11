@@ -5,6 +5,7 @@
         public Player player;
         public DungeonManager dManager;
         public QuestManager questManager;
+        public Shop shop;
 
         public GameManager()
         {
@@ -65,6 +66,7 @@
             player = saveManager.LoadCharacter();
             dManager = new DungeonManager(this.player);
             QuestManager questManager = new QuestManager();
+            shop = new Shop(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
             Thread.Sleep(500);
@@ -80,7 +82,8 @@
             Console.WriteLine("2. 인벤토리 보기");
             Console.WriteLine("3. 전투 시작");
             Console.WriteLine("4. 퀘스트");
-            CheckWrongInput(out int select, 1, 4);
+            Console.WriteLine("5. 상점");
+            CheckWrongInput(out int select, 1, 5);
 
             switch (select)
             {
@@ -95,6 +98,9 @@
                     break;
                 case 4:
                     questManager.Questscreen();
+                    break;
+                case 5:
+                    shop.PrintShop();
                     break;
             }
         }

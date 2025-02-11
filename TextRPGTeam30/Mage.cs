@@ -2,7 +2,6 @@
 {
     public class Mage : Job
     {
-        public string name = "마법사";
         public Mage()
         {
             name = "마법사";

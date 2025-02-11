@@ -2,7 +2,6 @@
 {
     public class Warrior : Job
     {
-        public string name = "전사";
         public Warrior()
         {
             name = "전사";
