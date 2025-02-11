@@ -7,9 +7,10 @@
         {
             cost = 15;
             dAttack = -1;
+            count = 1;
         }
 
-        public Growl(int cost, int dAttack, int dDefense) : base(cost, dAttack, dDefense)
+        public Growl(int cost, int dAttack, int dDefense, int count) : base(cost, dAttack, dDefense, count)
         {
 
         }
