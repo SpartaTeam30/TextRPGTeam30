@@ -263,12 +263,12 @@ namespace TextRPGTeam30
 
         public void EquipWeapon(Weapon weapon)
         {
-            if (equipWeapon == weapon)//장착해제
+            if (equipWeapon == weapon) // 장착 해제
             {
                 this.Attack -= equipWeapon.attack;
                 equipWeapon = null;
             }
-            else//장착
+            else // 장착
             {
                 if (equipWeapon != null)
                 {
@@ -277,24 +277,32 @@ namespace TextRPGTeam30
                 }
                 equipWeapon = weapon;
                 this.Attack += equipWeapon.attack;
+
+                // 🔥 퀘스트 진행 체크
+                QuestManager.Instance.OnWeaponEquipped();
             }
         }
 
+
         public void EquipArmor(Armor armor)
         {
-            if (equipArmor == armor)//장착해제
+            if (equipArmor == armor) // 장착 해제
             {
                 equipArmor = null;
             }
-            else//장착
+            else // 장착
             {
                 if (equipArmor != null)
                 {
                     equipArmor.Toggle();
                 }
                 equipArmor = armor;
+
+                // 🔥 퀘스트 진행 체크
+                QuestManager.Instance.OnArmorEquipped();
             }
         }
+
 
         public void Equip(Equipable equipable)
         {

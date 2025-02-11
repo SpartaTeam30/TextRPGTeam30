@@ -6,9 +6,14 @@ namespace TextRPGTeam30
         public DungeonManager dManager;
       // public QuestManager questManager;
         public Shop shop;
+        public static GameManager Instance { get; private set; }
 
         public GameManager()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
             PrintStartScene();
         }
 
@@ -86,8 +91,23 @@ namespace TextRPGTeam30
             Console.WriteLine("4. 퀘스트");
             Console.WriteLine("5. 상점");
             Console.WriteLine("0. 종료하기");
-            CheckWrongInput(out int select, 0, 5);
-           
+
+            // 🔥 장비 착용 상태 표시
+            Console.WriteLine("\n[장비 상태]");
+            Console.Write("무기: ");
+            if (player.equipWeapon != null)
+                GameManager.PrintColoredLine($"{player.equipWeapon.itName}", ConsoleColor.Cyan);
+            else
+                Console.WriteLine("없음");
+
+            Console.Write("방어구: ");
+            if (player.equipArmor != null)
+                GameManager.PrintColoredLine($"{player.equipArmor.itName}", ConsoleColor.Cyan);
+            else
+                Console.WriteLine("없음");
+
+            Console.Write("\n>> ");
+            GameManager.CheckWrongInput(out int select, 0, 5);
 
             switch (select)
             {

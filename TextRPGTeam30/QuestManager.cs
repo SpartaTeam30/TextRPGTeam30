@@ -104,12 +104,12 @@ namespace TextRPGTeam30
                 Console.WriteLine("1. 몬스터 퀘스트");
                 Console.WriteLine("2. 장비 퀘스트");
                 Console.WriteLine("3. 레벨업 퀘스트");
-                Console.WriteLine("4. 퀘스트 창 나가기");
+                Console.WriteLine("0. 퀘스트 창 나가기");
                 Console.Write("\n>> ");
 
-                GameManager.CheckWrongInput(out int behavior, 1, 4);
+                GameManager.CheckWrongInput(out int behavior, 0, 3);
 
-                if (behavior == 4)
+                if (behavior == 0)
                 {
                     Console.WriteLine("퀘스트 창을 종료합니다.");
                     return;
@@ -165,6 +165,39 @@ namespace TextRPGTeam30
                 }
 
                 Quest selectedQuest = quests[select - 1];
+
+                // 🔥 퀘스트 수락 시, 플레이어 레벨 및 장착 상태 확인
+                if (selectedQuest.Status == 0) // 미수락 상태라면
+                {
+                    selectedQuest.Status = 1; // 퀘스트 수락 처리
+                    Console.WriteLine($"'{selectedQuest.Name}' 퀘스트를 수락했습니다!");
+
+                    // 현재 플레이어 상태를 체크하여 즉시 퀘스트 진행도 반영
+                    if (selectedQuest.Type == 3 && GameManager.Instance.player.equipWeapon != null)
+                    {
+                        Console.WriteLine("현재 무기를 장착 중이므로 퀘스트 완료!");
+                        OnWeaponEquipped();
+                    }
+                    else if (selectedQuest.Type == 4 && GameManager.Instance.player.equipArmor != null)
+                    {
+                        Console.WriteLine("현재 방어구를 장착 중이므로 퀘스트 완료!");
+                        OnArmorEquipped();
+                    }
+                    else if (selectedQuest.Type == 5) // 🔥 레벨업 퀘스트
+                    {
+                        int playerLevel = GameManager.Instance.player.Level;
+                        Console.WriteLine($"현재 레벨: {playerLevel}");
+
+                        if (playerLevel >= selectedQuest.Condition) // 목표 레벨 도달 여부 체크
+                        {
+                            Console.WriteLine($"레벨 {selectedQuest.Condition} 달성! 퀘스트 완료!");
+                            UpdateQuestProgress(5, playerLevel);
+                        }
+                    }
+
+                    SaveQuestsToJson();
+                }
+
                 bool isupdate = selectedQuest.ShowQuestDetails();
 
                 if (isupdate)
@@ -173,6 +206,8 @@ namespace TextRPGTeam30
                 }
             }
         }
+
+
 
         public void UpdateQuestProgress(int questType, int increase)
         {
