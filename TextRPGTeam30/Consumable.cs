@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Consumable : IItem 
+    internal class Consumable(string itName, int itAbility, string itType, string itInfo) : Item(itName, itAbility, itType, itInfo)
     {
         public int ID { get; set; }
         public string Name { get; set; }
@@ -18,6 +18,10 @@ namespace TextRPGTeam30
         public void Use(Player player)
         {
 
+        }
+        public override void Use()
+        {
+            Console.WriteLine($"포션 {Name} 사용!");
         }
     }
 }
