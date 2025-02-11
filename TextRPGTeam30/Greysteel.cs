@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TextRPGTeam30
+{
+    internal class Greysteel : OffensiveSkill
+    {
+        public Greysteel() // 검날이 창백하게 빛나면서 거대한 폭발을 일으키는 전사의 스킬
+        {
+            name = "그레이스틸";
+            damageModifier = 4.0f;
+            cost = 30;
+        }
+
+        public Greysteel(float damageModifier, int cost) : base(damageModifier, cost)
+        {
+
+        }
+    }
+}
