@@ -86,7 +86,11 @@
             Console.WriteLine("2. 인벤토리 보기");
             Console.WriteLine("3. 전투 시작");
             Console.WriteLine("4. 퀘스트");
-            CheckWrongInput(out int select, 1, 4);
+            Console.WriteLine("0. 종료하기");
+            CheckWrongInput(out int select, 0, 4);
+
+            GameSaveManager saveManager = new GameSaveManager();
+            saveManager.SaveGame(player);
 
             switch (select)
             {
@@ -101,6 +105,11 @@
                     break;
                 case 4:
                     questManager.Questscreen();
+                    break;
+                case 0:
+                    Console.WriteLine("게임을 저장하고 종료합니다...");
+                    saveManager.SaveGame(player);
+                    Environment.Exit(0);
                     break;
             }
         }

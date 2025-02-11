@@ -12,7 +12,7 @@
         public DungeonManager(Player player)//생성자 함수
         {
             this.player = player;
-            stage = 1;
+            stage = player.Stage;
             monsters = new List<Monster>()
             {
                 new Monster("슬라임", 1, 10, 3), new Monster("고블린", 1, 15, 5), new Monster("코볼트", 1, 20, 7), new Monster("고스트", 1, 15, 13),
@@ -51,6 +51,8 @@
                 if (deadMonster == dungeon.monsters.Count)//죽은 몬스터 수와 던전의 몬스터수가 같을 때
                 {
                     dungeon.DungeonSuccess();//던전클리어
+                    GameSaveManager saveManager = new GameSaveManager();
+                    saveManager.SaveDungeonClearData(player);
                     break;
                 }
 
@@ -66,8 +68,6 @@
 
             //출력
             PrintReward();
-
-            stage++;//스테이지 값 증가
         }
 
         public void PrintTitle()

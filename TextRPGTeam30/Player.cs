@@ -20,6 +20,7 @@ namespace TextRPGTeam30
         public float DAttack {  get; set; }
         public int Evasion { get; set; }
         public int JobType { get; set; }
+        public int Stage { get; set; }
 
         public List<Item> inventory = new List<Item>();
 
@@ -58,7 +59,7 @@ namespace TextRPGTeam30
             job.ResetStat(this);
         }
 
-        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
+        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense, int stage = 1)
         {
             this.Name = name;
             this.Level = level;
@@ -69,6 +70,7 @@ namespace TextRPGTeam30
             this.CritRate = critRate;
             this.Attack = attack;
             this.Defense = defense; 
+            this.Stage = stage;
             this.JobType = jobType; //타입 0전사 1마법사
             this.job = ConvertJob(JobType);  // 직업 변환
             equipment = new List<Equipable>();  // 장비 가능 리스트
