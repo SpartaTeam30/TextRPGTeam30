@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace TextRPGTeam30;
 
-internal class QuestManager
+public class QuestManager
 {
     private readonly string QuestFilePath;
     private Dictionary<string, List<Quest>> QuestCategories;
