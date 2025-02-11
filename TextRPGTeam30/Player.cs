@@ -30,15 +30,6 @@ namespace TextRPGTeam30
 
         public Player()
         {
-            inventory = new List<Item>()
-            {
-                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10, 100),
-                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100),
-                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100),
-                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 5, 100),
-                new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7, 100),
-                new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100)
-            };
         }
 
         public Player(string name, Job job)
@@ -89,12 +80,6 @@ namespace TextRPGTeam30
 
             inventory = new List<Item>()
             {
-                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10, 100),
-                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100),
-                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100),
-                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 5, 100),
-                new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7, 100),
-                new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100)
             };
         }
 
@@ -318,17 +303,24 @@ namespace TextRPGTeam30
 
         public void Equip(Equipable equipable)
         {
-            equipable.Toggle();//equipable의 장착 상태 변경
-
-            if (equipable is Weapon)//무기일때
+            if (equipable == null)
             {
-                EquipWeapon((Weapon) equipable);
+                Console.WriteLine("선택한 아이템을 장착할 수 없습니다.");
+                return;
             }
-            else//방어구 일때
+
+            equipable.Toggle(); //장비 상태 변경
+
+            if (equipable is Weapon weapon)
             {
-                EquipArmor((Armor) equipable);
+                EquipWeapon(weapon);
+            }
+            else if (equipable is Armor armor)
+            {
+                EquipArmor(armor);
             }
         }
+
 
         public void DisplayInventory() // 인벤토리 상태
         {
@@ -336,6 +328,7 @@ namespace TextRPGTeam30
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine("================인벤토리===========================");
+
             if (inventory.Count == 0)
             {
                 Console.WriteLine("인벤토리가 비어 있습니다.");
@@ -346,33 +339,50 @@ namespace TextRPGTeam30
                 foreach (var item in inventory)
                 {
                     Console.Write($"{++num}. ");
-                    if (item is Equipable equipable)
+
+                    // 착용 여부 확인 후 [E] 표시
+                    if (equipWeapon == item || equipArmor == item)
                     {
-                        if (equipable.isEquip)
-                        {
-                            GameManager.PrintColored("[E]", ConsoleColor.Magenta);
-                        }
-                        else
-                        {
-                            Console.Write("   ");
-                        }
-                        Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
+                        GameManager.PrintColored("[E] ", ConsoleColor.Magenta);
                     }
+                    else
+                    {
+                        Console.Write("    ");
+                    }
+
+                    Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
                 }
                 Console.WriteLine();
                 Console.WriteLine("=================================================");
             }
 
-            Console.WriteLine("0. 돌아가기");
-            GameManager.CheckWrongInput(out int select, 0, num);
-            if (select == 0)
+            while (true) // 유효한 선택을 받을 때까지 반복
             {
-                return;
+                Console.WriteLine("0. 돌아가기");
+                GameManager.CheckWrongInput(out int select, 0, num);
+
+                if (select == 0)
+                {
+                    return;
+                }
+
+                Item selectedItem = inventory[select - 1];
+
+                // ✅ 선택한 아이템이 장비 가능한 경우에만 캐스팅
+                if (selectedItem is Equipable equipableItem)
+                {
+                    Equip(equipableItem);
+                    break; // ✅ 정상적으로 장비했으면 루프 탈출
+                }
+                else
+                {
+                    Console.WriteLine("이 아이템은 장비할 수 없습니다. 다시 선택하세요.");
+                }
             }
 
-            Equip((Equipable)inventory[select - 1]);
-            DisplayInventory();
+            DisplayInventory(); // 인벤토리 화면 갱신
         }
+
 
         public bool UseGold(int price)
         {

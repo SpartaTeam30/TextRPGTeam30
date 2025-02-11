@@ -19,6 +19,8 @@ namespace TextRPGTeam30
         public int Evasion { get; set; }
         public int Stage { get; set; } = 1;
 
+        public List<string> Inventory { get; set; } = new List<string>();
+
         public DateTime LastLogin { get; set; } //시간 관련 변수
     }
     public class GameSaveManager
@@ -43,9 +45,8 @@ namespace TextRPGTeam30
                 Exp = player.exp,
                 LastLogin = DateTime.Now,
                 Stage = player.Stage,
-                //Inventory = player.inventory.Select(item => item.itName).ToList(),
-                //EquippedWeapon = player.equipWeapon?.itName,
-                //EquippedArmor = player.equipArmor?.itName
+                Inventory = player.inventory.Select(item =>
+                $"{item.itName},{(player.equipWeapon == item || player.equipArmor == item ? 1 : 0)}" ).ToList()
             };
 
             string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
@@ -168,21 +169,55 @@ namespace TextRPGTeam30
             {
                 string jsonData = File.ReadAllText(filePath);
                 PlayerData characterData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
-               // Console.WriteLine($"{characterData.Name} 캐릭터를 불러왔습니다. (현재 스테이지: {characterData.Stage})");
 
-                return new Player(
+                Player player = new Player(
                     characterData.Name,
                     characterData.Level,
-                    characterData.Hp, // ✅ 체력 그대로 유지
+                    characterData.Hp,
                     characterData.Mp,
                     characterData.Gold,
                     characterData.Exp,
                     characterData.CritRate,
-                    (float)characterData.Attack, // ✅ 공격력 소수점 유지
+                    (float)characterData.Attack,
                     characterData.JobType,
                     characterData.Defense,
                     characterData.Stage
                 );
+
+                // ✅ 기존 인벤토리 초기화
+                player.inventory.Clear();
+
+                // ✅ 저장된 인벤토리 불러오기
+                foreach (var itemData in characterData.Inventory)
+                {
+                    string[] itemInfo = itemData.Split(',');
+                    if (itemInfo.Length == 2)
+                    {
+                        string itemName = itemInfo[0];
+                        bool isEquipped = itemInfo[1] == "1";
+
+                        Item item = CreateItemFromName(itemName);
+                        if (item != null)
+                        {
+                            player.inventory.Add(item);
+
+                            // ✅ 착용 상태인 경우, 장비로 설정
+                            if (isEquipped)
+                            {
+                                if (item is Weapon)
+                                {
+                                    player.equipWeapon = (Weapon)item;
+                                }
+                                else if (item is Armor)
+                                {
+                                    player.equipArmor = (Armor)item;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return player;
             }
             else
             {
@@ -190,6 +225,8 @@ namespace TextRPGTeam30
                 return CreateNewCharacter();
             }
         }
+
+
 
         //캐릭터 생성
         private Player CreateNewCharacter()
@@ -248,11 +285,11 @@ namespace TextRPGTeam30
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
-                Console.WriteLine($"🗑 캐릭터 {playerName}의 저장 데이터를 삭제했습니다.");
+                Console.WriteLine($"캐릭터 {playerName}의 저장 데이터를 삭제했습니다.");
             }
             else
             {
-                Console.WriteLine($"❌ {playerName}의 저장 데이터를 찾을 수 없습니다.");
+                Console.WriteLine($"{playerName}의 저장 데이터를 찾을 수 없습니다.");
             }
 
             // ✅ 캐릭터 목록에서도 삭제
@@ -264,7 +301,7 @@ namespace TextRPGTeam30
                 characterList.RemoveAll(entry => entry.StartsWith(playerName + ",")); // 이름이 일치하는 캐릭터 제거
 
                 File.WriteAllText(CharacterListFile, JsonConvert.SerializeObject(characterList, Formatting.Indented));
-                Console.WriteLine($"✅ {playerName}이(가) 캐릭터 목록에서 삭제되었습니다.");
+                Console.WriteLine($"{playerName}이(가) 캐릭터 목록에서 삭제되었습니다.");
             }
 
             // ✅ 최신 캐릭터 리스트 로드
@@ -294,5 +331,29 @@ namespace TextRPGTeam30
                 Console.WriteLine($"✅ {player.Name}의 진행 정보가 저장되었습니다. (스테이지: {player.Stage}, 체력: {player.Hp}, 마나: {player.mp})");
             }
         }
+
+        //아이템
+        private Item CreateItemFromName(string itemName)
+        {
+            switch (itemName)
+            {
+                case "본 헬름":
+                    return new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10, 100);
+                case "아론다이트":
+                    return new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100);
+                case "브리간딘 갑옷":
+                    return new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100);
+                case "건틀렛":
+                    return new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 5, 100);
+                case "이더 부츠":
+                    return new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7, 100);
+                case "녹색 망토":
+                    return new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100);
+                default:
+                    Console.WriteLine($"⚠ 알 수 없는 아이템: {itemName}");
+                    return null;
+            }
+        }
+
     }
 }
