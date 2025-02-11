@@ -141,6 +141,21 @@
             GameManager.PrintColoredLine($"{player.Hp}/{player.MaxHP}", ConsoleColor.Magenta);
             Console.Write("MP ");
             GameManager.PrintColoredLine($"{player.mp}/{player.maxMp}\n", ConsoleColor.Magenta);
+            Console.WriteLine("\n[획득아이템]");
+            GameManager.PrintColored("500", ConsoleColor.Magenta);
+            Console.WriteLine(" Gold");
+            if (dungeon.rewardConsume != null)
+            {
+                Console.Write($"{dungeon.rewardConsume.itName} - ");
+                GameManager.PrintColoredLine($"{dungeon.rewardConsume.itemCount}", ConsoleColor.Magenta);
+            }
+            if (dungeon.rewardEquip != null)
+            {
+                Console.Write($"{dungeon.rewardEquip.itName} - ");
+                GameManager.PrintColoredLine("1", ConsoleColor.Magenta);
+            }
+            Console.WriteLine("\n0. 다음\n");
+            GameManager.CheckWrongInput(out int con, 0, 0);
         }
 
         public void AttackMenu()
