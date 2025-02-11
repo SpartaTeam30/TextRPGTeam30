@@ -1,17 +1,26 @@
 ﻿namespace TextRPGTeam30
 {
-    internal interface ICharacter
+    public interface ICharacter
     {
         int Level { get; set; }
         string Name { get; set; }
         float Attack { get; set; }
+        float DAttack {  get; set; }
         int Hp { get; set; }
+        int MaxHP { get; set; }
+        int Defense { get; set; }
+        int DDefense {  get; set; } 
         int CritRate { get; set; }       
         int Evasion { get; set; }
 
-        void TakeDamage(int damage);
 
-        void Dead();    
+        void TakeDamage(float attack, int crit, bool isSkill = false);
+        
+        void ResetdStat();
+
+        void ApplydStat(UtilitySkill s);
+
+        void Dead();
     }
 }
 
