@@ -155,7 +155,7 @@
             switch (con)
             {
                 case 1:
-                    SelectTarget(player.Attack, false);
+                    SelectTarget(player.GetAttack(), false);
                     break;
                 case 2:
                     SkillMenu();
@@ -186,12 +186,12 @@
                 return;
             }
 
-            if (player.job.skills[con - 1] is OffensiveSkill offensive2)
+            if (player.job.skills != null && player.job.skills[con - 1] is OffensiveSkill offensive2)
             {
                 if (player.mp >= player.job.skills[con - 1].cost)
                 {
                     player.mp -= player.job.skills[con - 1].cost;
-                    SelectTarget(offensive2.UseSkill(player.Attack), true);
+                    SelectTarget(offensive2.UseSkill(player.GetAttack()), true);
                 }
                 else
                 {
@@ -299,7 +299,7 @@
                     GameManager.PrintColored($"{monster.Level}", ConsoleColor.Magenta);
                     Console.WriteLine($" {monster.Name} 의 공격");
 
-                    player.TakeDamage(monster.Attack, monster.CritRate, false);
+                    player.TakeDamage(monster.GetAttack(), monster.CritRate, false);
 
                     if (player.Hp <= 0)
                     {
