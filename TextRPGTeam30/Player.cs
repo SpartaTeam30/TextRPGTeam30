@@ -104,7 +104,8 @@ namespace TextRPGTeam30
             Console.WriteLine($"{Name}, ({job.name})");
             Console.WriteLine($"공격력 : {Attack}");
             Console.WriteLine($"방어력 : {Defense}");
-            Console.WriteLine($"체력 : {Hp}");
+            Console.WriteLine($"체력 : {Hp}/{MaxHP}");
+            Console.WriteLine($"마나 : {mp}/{maxMp}");
             Console.WriteLine($"Gold : {gold} G");
             Console.WriteLine("0. 돌아가기");
             GameManager.CheckWrongInput(out int select, 0, 0);

@@ -109,9 +109,9 @@
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
             Console.WriteLine($"  {player.Name} ({player.job.name})");
             Console.Write("HP ");
-            GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.Hp}/{player.MaxHP}", ConsoleColor.Magenta);
             Console.Write("MP ");
-            GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.mp}/{player.maxMp}\n", ConsoleColor.Magenta);
         }
 
         public void PrintMonster(Monster monster)
@@ -139,9 +139,9 @@
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
             Console.WriteLine($"  {player.Name} ()");
             Console.Write("HP ");
-            GameManager.PrintColoredLine($"{player.Hp}/100", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.Hp}/{player.MaxHP}", ConsoleColor.Magenta);
             Console.Write("MP ");
-            GameManager.PrintColoredLine($"{player.mp}/50\n", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{player.mp}/{player.maxMp}\n", ConsoleColor.Magenta);
         }
 
         public void AttackMenu()
@@ -167,6 +167,7 @@
         public void SkillMenu()
         {
             PrintDungeonUI();
+
             //스킬 출력
             Console.WriteLine("0. 취소");
             GameManager.CheckWrongInput(out int con, 0, 2);
