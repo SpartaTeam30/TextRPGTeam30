@@ -27,12 +27,12 @@ namespace TextRPGTeam30
         {
             inventory = new List<Item>()
             {
-                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10),
-                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10),
-                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15),
-                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 5),
-                new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7),
-                new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20)
+                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10, 100),
+                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100),
+                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100),
+                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 5, 100),
+                new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7, 100),
+                new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100)
             };
         }
 
@@ -79,12 +79,12 @@ namespace TextRPGTeam30
 
             inventory = new List<Item>()
             {
-                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10),
-                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10f),
-                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15),
-                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 5),
-                new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7),
-                new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20)
+                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10, 100),
+                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100),
+                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100),
+                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 5, 100),
+                new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7, 100),
+                new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100)
             };
 
             this.Defense = defense;
@@ -102,33 +102,55 @@ namespace TextRPGTeam30
         public void DisplayStatus()
         {
             Console.Clear();
-            Console.WriteLine($"Lv. {Level}");
-            Console.WriteLine($"{Name}, ({job.name})");
+            GameManager.PrintColoredLine("상태 보기\n",ConsoleColor.Yellow);
+            Console.Write("Lv. ");
+            GameManager.PrintColoredLine($"{Level}", ConsoleColor.Magenta);
+            Console.Write("이름 : ");
+            GameManager.PrintColored($"{Name}",ConsoleColor.Magenta);
+            Console.WriteLine($", ({job.name})");
             if (equipWeapon != null)
             {
-                Console.WriteLine($"공격력 : {Attack - equipWeapon.attack} + {equipWeapon.attack}");
+                Console.Write($"공격력 : ");
+                GameManager.PrintColoredLine($"{Attack - equipWeapon.attack} (+{equipWeapon.attack})", ConsoleColor.Magenta);
             }
             else
             {
-                Console.WriteLine($"공격력 : {Attack}");
+                Console.Write("공격력 : ");
+                GameManager.PrintColoredLine($"{Attack}", ConsoleColor.Magenta);
             }
             if (equipArmor != null)
             {
-                Console.WriteLine($"방어력 : {Defense - equipArmor.defense} + {equipArmor.defense}");
+                Console.Write("방어력 : ");
+                GameManager.PrintColoredLine($"{Defense - equipArmor.defense} (+{equipArmor.defense})", ConsoleColor.Magenta);
             }
             else
             {
-                Console.WriteLine($"방어력 : {Defense}");
+                Console.Write($"방어력 : ");
+                GameManager.PrintColoredLine($"{Defense}", ConsoleColor.Magenta);
             }
-            Console.WriteLine($"체력 : {Hp}");
-            Console.WriteLine($"Gold : {gold} G");
+            Console.Write($"체력 : ");
+            GameManager.PrintColoredLine($"{Hp}", ConsoleColor.Magenta);
+            Console.Write($"Gold : ");
+            GameManager.PrintColoredLine($"{gold} G", ConsoleColor.Magenta);
+            Console.Write("장착 무기 : ");
             if (equipWeapon != null)
             {
-                Console.WriteLine($"장착 무기 : {equipWeapon.itName}");
+                GameManager.PrintColoredLine($"{equipWeapon.itName}", ConsoleColor.Magenta);
             }
+            else
+            {
+                Console.WriteLine("없음");
+            }
+
+            Console.Write("장착 방어구 : ");
             if (equipArmor != null)
             {
-                Console.WriteLine($"장착 방어구 : {equipArmor.itName}");
+                
+                GameManager.PrintColoredLine($"{equipArmor.itName}", ConsoleColor.Magenta);
+            }
+            else
+            {
+                Console.WriteLine("없음");
             }
             Console.WriteLine("0. 돌아가기");
             GameManager.CheckWrongInput(out int select, 0, 0);
@@ -198,17 +220,17 @@ namespace TextRPGTeam30
             DDefense += s.dDefense;
         }
 
-        public void attack(float Attack)
-        {
-            //   if (equipWeapon != null)
-            // {
-            //      Console.WriteLine($"{Name} 공격 시 {equipWeapon.Name}, Power: {equipWeapon.AttackPower}");
-            //  }
-            //  else
-            {
-                Console.WriteLine($"{Name} 가 공격합니다!");
-            }
-        }
+        //public void attack(float Attack)
+        //{
+        //    //   if (equipWeapon != null)
+        //    // {
+        //    //      Console.WriteLine($"{Name} 공격 시 {equipWeapon.Name}, Power: {equipWeapon.AttackPower}");
+        //    //  }
+        //    //  else
+        //    {
+        //        Console.WriteLine($"{Name} 가 공격합니다!");
+        //    }
+        //}
 
         public void Dead()
         {
@@ -220,14 +242,42 @@ namespace TextRPGTeam30
         //    Console.WriteLine($"Name: {Name}, Level: {Level}, HP: {Hp}");
         //}
 
-        public void EquipWeapon(string name, int attackPower)
+        public void EquipWeapon(Weapon weapon)
         {
-            Name = name;
+            if (equipWeapon == weapon)//장착해제
+            {
+                this.Attack -= equipWeapon.attack;
+                equipWeapon = null;
+            }
+            else//장착
+            {
+                if (equipWeapon != null)
+                {
+                    this.Attack -= equipWeapon.attack;
+                    equipWeapon.Toggle();
+                }
+                equipWeapon = weapon;
+                this.Attack += equipWeapon.attack;
+            }
         }
 
-        public void EquipArmor(string name)
+        public void EquipArmor(Armor armor)
         {
-            Name = name;
+            if (equipArmor == armor)//장착해제
+            {
+                this.Defense -= equipArmor.defense;
+                equipArmor = null;
+            }
+            else//장착
+            {
+                if (equipArmor != null)
+                {
+                    this.Defense -= equipArmor.defense;
+                    equipArmor.Toggle();
+                }
+                equipArmor = armor;
+                this.Defense += equipArmor.defense;
+            }
         }
 
         public void Equip(Equipable equipable)
@@ -236,41 +286,11 @@ namespace TextRPGTeam30
 
             if (equipable is Weapon)//무기일때
             {
-                if (equipWeapon == equipable)//장착해제
-                {
-                    this.Attack -= equipWeapon.attack;
-                    equipWeapon = null;
-                }
-                else//장착
-                {
-                    if (equipWeapon != null)
-                    {
-                        this.Attack -= equipWeapon.attack;
-                        equipWeapon.Toggle();
-                    }
-                    equipWeapon = (Weapon)equipable;
-                    this.Attack += equipWeapon.attack;
-                }
-
+                EquipWeapon((Weapon) equipable);
             }
             else//방어구 일때
             {
-                if (equipArmor == equipable)//장착해제
-                {
-                    this.Defense -= equipArmor.defense;
-                    equipArmor = null;
-                }
-                else
-                {//장착
-                    if (equipArmor != null)
-                    {
-                        this.Defense -= equipArmor.defense;
-                        equipArmor.Toggle();
-                    }
-                    equipArmor = (Armor)equipable;
-                    this.Defense += equipArmor.defense;
-
-                }
+                EquipArmor((Armor) equipable);
             }
         }
 
@@ -294,9 +314,13 @@ namespace TextRPGTeam30
                     {
                         if (equipable.isEquip)
                         {
-                            Console.Write("[E]");
+                            GameManager.PrintColored("[E]", ConsoleColor.Magenta);
                         }
-                        Console.WriteLine($" 이름: {item.itName}, 설명: {item.itInfo}");
+                        else
+                        {
+                            Console.Write("   ");
+                        }
+                        Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
                     }
                 }
                 Console.WriteLine();

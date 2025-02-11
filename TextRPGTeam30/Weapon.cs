@@ -2,9 +2,9 @@
 {
     public class Weapon : Equipable
     {
-        public float Attack;
+        public float attack;
 
-        public Weapon(string itName, int itAbility, string itType, string itInfo, int price) : base(itName, itAbility, itType, itInfo, price)
+        public Weapon(string itName, int itAbility, string itType, string itInfo, float _attack, int price) : base(itName, itAbility, itType, itInfo, price)
         {
             attack = _attack;
         }

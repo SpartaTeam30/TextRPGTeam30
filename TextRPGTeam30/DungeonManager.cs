@@ -285,7 +285,7 @@
                     Console.Write("HP");
                     GameManager.PrintColored($"{playerHp}", ConsoleColor.Magenta);
                     Console.Write(" -> ");
-                    GameManager.PrintColored($"{playerHp}\n", ConsoleColor.Magenta);
+                    GameManager.PrintColored($"{player.Hp}\n", ConsoleColor.Magenta);
                     Console.WriteLine("0. 다음\n");
                     GameManager.CheckWrongInput(out int con, 0, 0);
                 }

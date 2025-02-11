@@ -74,7 +74,7 @@ namespace TextRPGTeam30
 
         public void DungeonFail()
         {
-
+            
         }
     }
 }
