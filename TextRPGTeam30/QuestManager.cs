@@ -11,7 +11,7 @@ internal class QuestManager
     public QuestManager(string characterName)
     {
         CharacterName = characterName;
-        QuestFilePath = $"{CharacterName}_퀘스트.json"; // 🔥 동적 파일명 설정
+        QuestFilePath = $"{CharacterName}_Quest.json"; // 🔥 동적 파일명 설정
         QuestCategories = LoadQuestsFromJson();
     }
 

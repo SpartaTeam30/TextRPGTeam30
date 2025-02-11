@@ -8,7 +8,7 @@
 
         public GameManager()
         {
-
+            PrintStartScene();
         }
 
         public GameManager(Player player, QuestManager questManager)
@@ -71,7 +71,7 @@
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
 
-            QuestManager questManager = new QuestManager(player.Name);
+            questManager = new QuestManager(player.Name);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
 
