@@ -2,6 +2,7 @@ namespace TextRPGTeam30
 {
     public class Dungeon
     {
+        public Player player;
         public int stage;
         public int rewardExp;
         public int rewardGold;
@@ -11,14 +12,15 @@ namespace TextRPGTeam30
         public List<Equipable> equipables;
         public List<Consumable> consumables;
 
-        public Dungeon(int _stage, List<Monster> _monsters, Monster _BossMonster)
+        public Dungeon(Player player, int _stage, List<Monster> _monsters, Monster _BossMonster)
         {
+            this.player = player;
             stage = _stage;
             rewardExp = 0;
             monsters = new List<Monster>();
             rewardGold = 0;
             uniqueRate = 5;
-            monsterNum = new Random().Next(1, 5);
+            monsterNum = new Random().Next(1, 4);
 
             if (stage % 20 == 0)
             {
@@ -67,8 +69,11 @@ namespace TextRPGTeam30
             {
                 rewardGold += new Random().Next(stage * 100, stage * 200);
             }
-            //item
 
+            //exp
+            player.LevelUp(rewardExp);
+
+            //item
 
         }
 

@@ -36,7 +36,7 @@
                 maxRangeMonster = monsters.Count - 1;
             }
             //던전 생성
-            dungeon = new Dungeon(stage, monsters.GetRange(minRangeMonster, maxRangeMonster), bossMonsters[randomBoss]);
+            dungeon = new Dungeon(player, stage, monsters.GetRange(minRangeMonster, maxRangeMonster), bossMonsters[randomBoss]);
         }
 
         public void DungeonStart()//던전 시작화면
@@ -282,10 +282,10 @@
                     }
 
                     Console.WriteLine($"Lv. {player.Level} {player.Name}");
-                    Console.Write("HP");
+                    Console.Write("HP ");
                     GameManager.PrintColored($"{playerHp}", ConsoleColor.Magenta);
                     Console.Write(" -> ");
-                    GameManager.PrintColored($"{playerHp}\n", ConsoleColor.Magenta);
+                    GameManager.PrintColored($"{player.Hp}\n", ConsoleColor.Magenta);
                     Console.WriteLine("0. 다음\n");
                     GameManager.CheckWrongInput(out int con, 0, 0);
                 }

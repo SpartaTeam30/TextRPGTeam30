@@ -94,7 +94,7 @@ namespace TextRPGTeam30
         public void DisplayStatus()
         {
             Console.Clear();
-            Console.WriteLine($"Lv. {Level}");
+            Console.WriteLine($"Lv. {Level} ({exp} / {(Level == 1 ? 10 : Level * 5 + 25)})");
             Console.WriteLine($"{Name}, ({job.name})");
             Console.WriteLine($"공격력 : {Attack}");
             Console.WriteLine($"방어력 : {Defense}");
@@ -153,6 +153,21 @@ namespace TextRPGTeam30
             else
             {
                 Console.WriteLine("\n");
+            }
+        }
+
+        public void LevelUp(int e)
+        {
+            int requiredAmount = Level == 1 ? 10 : Level * 5 + 25;
+            exp += e;
+            if (exp >= requiredAmount)
+            {
+                int levelAdd = exp / requiredAmount;
+                Console.WriteLine($"축하합니다! 레벨이 {levelAdd} 올랐습니다!");
+                Level += levelAdd;
+                exp = e % requiredAmount;
+                Attack += 0.5f * levelAdd;
+                Defense += 1 * levelAdd;
             }
         }
 
