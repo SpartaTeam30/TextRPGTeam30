@@ -4,7 +4,7 @@
     {
         public int mana;
 
-        public ManaPotion(string itName, int itAbility, string itType, string itInfo) : base(itName, itAbility, itType, itInfo)
+        public ManaPotion(string itName, int itAbility, string itType, string itInfo, int price) : base(itName, itAbility, itType, itInfo, price)
         {
 
         }

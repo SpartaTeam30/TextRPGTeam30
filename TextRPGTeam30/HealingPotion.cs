@@ -4,7 +4,7 @@
     {
         public int heal;
 
-        public HealingPotion(string itName, int itAbility, string itType, string itInfo) : base(itName, itAbility, itType, itInfo)
+        public HealingPotion(string itName, int itAbility, string itType, string itInfo, int price) : base(itName, itAbility, itType, itInfo, price)
         {
 
         }

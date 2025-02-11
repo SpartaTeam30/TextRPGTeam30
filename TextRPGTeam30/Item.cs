@@ -3,19 +3,19 @@
     public class Item
     {
         public int ID { get; set; }
-        // public int Price { get; set; }    
-
+        public int Price { get; set; }    
         public string itName { get; set; }
         public int itAbility { get; set; }
         public string itType { get; set; }
         public string itInfo { get; set; }
 
-        public Item(string itName, int itAbility, string itType, string itInfo)
+        public Item(string itName, int itAbility, string itType, string itInfo, int price)
         {
             this.itName = itName;
+            this.itAbility = itAbility;
             this.itType = itType;
             this.itInfo = itInfo;
-            this.itAbility = itAbility;
+            this.Price = price;
         }
 
         // 마법사 - "현자의 돌", 60, "마력", "중세 연금사들이 비금속을 황금으로 바꿀 수 있는 재료.") // 장신구

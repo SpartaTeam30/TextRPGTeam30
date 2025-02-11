@@ -17,7 +17,7 @@ namespace TextRPGTeam30
         public int Hp { get; set; }
         public int CritRate { get; set; }
         public float Attack { get; set; }
-        public float DAttack {  get; set; }
+        public float DAttack { get; set; }
         public int Evasion { get; set; }
         public int JobType { get; set; }
 
@@ -27,12 +27,8 @@ namespace TextRPGTeam30
         {
             inventory = new List<Item>()
             {
-                new Item("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구."),
-                    new Item("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검."),
-                    new Item("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷."),
-                    new Item("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑."),
-                    new Item("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠."),
-                    new Item("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.")
+                new Item("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 16),
+                new Item("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 24),
             };
         }
 
@@ -79,13 +75,14 @@ namespace TextRPGTeam30
 
             inventory = new List<Item>()
             {
-                new Item("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구."),
-                    new Item("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검."),
-                    new Item("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷."),
-                    new Item("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑."),
-                    new Item("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠."),
-                    new Item("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.")
+                new Item("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 16),
+                new Item("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 24),
             };
+
+            this.Defense = defense;
+            this.JobType = jobType; //타입 0전사 1마법사
+            this.job = ConvertJob(jobType);  // 직업 변환
+            job.ResetStat(this);
         }
 
         //직업 변환
@@ -244,7 +241,7 @@ namespace TextRPGTeam30
         {
             Console.WriteLine();
             Console.WriteLine("================인벤토리===========================");
-            if (inventory.Count == 0) 
+            if (inventory.Count == 0)
             {
                 Console.WriteLine("인벤토리가 비어 있습니다.");
             }
@@ -256,12 +253,29 @@ namespace TextRPGTeam30
                     Console.WriteLine($"ID: {item.ID}, 이름: {item.itName}, 설명: {item.itInfo}");
                 }
                 Console.WriteLine();
-                Console.WriteLine("=================================================");       
+                Console.WriteLine("=================================================");
             }
 
             Console.WriteLine("0. 돌아가기");
             GameManager.CheckWrongInput(out int select, 0, 0);
             return;
+        }
+
+        public bool UseGold(int price)
+        {
+            if (price > gold)
+            {
+                Console.WriteLine("Gold가 부족합니다.");
+                Thread.Sleep(500);
+                return false;
+            }
+            else
+            {
+                gold -= price;
+                Console.WriteLine($"{price} Gold를 지불했습니다.");
+                Thread.Sleep(500);
+                return true;
+            }
         }
     }
 }
