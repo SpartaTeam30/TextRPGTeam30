@@ -88,11 +88,6 @@ namespace TextRPGTeam30
                 new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100),
                 new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100),
             };
-
-            this.Defense = defense;
-            this.JobType = jobType; //타입 0전사 1마법사
-            this.job = ConvertJob(jobType);  // 직업 변환
-            job.ResetStat(this);
         }
 
         //직업 변환
