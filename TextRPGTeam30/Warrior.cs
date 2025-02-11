@@ -15,12 +15,15 @@ namespace TextRPGTeam30
 
         }
 
-        public Warrior(Skill skill, int savedHp, float savedAttack, int savedDefense) : base(skill, savedHp, savedAttack, savedDefense)
+        public Warrior(List<Skill> savedSkills, int savedHp, float savedAttack, int savedDefense)
         {
-            name = "야만전사"; // 직업명 유지
+            name = "전사";
             this.hp = savedHp;
             this.attack = savedAttack;
             this.defense = savedDefense;
+
+            skills = savedSkills ?? new List<Skill> { new Slash() }; // 저장된 스킬이 없으면 기본 스킬 추가
         }
+
     }
 }

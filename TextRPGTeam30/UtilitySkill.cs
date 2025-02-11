@@ -10,7 +10,7 @@
 
         }
 
-        public UtilitySkill(int cost, int dAttack, int dDefense) : base(cost)
+        public UtilitySkill(int cost, int dAttack, int dDefense, int count) : base(cost, count)
         {
             this.dAttack = dAttack;
             this.dDefense = dDefense;

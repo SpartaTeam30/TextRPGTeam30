@@ -38,10 +38,10 @@ namespace TextRPGTeam30
             this.job = job;
             this.Level = 1;
             this.Hp = 100;
-            MaxHP = Hp;
+            MaxHP = 100;
             this.Defense = 5;
             this.mp = 50;
-            maxMp = mp;
+            maxMp = 50;
             this.gold = 100;
             this.exp = 0;
             this.CritRate = 15;
@@ -54,14 +54,14 @@ namespace TextRPGTeam30
             job.ResetStat(this);
         }
 
-        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense, int stage = 1)
+        public Player(string name, int level, int hp, int maxHp, int mp, int maxMp, int gold, int exp, int critRate, float attack, int jobType, int defense, int stage = 1)
         {
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
-            MaxHP = Hp;
+            this.MaxHP = maxHp;
             this.mp = mp;
-            maxMp = mp;
+            this.maxMp = maxMp;
             this.gold = gold;
             this.exp = exp;
             this.CritRate = critRate;
@@ -218,19 +218,31 @@ namespace TextRPGTeam30
             {
                 int levelAdd = exp / requiredAmount;
 
-                Console.WriteLine($"축하합니다! 레벨이 {levelAdd} 올랐습니다!");
-                Console.WriteLine("체력과 마나가 회복되었습니다!");
-                
+                Console.WriteLine($" 축하합니다! 레벨이 {levelAdd} 올랐습니다!");
+                Console.WriteLine(" 체력과 마나가 회복되었습니다!");
+
                 Level += levelAdd;
                 exp = e % requiredAmount;
+
+                // ✅ 레벨업 시에만 최대 체력 & 최대 마나 증가
+                MaxHP += levelAdd * 5;
+                maxMp += levelAdd * 2;
+
+                Hp = MaxHP;  // ✅ 레벨업 후 체력 회복
+                mp = maxMp;  // ✅ 레벨업 후 마나 회복
                 Attack += levelAdd * 0.5f;
                 Defense += levelAdd * 1;
-                Hp = MaxHP += levelAdd * 5;
-                mp = maxMp += levelAdd * 2;
 
+                // ✅ 레벨업할 때만 `MaxHP`, `MaxMP` 업데이트 저장
+                GameSaveManager saveManager = new GameSaveManager();
+                saveManager.SaveMaxHPMP(this);
+
+                Console.WriteLine($"새로운 상태: HP={Hp}/{MaxHP}, MP={mp}/{maxMp}");
                 Thread.Sleep(500);
             }
         }
+
+
 
         public void ResetdStat()
         {
@@ -354,11 +366,11 @@ namespace TextRPGTeam30
 
                 Item selectedItem = inventory[select - 1];
 
-                // ✅ 선택한 아이템이 장비 가능한 경우에만 캐스팅
+                // 선택한 아이템이 장비 가능한 경우에만 캐스팅
                 if (selectedItem is Equipable equipableItem)
                 {
                     Equip(equipableItem);
-                    break; // ✅ 정상적으로 장비했으면 루프 탈출
+                    break; // 정상적으로 장비했으면 루프 탈출
                 }
                 else if(selectedItem is Consumable consumableItem)
                 {
