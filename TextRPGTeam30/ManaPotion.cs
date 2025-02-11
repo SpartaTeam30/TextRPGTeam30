@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
-    internal class ManaPotion : Consumable
+    public class ManaPotion : Consumable
     {
         public int ManaAmount { get; set; }
    

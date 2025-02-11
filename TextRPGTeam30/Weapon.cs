@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TextRPGTeam30
+﻿namespace TextRPGTeam30
 {
-    internal class Weapon : Equipable
+    public class Weapon : Equipable
     {
         public float attack;
 
-        public Weapon(string name, int id, string description, int attackBonus)
+        public Weapon(string itName, int itAbility, string itType, string itInfo, float _attack, int price) : base(itName, itAbility, itType, itInfo, price)
         {
-            //     AttackBonus = attackBonus;
+            attack = _attack;
         }
 
+        // public Weapon()
+        
         public void Toggle()
         {
-
+            isEquip = !isEquip;
         }
     }
 }

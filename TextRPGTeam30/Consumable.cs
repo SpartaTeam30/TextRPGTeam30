@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace TextRPGTeam30
 {
-    internal class Consumable(string itName, int itAbility, string itType, string itInfo)
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        // public int Price { get; set; }
-        public string IDescription { get; set; } // 변수 설명용      
-
+    public class Consumable : Item 
+    {   
         public int itemCount;
+
+        public Consumable(string itName, int itAbility, string itType, string itInfo, int price) : base(itName, itAbility, itType, itInfo, price)
+        {
+
+        }
 
         public void Use(Player player)
         {

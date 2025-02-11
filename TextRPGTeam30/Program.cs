@@ -1,10 +1,12 @@
 ﻿namespace TextRPGTeam30
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            GameManager gameManager = new GameManager();
+
+            while (gameManager.player.Hp > 0) gameManager.StartSelect();
         }
     }
 }
