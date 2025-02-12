@@ -14,6 +14,7 @@ namespace TextRPGTeam30
             description = "간절한 기도로 공격력이 증가한다.";
             dAttack = 2;
             cost = 20;
+            count = 1;
         }
 
         public Pray(string description, int cost, int dAttack, int dDefense, int count) : base(description, cost, dAttack, dDefense, count)

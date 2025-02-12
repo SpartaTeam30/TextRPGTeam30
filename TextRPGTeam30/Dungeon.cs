@@ -24,7 +24,7 @@
             uniqueRate = 5;
             rewardEquip = null;
             rewardConsume = null;
-            monsterNum = new Random().Next(1, 4);
+            monsterNum = new Random().Next(1, 5);
             equipables = new List<Equipable>()
             {
                 new Armor("본 헬름", 20, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 30, 100),
