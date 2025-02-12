@@ -404,11 +404,11 @@ namespace TextRPGTeam30
                 case "마나 물약":
                     return new ManaPotion("마나 물약", 30, "마나 회복", "마시면 마나가 회복된다.", 100, 1);
                 case "플레이트 헬멧":
-                    return new Armor("플레이트 헬멧", 10, "방어력", "플레이트 메일과 세트로 이루는 무거운 투구.", 8, 10);
+                    return new Armor("플레이트 헬멧", 10, "방어력", "플레이트 메일과 세트로 이루는 무거운 투구.", 10);
                 case "본 헬름2":
-                    return new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 20, 3);
+                    return new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 3);
                 case "숏 소드":
-                    return new Weapon("숏 소드", 4, "공격력", "편하게 사용할 수 있는 짧고 가벼운 소드.", 5, 10);
+                    return new Weapon("숏 소드", 4, "공격력", "편하게 사용할 수 있는 짧고 가벼운 소드.", 10);
 
                 default:
                     Console.WriteLine($"⚠ 알 수 없는 아이템: {itemName}");
