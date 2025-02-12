@@ -33,6 +33,8 @@ namespace TextRPGTeam30
         {
             string saveFilePath = $"{player.Name}.json";
 
+            string jobName = player.JobType == 0 ? "전사" : "마법사";
+
             PlayerData playerData = new PlayerData
             {
                 Name = player.Name,
@@ -52,7 +54,8 @@ namespace TextRPGTeam30
                 Stage = player.Stage,
                 Skills = player.job.skills.Select(skill => skill.name).ToList(),
                 Inventory = player.inventory.Select(item =>
-                    $"{item.itName},{(player.equipWeapon == item || player.equipArmor == item ? 1 : 0)}").ToList()
+                    item is Consumable consumable ? $"{item.itName},{consumable.itemCount}" : $"{item.itName},1"
+        ).ToList()
             };
 
             string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
@@ -177,6 +180,8 @@ namespace TextRPGTeam30
                 string jsonData = File.ReadAllText(filePath);
                 PlayerData characterData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
 
+                string jobName = characterData.JobType == 0 ? "전사" : "마법사";
+
                 // ✅ 기존 HP & MP 유지 (던전 진행 후 깎인 상태 반영)
                 Player player = new Player(
                     characterData.Name,
@@ -201,17 +206,17 @@ namespace TextRPGTeam30
                     if (itemInfo.Length == 2)
                     {
                         string itemName = itemInfo[0];
-                        bool isEquipped = itemInfo[1] == "1";
+                        int itemCount = int.TryParse(itemInfo[1], out int count) ? count : 1;
 
                         Item item = CreateItemFromName(itemName);
                         if (item != null)
                         {
-                            player.inventory.Add(item);
-                            if (isEquipped)
+                            if (item is Consumable consumable)
                             {
-                                if (item is Weapon) player.equipWeapon = (Weapon)item;
-                                else if (item is Armor) player.equipArmor = (Armor)item;
+                                consumable.itemCount = itemCount; // 포션 개수 설정
                             }
+
+                            player.inventory.Add(item);
                         }
                     }
                 }
@@ -387,8 +392,14 @@ namespace TextRPGTeam30
                     return new Armor("이더 부츠", 10, "방어력", "가죽으로 만든 목이 긴 부츠.", 7, 100);
                 case "녹색 망토":
                     return new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100);
+                case "체력 물약":
+                    return new HealingPotion("체력 물약", 30, "체력 회복", "마시면 체력이 회복된다.", 100, 2);
+                case "마나 물약":
+                    return new ManaPotion("마나 물약", 30, "마나 회복", "마시면 마나가 회복된다.", 100, 1);
+
                 default:
                     Console.WriteLine($"⚠ 알 수 없는 아이템: {itemName}");
+
                     return null;
             }
         }
