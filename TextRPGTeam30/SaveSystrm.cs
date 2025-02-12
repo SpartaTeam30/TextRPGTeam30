@@ -43,6 +43,7 @@ namespace TextRPGTeam30
                 MaxMP = player.maxMp, // 최대 마나 유지 (레벨업할 때만 변경)
                 Attack = (float)Math.Round(player.Attack, 1),
                 Defense = player.Defense,
+
                 CritRate = player.CritRate,
                 Evasion = player.Evasion,
                 Gold = player.gold,
@@ -51,7 +52,9 @@ namespace TextRPGTeam30
                 Stage = player.Stage,
                 Skills = player.job.skills.Select(skill => skill.name).ToList(),
                 Inventory = player.inventory.Select(item =>
-                    item is Consumable consumable ? $"{item.itName},{consumable.itemCount}" : $"{item.itName},1").ToList()
+                    item is Equipable equipable ? $"{item.itName},{(player.equipWeapon == item || player.equipArmor == item ? 1 : 0)}"
+                    : item is Consumable consumable ? $"{item.itName},{consumable.itemCount}"
+                    : $"{item.itName},0").ToList()
             };
             string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
             File.WriteAllText(saveFilePath, jsonData);
@@ -196,17 +199,25 @@ namespace TextRPGTeam30
                 foreach (var itemData in characterData.Inventory)
                 {
                     string[] itemInfo = itemData.Split(',');
-                    if (itemInfo.Length == 2)
+                    if (itemInfo.Length >= 2)
                     {
                         string itemName = itemInfo[0];
-                        int itemCount = int.TryParse(itemInfo[1], out int count) ? count : 1;
+                        int itemCountOrEquipStatus = int.TryParse(itemInfo[1], out int value) ? value : 0;
 
                         Item item = CreateItemFromName(itemName);
                         if (item != null)
                         {
                             if (item is Consumable consumable)
                             {
-                                consumable.itemCount = itemCount; // 포션 개수 설정
+                                consumable.itemCount = itemCountOrEquipStatus; // ✅ 포션 개수 설정
+                            }
+                            else if (item is Equipable equipable)
+                            {
+                                if (itemCountOrEquipStatus == 1) // ✅ 1이면 장착 중
+                                {
+                                    if (equipable is Weapon weapon) player.equipWeapon = weapon;
+                                    else if (equipable is Armor armor) player.equipArmor = armor;
+                                }
                             }
 
                             player.inventory.Add(item);
@@ -214,8 +225,8 @@ namespace TextRPGTeam30
                     }
                 }
 
-                // ✅ 기존 스킬 초기화 후 로드
-                player.job.skills.Clear();
+                    // ✅ 기존 스킬 초기화 후 로드
+                    player.job.skills.Clear();
                 foreach (var skillName in characterData.Skills)
                 {
                     Skill skill = CreateSkillFromName(skillName);
@@ -267,6 +278,8 @@ namespace TextRPGTeam30
             );
             SaveGame(newPlayer, jobType); // 플레이어 객체에서 JobType을 가져오지 않고 직접 전달
             SaveCharacterList(name, jobType); // 캐릭터 리스트에 저장
+
+            GameManager.PrintStartStory();
 
             return newPlayer;
         }
@@ -374,25 +387,7 @@ namespace TextRPGTeam30
         {
             switch (itemName)
             {
-<<<<<<< Updated upstream
-                case "본 헬름":
-                    return new Armor("본 헬름", 10, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 3, 100);
-                case "아론다이트":
-                    return new Weapon("아론다이트", 10, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 5, 100);
-                case "브리간딘 갑옷":
-                    return new Armor("브리간딘 갑옷", 15, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100);
-                case "건틀렛":
-                    return new Armor("건틀렛", 5, "방어력", "철로 만들어진 전투용 장갑.", 2, 100);
-                case "이더 부츠":
-                    return new Armor("이더 부츠", 7, "방어력", "가죽으로 만든 목이 긴 부츠.", 10, 100);
-                case "녹색 망토":
-                    return new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 20, 100);
-                case "체력 물약":
-                    return new HealingPotion("체력 물약", 30, "체력 회복", "마시면 체력이 회복된다.", 100, 2);
-                case "마나 물약":
-                    return new ManaPotion("마나 물약", 30, "마나 회복", "마시면 마나가 회복된다.", 100, 1);
 
-=======
                 //  무기 추가
                 case "숏 소드":
                     return new Weapon("숏 소드", 5, "공격력", "편하게 사용할 수 있는 짧고 가벼운 소드.", 30);
@@ -452,13 +447,13 @@ namespace TextRPGTeam30
                     return new ManaPotion("마나 포션 (대)", 100, "회복력", "MP 100 회복", 50, 1);
 
                 //  예외 처리: 정의되지 않은 아이템
->>>>>>> Stashed changes
-                default:
-                    Console.WriteLine($"⚠ 알 수 없는 아이템: {itemName}");
 
+                default:
+                    Console.WriteLine($"알 수 없는 아이템: {itemName}");
                     return null;
             }
         }
+
         //최대 체력마나 저장
         public void SaveMaxHPMP(Player player)
         {

@@ -20,13 +20,12 @@
             };
             bossMonsters = new List<Monster>()
             {
-                new Monster("트롤", 1 , 200, 10), new Monster("오우거", 1, 130, 25)
+                new Monster("마왕", 1 , 200, 10)/*, new Monster("오우거", 1, 130, 25)*/
             };
         }
 
         public void CreateDungeon()//던전 생성
         {
-            stage = 18;
             //스테이지에 따라 출현가능한 몬스터의 범위가 달라짐
             int minRangeMonster = 0 + stage / 5;
             
@@ -44,13 +43,26 @@
             CreateDungeon();//던전 생성
             deadMonster = 0;//죽은 몬스터 수 초기화
 
+            
+            if (stage == 20) //GameManager.PrintMeetStory();
+
             while (true)
             {
                 AttackMenu();//플레이어의 공격
 
                 if (deadMonster == dungeon.monsters.Count)//죽은 몬스터 수와 던전의 몬스터수가 같을 때
                 {
+                    if (stage == 10) GameManager.PrintRememberStory();
+                    else if (stage == 20)
+                    {
+                        GameManager.PrintEndStory();
+                        GameClear();
+                        player.Hp = 0;
+                        return;
+                    }
                     dungeon.DungeonSuccess();//던전클리어
+                    player.Stage++;
+                    stage++;
                     GameSaveManager saveManager = new GameSaveManager();
                     saveManager.SaveDungeonClearData(player);
                     break;
@@ -320,6 +332,10 @@
             {
                 deadMonster++;
                 Console.WriteLine("Dead");
+
+                //  퀘스트 진행도 업데이트
+                bool isBoss = bossMonsters.Contains(target); // 보스 몬스터인지 확인
+                QuestManager.Instance.OnMonsterKilled(isBoss);
             }
 
             Console.WriteLine("\n0. 다음\n");
@@ -413,6 +429,14 @@
                     GameManager.CheckWrongInput(out int con, 0, 0);
                 }
             }
+        }
+
+        public void GameClear()
+        {   
+            GameSaveManager gameSaveManager = new GameSaveManager();
+            gameSaveManager.DeleteCharacter(player.Name);
+            Console.Clear();
+            Console.WriteLine("Game Clear");
         }
     }
 }

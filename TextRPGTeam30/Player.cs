@@ -94,7 +94,7 @@ namespace TextRPGTeam30
             Console.Clear();
             GameManager.PrintColoredLine("상태 보기\n",ConsoleColor.Yellow);
             Console.Write("Lv. ");
-            GameManager.PrintColoredLine($"{Level}", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{Level} ({exp} / {Level * 5 + 5})", ConsoleColor.Magenta);
             Console.Write("이름 : ");
             GameManager.PrintColored($"{Name}",ConsoleColor.Magenta);
             Console.WriteLine($", ({job.name})");
@@ -205,7 +205,7 @@ namespace TextRPGTeam30
 
         public void LevelUp(int e)
         {
-            int requiredAmount = Level == 1 ? 10 : Level * 5 + 25;
+            int requiredAmount = Level * 5 + 5;
             exp += e;
 
             if (exp >= requiredAmount)
@@ -217,6 +217,7 @@ namespace TextRPGTeam30
 
                 Level += levelAdd;
                 exp = e % requiredAmount;
+                QuestManager.Instance.OnPlayerLevelUp();
 
                 // ✅ 레벨업 시에만 최대 체력 & 최대 마나 증가
                 MaxHP += levelAdd * 5;
@@ -232,7 +233,7 @@ namespace TextRPGTeam30
                 saveManager.SaveMaxHPMP(this);
 
                 Console.WriteLine($"새로운 상태: HP={Hp}/{MaxHP}, MP={mp}/{maxMp}");
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
         }
 
@@ -257,35 +258,43 @@ namespace TextRPGTeam30
 
         public void EquipWeapon(Weapon weapon)
         {
-            if (equipWeapon == weapon)//장착해제
+            if (equipWeapon == weapon) // 장착 해제
             {
                 equipWeapon = null;
             }
-            else//장착
+            else // 장착
             {
                 if (equipWeapon != null)
                 {
                     equipWeapon.Toggle();
                 }
                 equipWeapon = weapon;
+
+                // 🔥 퀘스트 진행 체크
+                QuestManager.Instance.OnWeaponEquipped();
             }
         }
 
+
         public void EquipArmor(Armor armor)
         {
-            if (equipArmor == armor)//장착해제
+            if (equipArmor == armor) // 장착 해제
             {
                 equipArmor = null;
             }
-            else//장착
+            else // 장착
             {
                 if (equipArmor != null)
                 {
                     equipArmor.Toggle();
                 }
                 equipArmor = armor;
+
+                // 🔥 퀘스트 진행 체크
+                QuestManager.Instance.OnArmorEquipped();
             }
         }
+
 
         public void Equip(Equipable equipable)
         {
@@ -339,7 +348,7 @@ namespace TextRPGTeam30
                         }
                         Console.WriteLine($"이름: {item.itName}({item.itType} + {item.itAbility}), 설명: {item.itInfo}");
                     }
-                    else if (item is Consumable consumable) 
+                    else if (item is Consumable consumable)
                     {
                         Console.WriteLine($"    이름: {item.itName}, 남은 갯수: {consumable.itemCount}, 설명: {item.itInfo}");
                     }
@@ -366,7 +375,7 @@ namespace TextRPGTeam30
                     Equip(equipableItem);
                     break; // 정상적으로 장비했으면 루프 탈출
                 }
-                else if(selectedItem is Consumable consumableItem)
+                else if (selectedItem is Consumable consumableItem)
                 {
                     UsePotion(consumableItem);
                     break;
@@ -379,6 +388,7 @@ namespace TextRPGTeam30
 
             DisplayInventory(); // 인벤토리 화면 갱신
         }
+
 
 
         public bool UseGold(int price)
