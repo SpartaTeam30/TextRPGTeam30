@@ -100,7 +100,7 @@ namespace TextRPGTeam30
             Console.Clear();
             GameManager.PrintColoredLine("상태 보기\n",ConsoleColor.Yellow);
             Console.Write("Lv. ");
-            GameManager.PrintColoredLine($"{Level}", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{Level} ({exp} / {Level * 5 + 5})", ConsoleColor.Magenta);
             Console.Write("이름 : ");
             GameManager.PrintColored($"{Name}",ConsoleColor.Magenta);
             Console.WriteLine($", ({job.name})");
@@ -211,7 +211,7 @@ namespace TextRPGTeam30
 
         public void LevelUp(int e)
         {
-            int requiredAmount = Level == 1 ? 10 : Level * 5 + 25;
+            int requiredAmount = Level * 5 + 5;
             exp += e;
 
             if (exp >= requiredAmount)
@@ -238,7 +238,7 @@ namespace TextRPGTeam30
                 saveManager.SaveMaxHPMP(this);
 
                 Console.WriteLine($"새로운 상태: HP={Hp}/{MaxHP}, MP={mp}/{maxMp}");
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
         }
 

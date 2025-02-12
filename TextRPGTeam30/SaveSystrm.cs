@@ -270,6 +270,8 @@ namespace TextRPGTeam30
             SaveGame(newPlayer); // ✅ 새로운 캐릭터 저장
             SaveCharacterList(name, jobType); // ✅ 캐릭터 슬롯 추가
 
+            GameManager.PrintStartStory();
+
             return newPlayer;
         }
 
