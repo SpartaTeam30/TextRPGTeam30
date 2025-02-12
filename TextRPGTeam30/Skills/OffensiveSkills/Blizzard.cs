@@ -12,12 +12,13 @@ namespace TextRPGTeam30
         public Blizzard() // 시전자 주위로 폭풍을 일으킨다. 광역기.
         {
             name = "블리자드";
+            description = "시전자 주위로 폭풍을 일으킨다.";
             damageModifier = 3.0f;
             cost = 25;
             count = 3;
         }
 
-        public Blizzard(float damageModifier, int cost, int count) : base(damageModifier, cost, count)
+        public Blizzard(string description, float damageModifier, int cost, int count) : base(description, damageModifier, cost, count)
         {
 
         }
