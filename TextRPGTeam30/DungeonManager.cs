@@ -43,7 +43,8 @@
             CreateDungeon();//던전 생성
             deadMonster = 0;//죽은 몬스터 수 초기화
 
-            if (stage == 20) GameManager.PrintMeetStory();
+            
+            if (stage == 20) //GameManager.PrintMeetStory();
 
             while (true)
             {
@@ -52,8 +53,13 @@
                 if (deadMonster == dungeon.monsters.Count)//죽은 몬스터 수와 던전의 몬스터수가 같을 때
                 {
                     if (stage == 10) GameManager.PrintRememberStory();
-                    else if(stage == 20) GameManager.PrintEndStory();
-
+                    else if (stage == 20)
+                    {
+                        GameManager.PrintEndStory();
+                        GameClear();
+                        player.Hp = 0;
+                        return;
+                    }
                     dungeon.DungeonSuccess();//던전클리어
                     player.Stage++;
                     stage++;
@@ -423,6 +429,14 @@
                     GameManager.CheckWrongInput(out int con, 0, 0);
                 }
             }
+        }
+
+        public void GameClear()
+        {   
+            GameSaveManager gameSaveManager = new GameSaveManager();
+            gameSaveManager.DeleteCharacter(player.Name);
+            Console.Clear();
+            Console.WriteLine("Game Clear");
         }
     }
 }
