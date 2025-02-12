@@ -101,7 +101,7 @@ namespace TextRPGTeam30
             if (equipWeapon != null)
             {
                 Console.Write($"공격력 : ");
-                GameManager.PrintColoredLine($"{Attack} (+{equipWeapon.attack})", ConsoleColor.Magenta);
+                GameManager.PrintColoredLine($"{Attack} (+{equipWeapon.itAbility})", ConsoleColor.Magenta);
             }
             else
             {
@@ -111,7 +111,7 @@ namespace TextRPGTeam30
             if (equipArmor != null)
             {
                 Console.Write("방어력 : ");
-                GameManager.PrintColoredLine($"{Defense} (+{equipArmor.defense})", ConsoleColor.Magenta);
+                GameManager.PrintColoredLine($"{Defense} (+{equipArmor.itAbility})", ConsoleColor.Magenta);
             }
             else
             {
@@ -444,7 +444,7 @@ namespace TextRPGTeam30
         {
             if (equipWeapon != null)
             {
-                return Attack + equipWeapon.attack + DAttack;
+                return Attack + equipWeapon.itAbility + DAttack;
             }
             return Attack + DAttack;
         }
@@ -453,7 +453,7 @@ namespace TextRPGTeam30
         {
             if (equipArmor != null)
             {
-                return Defense + equipArmor.defense + DDefense;
+                return Defense + equipArmor.itAbility + DDefense;
             }
             return Defense + DDefense;
         }

@@ -7,11 +7,9 @@ namespace TextRPGTeam30
 {
     public class Armor : Equipable
     {
-        public int defense;
-
         public Armor(string Name, int ItAbility, string ItType, string ItInfo, int price) : base(Name, ItAbility, ItType, ItInfo, price)
         {
-            defense = ItAbility;
+
         }
 
         // public Armor(string name, int id, string description, int defenseBonus)
