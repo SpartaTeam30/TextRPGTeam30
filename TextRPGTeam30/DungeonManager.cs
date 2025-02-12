@@ -26,17 +26,17 @@
 
         public void CreateDungeon()//던전 생성
         {
+            stage = 18;
             //스테이지에 따라 출현가능한 몬스터의 범위가 달라짐
-            int maxRangeMonster = 3 + stage / 5;
-            int minRangeMonster = 1 + stage / 5;
+            int minRangeMonster = 0 + stage / 5;
+            
             int randomBoss = new Random().Next(0, bossMonsters.Count);
-            if (maxRangeMonster >= monsters.Count)
+            if (minRangeMonster + 3 >= monsters.Count)
             {
-                minRangeMonster = maxRangeMonster - 3;
-                maxRangeMonster = monsters.Count - 1;
+                minRangeMonster -= 3;
             }
             //던전 생성
-            dungeon = new Dungeon(player, stage, monsters.GetRange(minRangeMonster, maxRangeMonster), bossMonsters[randomBoss]);
+            dungeon = new Dungeon(player, stage, monsters.GetRange(minRangeMonster, 3), bossMonsters[randomBoss]);
         }
 
         public void DungeonStart()//던전 시작화면
@@ -144,6 +144,7 @@
             Console.WriteLine("\n[획득아이템]");
             GameManager.PrintColored("500", ConsoleColor.Magenta);
             Console.WriteLine(" Gold");
+
             if (dungeon.rewardConsume != null)
             {
                 Console.Write($"{dungeon.rewardConsume.itName} - ");
@@ -154,8 +155,29 @@
                 Console.Write($"{dungeon.rewardEquip.itName} - ");
                 GameManager.PrintColoredLine("1", ConsoleColor.Magenta);
             }
+
             Console.WriteLine("\n0. 다음\n");
             GameManager.CheckWrongInput(out int con, 0, 0);
+        }
+
+        public int PrintSelectMonster()
+        {
+            int num = 0;
+
+            foreach (Monster monster in dungeon.monsters)
+            {
+                if (monster.Hp > 0)
+                {
+                    GameManager.PrintColored($"{++num} ", ConsoleColor.Cyan);
+                    PrintMonster(monster);
+                }
+                else
+                {
+                    GameManager.PrintColoredLine($"{++num} Lv.{monster.Level} {monster.Name} Dead", ConsoleColor.DarkGray);
+                }
+            }
+
+            return num;
         }
 
         public void AttackMenu()
@@ -186,7 +208,7 @@
             foreach (var skill in player.job.skills)
             {
                 Console.WriteLine($"{++num}. {skill.name} - MP {skill.cost}");
-                if(skill is OffensiveSkill offensive1)
+                if (skill is OffensiveSkill offensive1)
                 {
                     Console.WriteLine($"공격력 * {offensive1.damageModifier}");
                 }
@@ -195,7 +217,7 @@
             Console.WriteLine("0. 취소");
             GameManager.CheckWrongInput(out int con, 0, num);
 
-            if(con == 0)
+            if (con == 0)
             {
                 AttackMenu();
                 return;
@@ -206,7 +228,10 @@
                 if (player.mp >= player.job.skills[con - 1].cost)
                 {
                     player.mp -= player.job.skills[con - 1].cost;
-                    SelectTarget(offensive2.UseSkill(player.GetAttack()), true);
+                    for (int i = 0; i < offensive2.count; i++)
+                    {
+                        SelectTarget(offensive2.UseSkill(player.GetAttack()), true);
+                    }
                 }
                 else
                 {
@@ -216,31 +241,36 @@
                     return;
                 }
             }
-            else if (player.job.skills[con - 1] is UtilitySkill utility)
+            else if (player.job.skills != null && player.job.skills[con - 1] is UtilitySkill utility)
             {
-
+                if (player.mp >= player.job.skills[con - 1].cost)
+                {
+                    for (int i = 0; i < utility.count; i++)
+                    {
+                        SelectTargetUtility(utility);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("mp가 부족합니다.");
+                    Thread.Sleep(500);
+                    SkillMenu();
+                    return;
+                }
             }
 
         }
 
         public void SelectTarget(float _attack, bool isSkill)
         {
+            if(deadMonster == dungeon.monsterNum)
+            {
+                return;
+            }
             PrintTitle();
 
-            int num = 0;
+            int num = PrintSelectMonster();
 
-            foreach (Monster monster in dungeon.monsters)
-            {
-                if (monster.Hp > 0)
-                {
-                    GameManager.PrintColored($"{++num} ", ConsoleColor.Cyan);
-                    PrintMonster(monster);
-                }
-                else
-                {
-                    GameManager.PrintColoredLine($"{++num} Lv.{monster.Level} {monster.Name} Dead", ConsoleColor.DarkGray);
-                }
-            }
             PrintPlayer();
             Console.WriteLine("0. 취소");
             Monster target;
@@ -299,6 +329,59 @@
             {
                 target.Dead();
             }
+        }
+
+        public void SelectTargetUtility(UtilitySkill utilitySkill)
+        {
+            if (deadMonster == dungeon.monsterNum)
+            {
+                return;
+            }
+            PrintTitle();
+            int num = PrintSelectMonster();
+            Console.WriteLine($"{num + 1} {player.Name}");
+
+            PrintPlayer();
+            Console.WriteLine("0. 취소");
+            Monster target;
+            int con;
+
+            while (true)
+            {
+                GameManager.CheckWrongInput(out con, 0, num + 1);
+
+                if (con == 0)
+                {
+                    AttackMenu();
+                    return;
+                }
+
+                if (con == num + 1) 
+                {
+                    utilitySkill.UseSkill(player);
+                    return;
+                }
+                target = dungeon.monsters[con - 1];
+
+                if (target.Hp <= 0)
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+
+            PrintTitle();
+            Console.WriteLine($"{player.Name}의 {utilitySkill.name}!");
+            float atk = target.GetAttack();
+            utilitySkill.UseSkill(target);
+
+            Console.WriteLine("\n0. 다음\n");
+            GameManager.CheckWrongInput(out con, 0, 0);
+
         }
 
         public void MonsterAttack()
