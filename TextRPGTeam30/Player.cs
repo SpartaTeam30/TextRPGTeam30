@@ -233,7 +233,7 @@ namespace TextRPGTeam30
                 saveManager.SaveMaxHPMP(this);
 
                 Console.WriteLine($"새로운 상태: HP={Hp}/{MaxHP}, MP={mp}/{maxMp}");
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
         }
 

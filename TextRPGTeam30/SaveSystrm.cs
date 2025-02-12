@@ -268,6 +268,8 @@ namespace TextRPGTeam30
             SaveGame(newPlayer, jobType); // 플레이어 객체에서 JobType을 가져오지 않고 직접 전달
             SaveCharacterList(name, jobType); // 캐릭터 리스트에 저장
 
+            GameManager.PrintStartStory();
+
             return newPlayer;
         }
 
