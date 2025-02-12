@@ -69,7 +69,7 @@ namespace TextRPGTeam30
             this.Defense = defense; 
             this.Stage = stage;
             this.JobType = jobType; //타입 0전사 1마법사
-            this.job = ConvertJob(jobType, hp, attack, defense);//직업변환
+            this.job = ConvertJob(jobType, hp, mp, attack, defense);//직업변환
             this.equipWeapon = null;
             this.equipArmor = null;
             this.DAttack = 0;
@@ -81,11 +81,11 @@ namespace TextRPGTeam30
         }
 
         //직업 변환
-        private Job ConvertJob(int jobType, int savedHp, float savedAttack, int savedDefense)
+        private Job ConvertJob(int jobType, int savedHp, int savedMp, float savedAttack, int savedDefense)
         {
             return jobType == 0
-                ? new Warrior(null, savedHp, savedAttack, savedDefense)
-                : new Mage(null, savedHp, savedAttack, savedDefense);
+                ? new Warrior(null, savedHp, savedMp, savedAttack, savedDefense)
+                : new Mage(null, savedHp, savedMp, savedAttack, savedDefense);
         }
 
 

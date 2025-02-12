@@ -274,25 +274,22 @@ namespace TextRPGTeam30
                 Console.WriteLine("올바른 숫자를 입력하세요. (0: 전사, 1: 마법사)");
             }
 
-            int baseHp = jobType == 0 ? 150 : 75;
-            int baseMp = jobType == 0 ? 50 : 150;
-            int baseAttack = jobType == 0 ? 10 : 20;
-            int baseDefense = jobType == 0 ? 10 : 5;
+            Job job = jobType == 0 ? new Warrior() : new Mage();
 
             // 새 캐릭터 생성
             Player newPlayer = new Player(
                 name,
                 1,             // Level
-                baseHp,        // Hp
-                baseHp,        // MaxHP  
-                baseMp,        // Mp
-                baseMp,        // MaxMP  
+                job.hp,        // Hp
+                job.hp,        // MaxHP  
+                job.mp,        // Mp
+                job.mp,        // MaxMP  
                 100,           // Gold
                 0,             // Exp
                 10,            // CritRate
-                baseAttack,    // Attack
+                job.attack,    // Attack
                 jobType,       // JobType을 올바르게 전달
-                baseDefense,   // Defense 값을 별도로 전달
+                job.defense,   // Defense 값을 별도로 전달
                 1              // Stage
             );
 
