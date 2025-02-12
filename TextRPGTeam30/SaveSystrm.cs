@@ -308,16 +308,29 @@ namespace TextRPGTeam30
         //캐릭터 삭제 기능
         public void DeleteCharacter(string playerName)
         {
-            string filePath = $"{playerName}.json";
+            string playerFilePath = $"{playerName}.json";
+            string questFilePath = $"{playerName}_Quest.json"; // ✅ 퀘스트 데이터 파일 경로
 
-            if (File.Exists(filePath))
+            // ✅ 캐릭터 저장 데이터 삭제
+            if (File.Exists(playerFilePath))
             {
-                File.Delete(filePath);
+                File.Delete(playerFilePath);
                 Console.WriteLine($"캐릭터 {playerName}의 저장 데이터를 삭제했습니다.");
             }
             else
             {
                 Console.WriteLine($"{playerName}의 저장 데이터를 찾을 수 없습니다.");
+            }
+
+            // ✅ 퀘스트 데이터 삭제
+            if (File.Exists(questFilePath))
+            {
+                File.Delete(questFilePath);
+                Console.WriteLine($"{playerName}의 퀘스트 데이터를 삭제했습니다.");
+            }
+            else
+            {
+                Console.WriteLine($"{playerName}의 퀘스트 데이터를 찾을 수 없습니다.");
             }
 
             // ✅ 캐릭터 목록에서도 삭제
@@ -331,11 +344,8 @@ namespace TextRPGTeam30
                 File.WriteAllText(CharacterListFile, JsonConvert.SerializeObject(characterList, Formatting.Indented));
                 Console.WriteLine($"{playerName}이(가) 캐릭터 목록에서 삭제되었습니다.");
             }
-
-            // ✅ 최신 캐릭터 리스트 로드
             LoadCharacterList();
         }
-
 
         //던전 저장
         public void SaveDungeonClearData(Player player)
