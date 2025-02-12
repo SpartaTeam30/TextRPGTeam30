@@ -15,7 +15,7 @@ namespace TextRPGTeam30
             cost = 15;
         }
 
-        public Frey(int cost, int dAttack, int dDefense) : base(cost, dAttack, dDefense)
+        public Frey(int cost, int dAttack, int dDefense, int count) : base(cost, dAttack, dDefense, count)
         {
 
         }
