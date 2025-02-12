@@ -174,13 +174,13 @@ namespace TextRPGTeam30
             ,"하지만 왠지 가슴 한 구석이 쓰라립니다. 격한 전투 중에 상처라도 입은 걸까요?."
             ,"당신은 일단 마을로 돌아가기로 합니다."
             ,"\n"
-            ,"> 모험을 계속하려면 Enter를 입력하세요."
+            ,"> 모험을 끝마치려면 Enter를 입력하세요."
         };
 
         private static bool startFlag = false;
         private static bool rememberFlag = false;
-        private static bool MeetFlag = false;
-        private static bool EndFlag = false;
+        private static bool meetFlag = false;
+        private static bool endFlag = false;
 
         public static void PrintStartStory()
         {
@@ -214,7 +214,7 @@ namespace TextRPGTeam30
 
         public static void PrintMeetStory()
         {
-            if (MeetFlag) return;
+            if (meetFlag) return;
 
             Console.Clear();
             foreach (string s in meetStory)
@@ -222,14 +222,14 @@ namespace TextRPGTeam30
                 Console.WriteLine(new string(' ', (int)(Console.WindowWidth - s.Length * 1.5f) / 2) + s);
                 Thread.Sleep(1000);
             }
-            MeetFlag = true;
+            meetFlag = true;
             Console.ReadLine();
             Console.Clear();
         }
 
         public static void PrintEndStory()
         {
-            if (EndFlag) return;
+            if (endFlag) return;
 
             Console.Clear();
             foreach (string s in endStory)
@@ -237,7 +237,7 @@ namespace TextRPGTeam30
                 Console.WriteLine(new string(' ', (int)(Console.WindowWidth - s.Length * 1.5f) / 2) + s);
                 Thread.Sleep(1200);
             }
-            EndFlag = true;
+            endFlag = true;
             Console.ReadLine();
             Console.Clear();
         }

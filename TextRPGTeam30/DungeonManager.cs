@@ -1,4 +1,6 @@
-﻿namespace TextRPGTeam30
+﻿using System.Threading;
+
+namespace TextRPGTeam30
 {
     public class DungeonManager
     {
@@ -28,7 +30,7 @@
         {
             //스테이지에 따라 출현가능한 몬스터의 범위가 달라짐
             int minRangeMonster = 0 + stage / 5;
-            
+
             int randomBoss = new Random().Next(0, bossMonsters.Count);
             if (minRangeMonster + 3 >= monsters.Count)
             {
@@ -44,45 +46,45 @@
             CreateDungeon();//던전 생성
             deadMonster = 0;//죽은 몬스터 수 초기화
 
-            
-            if (stage == 20) //GameManager.PrintMeetStory();
 
-            while (true)
-            {
-                AttackMenu();//플레이어의 공격
+            if (stage == 20) GameManager.PrintMeetStory();
 
-                if (deadMonster == dungeon.monsters.Count)//죽은 몬스터 수와 던전의 몬스터수가 같을 때
+                while (true)
                 {
-                    if (stage == 10) GameManager.PrintRememberStory();
-                    else if (stage == 20)
+                    AttackMenu();//플레이어의 공격
+
+                    if (deadMonster == dungeon.monsters.Count)//죽은 몬스터 수와 던전의 몬스터수가 같을 때
                     {
-                        GameManager.PrintEndStory();
-                        GameClear();
-                        player.Hp = 0;
+                        if (stage == 10) GameManager.PrintRememberStory();
+                        else if (stage == 20)
+                        {
+                            GameManager.PrintEndStory();
+                            GameClear();
+                            player.Hp = 0;
+                            return;
+                        }
+                        dungeon.DungeonSuccess();//던전클리어
+                        player.Stage++;
+                        stage++;
+                        GameSaveManager saveManager = new GameSaveManager();
+                        saveManager.SaveDungeonClearData(player);
+                        break;
+                    }
+
+                    MonsterAttack();//몬스터의 공격
+
+                    if (player.Hp <= 0)//플레이어 사망 여부
+                    {
+                        stage = 1;//스테이지 초기화
+                        dungeon.DungeonFail();//던전 실패
                         return;
                     }
-                    dungeon.DungeonSuccess();//던전클리어
-                    player.Stage++;
-                    stage++;
-                    GameSaveManager saveManager = new GameSaveManager();
-                    saveManager.SaveDungeonClearData(player);
-                    break;
                 }
-
-                MonsterAttack();//몬스터의 공격
-
-                if (player.Hp <= 0)//플레이어 사망 여부
-                {
-                    stage = 1;//스테이지 초기화
-                    dungeon.DungeonFail();//던전 실패
-                    return;
-                }
-            }
             //출력
             PrintReward();
         }
 
-        public void PrintTitle()
+        public void PrintTitle()//던전 전투 이름 출력
         {
             Console.Clear();
             if (stage % 20 == 0)
@@ -114,7 +116,7 @@
             PrintPlayer();
         }
 
-        public void PrintPlayer()
+        public void PrintPlayer()//플레이어 정보 출력
         {
             Console.WriteLine("\n[내정보]");
             Console.Write($"Lv.");
@@ -126,7 +128,7 @@
             GameManager.PrintColoredLine($"{player.mp}/{player.maxMp}\n", ConsoleColor.Magenta);
         }
 
-        public void PrintMonster(Monster monster)
+        public void PrintMonster(Monster monster)//몬스터 정보 출력
         {
             if (monster.isUnique == true)
             {
@@ -138,7 +140,7 @@
             GameManager.PrintColoredLine($"{monster.Hp}", ConsoleColor.Magenta);
         }
 
-        public void PrintReward()
+        public void PrintReward()//보상출력
         {
             Console.Clear();
             GameManager.PrintColoredLine("\nBattle!! - Result\n\n", ConsoleColor.Yellow);
@@ -172,7 +174,7 @@
             GameManager.CheckWrongInput(out int con, 0, 0);
         }
 
-        public int PrintSelectMonster()
+        public int PrintSelectMonster()//몬스터 선택창 출력
         {
             int num = 0;
 
@@ -192,7 +194,7 @@
             return num;
         }
 
-        public void AttackMenu()
+        public void AttackMenu()//공격메뉴
         {
             PrintDungeonUI();
 
@@ -212,7 +214,7 @@
             }
         }
 
-        public void SkillMenu()
+        public void SkillMenu()//스킬메뉴
         {
             PrintDungeonUI();
             //스킬 출력
@@ -240,9 +242,13 @@
                 if (player.mp >= player.job.skills[con - 1].cost)
                 {
                     player.mp -= player.job.skills[con - 1].cost;
-                    for (int i = 0; i < offensive2.count; i++)
+                    if (offensive2.count == 0)
                     {
                         SelectTarget(offensive2.UseSkill(player.GetAttack()), true);
+                    }
+                    else
+                    {
+                        SelectTargetMulti(offensive2.UseSkill(player.GetAttack()), true, offensive2.count);
                     }
                 }
                 else
@@ -257,9 +263,14 @@
             {
                 if (player.mp >= player.job.skills[con - 1].cost)
                 {
-                    for (int i = 0; i < utility.count; i++)
+                    player.mp -= player.job.skills[con - 1].cost;
+                    if (utility.count == 0)
                     {
                         SelectTargetUtility(utility);
+                    }
+                    else
+                    {
+                        SelectTargetUtilityMulti(utility, utility.count);
                     }
                 }
                 else
@@ -273,12 +284,8 @@
 
         }
 
-        public void SelectTarget(float _attack, bool isSkill)
+        public void SelectTarget(float _attack, bool isSkill)//타겟 설정
         {
-            if(deadMonster == dungeon.monsterNum)
-            {
-                return;
-            }
             PrintTitle();
 
             int num = PrintSelectMonster();
@@ -310,23 +317,80 @@
                 }
             }
 
-            int targetHp = target.Hp;
+            PlayerAttack(target, _attack, isSkill);
+        }
 
+        public void SelectTargetMulti(float _attack, bool isSkill, int count)//타겟 설정
+        {
+            if (dungeon.monsterNum - deadMonster <= count)
+            {
+                foreach (var monster in dungeon.monsters)
+                {
+                    if (monster.Hp > 0)
+                    {
+                        PlayerAttack(monster, _attack, isSkill);
+                    }
+                }
+                return;
+            }
+            PrintTitle();
+
+            int num = PrintSelectMonster();
+
+            PrintPlayer();
+            Console.WriteLine("0. 취소");
+            Monster target;
+            int con;
+            int selectNum = 0;
+            List<bool> selectList = Enumerable.Repeat(false, dungeon.monsterNum).ToList();
+
+            while (selectNum < count)
+            {
+                GameManager.CheckWrongInput(out con, 0, num);
+
+                if (con == 0)
+                {
+                    AttackMenu();
+                    return;
+                }
+
+                target = dungeon.monsters[con - 1];
+
+                if (target.Hp <= 0 || selectList[con - 1] == true)
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                }
+                else
+                {
+                    selectList[con - 1] = true;
+                    selectNum++;
+                }
+            }
+
+            for (int i = 0; i < selectList.Count; i++)
+            {
+                if (selectList[i] == true)
+                {
+                    PlayerAttack(dungeon.monsters[i], _attack, isSkill);
+                }
+            }
+        }
+
+        public void PlayerAttack(Monster monster, float _attack, bool isSkill)
+        {
+            int monsterHp = monster.Hp;
+            monster.TakeDamage(_attack, player.CritRate, isSkill);
             PrintTitle();
             Console.WriteLine($"{player.Name}의 공격!");
-
-            target.TakeDamage(_attack, player.CritRate, isSkill);
-
             Console.Write("Lv.");
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
-            Console.WriteLine($" {target.Name}");
+            Console.WriteLine($" {monster.Name}");
             Console.Write("HP ");
-            GameManager.PrintColored($"{targetHp}", ConsoleColor.Magenta);
+            GameManager.PrintColored($"{monsterHp}", ConsoleColor.Magenta);
             Console.Write(" -> ");
-
-            if (target.Hp > 0)
+            if (monster.Hp > 0)
             {
-                GameManager.PrintColored($"{target.Hp}", ConsoleColor.Magenta);
+                GameManager.PrintColored($"{monster.Hp}", ConsoleColor.Magenta);
             }
             else
             {
@@ -334,25 +398,21 @@
                 Console.WriteLine("Dead");
 
                 //  퀘스트 진행도 업데이트
-                bool isBoss = bossMonsters.Contains(target); // 보스 몬스터인지 확인
+                bool isBoss = bossMonsters.Contains(monster); // 보스 몬스터인지 확인
                 QuestManager.Instance.OnMonsterKilled(isBoss);
             }
 
             Console.WriteLine("\n0. 다음\n");
-            GameManager.CheckWrongInput(out con, 0, 0);
+            GameManager.CheckWrongInput(out int con, 0, 0);
 
-            if (target.Hp <= 0)
+            if (monster.Hp <= 0)
             {
-                target.Dead();
+                monster.Dead();
             }
         }
 
-        public void SelectTargetUtility(UtilitySkill utilitySkill)
+        public void SelectTargetUtility(UtilitySkill utilitySkill)//유틸리티스킬 타겟 설정
         {
-            if (deadMonster == dungeon.monsterNum)
-            {
-                return;
-            }
             PrintTitle();
             int num = PrintSelectMonster();
             Console.WriteLine($"{num + 1} {player.Name}");
@@ -372,7 +432,7 @@
                     return;
                 }
 
-                if (con == num + 1) 
+                if (con == num + 1)
                 {
                     utilitySkill.UseSkill(player);
                     return;
@@ -400,7 +460,75 @@
 
         }
 
-        public void MonsterAttack()
+        public void SelectTargetUtilityMulti(UtilitySkill utilitySkill, int count)//유틸리티스킬 타겟 설정
+        {
+            if (dungeon.monsterNum - deadMonster <= count)
+            {
+                foreach (var monster in dungeon.monsters)
+                {
+                    if (monster.Hp > 0)
+                    {
+                        PlayerUseUtilitySkill(utilitySkill, monster);
+                    }
+                }
+                return;
+            }
+
+            PrintTitle();
+            int num = PrintSelectMonster();
+            Console.WriteLine($"{num + 1} {player.Name}");
+
+            PrintPlayer();
+            Console.WriteLine("0. 취소");
+            Monster target;
+            int con;
+            int selectNum = 0;
+            List<bool> selectList = Enumerable.Repeat(false, dungeon.monsterNum).ToList();
+
+            while (selectNum < count)
+            {
+                GameManager.CheckWrongInput(out con, 0, num);
+
+                if (con == 0)
+                {
+                    AttackMenu();
+                    return;
+                }
+
+                target = dungeon.monsters[con - 1];
+
+                if (target.Hp <= 0 || selectList[con - 1] == true)
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                }
+                else
+                {
+                    selectList[con - 1] = true;
+                    selectNum++;
+                }
+            }
+
+            for (int i = 0; i < selectList.Count; i++)
+            {
+                if (selectList[i] == true)
+                {
+                    PlayerUseUtilitySkill(utilitySkill, dungeon.monsters[i]);
+                }
+            }
+
+        }
+
+        public void PlayerUseUtilitySkill(UtilitySkill utilitySkill, Monster target)
+        {
+            PrintTitle();
+            Console.WriteLine($"{player.Name}의 {utilitySkill.name}!");
+            float atk = target.GetAttack();
+            utilitySkill.UseSkill(target);
+            Console.WriteLine("\n0. 다음\n");
+            GameManager.CheckWrongInput(out int con, 0, 0);
+        }
+
+        public void MonsterAttack()//몬스터의 공격
         {
             foreach (Monster monster in dungeon.monsters)
             {
@@ -431,8 +559,8 @@
             }
         }
 
-        public void GameClear()
-        {   
+        public void GameClear()//게임클리어
+        {
             GameSaveManager gameSaveManager = new GameSaveManager();
             gameSaveManager.DeleteCharacter(player.Name);
             Console.Clear();
