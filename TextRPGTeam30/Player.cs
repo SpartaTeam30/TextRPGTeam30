@@ -266,18 +266,15 @@ namespace TextRPGTeam30
         {
             if (equipWeapon == weapon) // 장착 해제
             {
-                this.Attack -= equipWeapon.attack;
                 equipWeapon = null;
             }
             else // 장착
             {
                 if (equipWeapon != null)
                 {
-                    this.Attack -= equipWeapon.attack;
                     equipWeapon.Toggle();
                 }
                 equipWeapon = weapon;
-                this.Attack += equipWeapon.attack;
 
                 // 🔥 퀘스트 진행 체크
                 QuestManager.Instance.OnWeaponEquipped();

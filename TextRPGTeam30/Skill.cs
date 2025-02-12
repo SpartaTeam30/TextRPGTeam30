@@ -4,15 +4,17 @@
     {
         public string name;
         public int cost;
+        public int count;
 
         public Skill()
         {
 
         }
 
-        public Skill(int cost)
+        public Skill(int cost, int count)
         {
             this.cost = cost;
+            this.count = count;
         }
 
         public void UseSkill()
