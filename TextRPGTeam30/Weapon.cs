@@ -4,9 +4,9 @@
     {
         public float attack;
 
-        public Weapon(string itName, int itAbility, string itType, string itInfo, float _attack, int price) : base(itName, itAbility, itType, itInfo, price)
+        public Weapon(string itName, int itAbility, string itType, string itInfo, int price, object 가격) : base(itName, itAbility, itType, itInfo, price)
         {
-            attack = _attack;
+            attack = itAbility;
         }
 
         // public Weapon()

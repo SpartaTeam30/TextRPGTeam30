@@ -7,9 +7,9 @@
         {
             name = "마법사";
             skills.Add(new Fireball());
-            hp = 100;
-            attack = 10;
-            defense = 10;
+            hp = 80;
+            attack = 25;
+            defense = 20;
         }
 
         // 저장된 값으로 초기화하는 생성자 추가

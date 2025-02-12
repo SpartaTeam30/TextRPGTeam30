@@ -77,12 +77,6 @@ namespace TextRPGTeam30
             job.ResetStat(this);
             inventory = new List<Item>()
             {
-                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 20, 100),
-                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 30, 100),
-                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 25, 100),
-                new Armor("건틀렛", 25, "방어력", "철로 만들어진 전투용 장갑.", 15, 100),
-                new HealingPotion("체력 물약", 30,"체력 회복","마시면 체력이 회복된다.",100, 2),
-                new ManaPotion("마나 물약", 30,"마나 회복","마시면 마나가 회복된다.",100 ,1)
             };
         }
 
@@ -223,6 +217,7 @@ namespace TextRPGTeam30
 
                 Level += levelAdd;
                 exp = e % requiredAmount;
+                QuestManager.Instance.OnPlayerLevelUp();
 
                 // ✅ 레벨업 시에만 최대 체력 & 최대 마나 증가
                 MaxHP += levelAdd * 5;
@@ -263,38 +258,43 @@ namespace TextRPGTeam30
 
         public void EquipWeapon(Weapon weapon)
         {
-            if (equipWeapon == weapon)//장착해제
+            if (equipWeapon == weapon) // 장착 해제
             {
-                this.Attack -= equipWeapon.attack;
                 equipWeapon = null;
             }
-            else//장착
+            else // 장착
             {
                 if (equipWeapon != null)
                 {
-                    this.Attack -= equipWeapon.attack;
                     equipWeapon.Toggle();
                 }
                 equipWeapon = weapon;
-                this.Attack += equipWeapon.attack;
+
+                // 🔥 퀘스트 진행 체크
+                QuestManager.Instance.OnWeaponEquipped();
             }
         }
 
+
         public void EquipArmor(Armor armor)
         {
-            if (equipArmor == armor)//장착해제
+            if (equipArmor == armor) // 장착 해제
             {
                 equipArmor = null;
             }
-            else//장착
+            else // 장착
             {
                 if (equipArmor != null)
                 {
                     equipArmor.Toggle();
                 }
                 equipArmor = armor;
+
+                // 🔥 퀘스트 진행 체크
+                QuestManager.Instance.OnArmorEquipped();
             }
         }
+
 
         public void Equip(Equipable equipable)
         {
@@ -346,7 +346,7 @@ namespace TextRPGTeam30
                         {
                             Console.Write("    ");
                         }
-                        Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
+                        Console.WriteLine($"이름: {item.itName}({item.itType} + {item.itAbility}), 설명: {item.itInfo}");
                     }
                     else if (item is Consumable consumable) 
                     {
