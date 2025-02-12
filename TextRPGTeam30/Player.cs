@@ -100,7 +100,7 @@ namespace TextRPGTeam30
             Console.Clear();
             GameManager.PrintColoredLine("상태 보기\n",ConsoleColor.Yellow);
             Console.Write("Lv. ");
-            GameManager.PrintColoredLine($"{Level}", ConsoleColor.Magenta);
+            GameManager.PrintColoredLine($"{Level} ({exp} / {Level * 5 + 5})", ConsoleColor.Magenta);
             Console.Write("이름 : ");
             GameManager.PrintColored($"{Name}",ConsoleColor.Magenta);
             Console.WriteLine($", ({job.name})");

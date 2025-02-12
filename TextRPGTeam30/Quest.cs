@@ -45,7 +45,11 @@
             }
 
             Console.WriteLine("\n보상");
-            Console.WriteLine($"아이템: {RewardItem.itName ?? "없음"}");
+            if (RewardItem != null)
+            {
+                Console.WriteLine($"아이템: {RewardItem.itName}");
+            }
+           
             Console.WriteLine($"골드: {RewardGold} G");
             Console.WriteLine($"경험치: {RewardExp} EXP");
             Console.WriteLine("==============================================");
@@ -87,7 +91,7 @@
         public void QuestReward()
         {
             QuestManager.Instance.player.inventory.Add(RewardItem);
-            QuestManager.Instance.player.exp += RewardExp;
+            QuestManager.Instance.player.LevelUp(RewardExp);
             QuestManager.Instance.player.gold += RewardGold;
             return;
         }
