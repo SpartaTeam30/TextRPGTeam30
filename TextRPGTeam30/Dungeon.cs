@@ -24,7 +24,7 @@
             uniqueRate = 5;
             rewardEquip = null;
             rewardConsume = null;
-            monsterNum = new Random().Next(1, 4);
+            monsterNum = new Random().Next(1, 5);
             equipables = new List<Equipable>()
             {
                 new Weapon("숏 소드", 5, "공격력", "편하게 사용할 수 있는 짧고 가벼운 소드.", 10),
