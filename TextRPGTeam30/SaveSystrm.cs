@@ -43,6 +43,7 @@ namespace TextRPGTeam30
                 MaxMP = player.maxMp, // 최대 마나 유지 (레벨업할 때만 변경)
                 Attack = (float)Math.Round(player.Attack, 1),
                 Defense = player.Defense,
+
                 CritRate = player.CritRate,
                 Evasion = player.Evasion,
                 Gold = player.gold,
@@ -51,7 +52,9 @@ namespace TextRPGTeam30
                 Stage = player.Stage,
                 Skills = player.job.skills.Select(skill => skill.name).ToList(),
                 Inventory = player.inventory.Select(item =>
-                    item is Consumable consumable ? $"{item.itName},{consumable.itemCount}" : $"{item.itName},1").ToList()
+                    item is Equipable equipable ? $"{item.itName},{(player.equipWeapon == item || player.equipArmor == item ? 1 : 0)}"
+                    : item is Consumable consumable ? $"{item.itName},{consumable.itemCount}"
+                    : $"{item.itName},0").ToList()
             };
             string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
             File.WriteAllText(saveFilePath, jsonData);
@@ -196,17 +199,25 @@ namespace TextRPGTeam30
                 foreach (var itemData in characterData.Inventory)
                 {
                     string[] itemInfo = itemData.Split(',');
-                    if (itemInfo.Length == 2)
+                    if (itemInfo.Length >= 2)
                     {
                         string itemName = itemInfo[0];
-                        int itemCount = int.TryParse(itemInfo[1], out int count) ? count : 1;
+                        int itemCountOrEquipStatus = int.TryParse(itemInfo[1], out int value) ? value : 0;
 
                         Item item = CreateItemFromName(itemName);
                         if (item != null)
                         {
                             if (item is Consumable consumable)
                             {
-                                consumable.itemCount = itemCount; // 포션 개수 설정
+                                consumable.itemCount = itemCountOrEquipStatus; // ✅ 포션 개수 설정
+                            }
+                            else if (item is Equipable equipable)
+                            {
+                                if (itemCountOrEquipStatus == 1) // ✅ 1이면 장착 중
+                                {
+                                    if (equipable is Weapon weapon) player.equipWeapon = weapon;
+                                    else if (equipable is Armor armor) player.equipArmor = armor;
+                                }
                             }
 
                             player.inventory.Add(item);
@@ -214,8 +225,8 @@ namespace TextRPGTeam30
                     }
                 }
 
-                // ✅ 기존 스킬 초기화 후 로드
-                player.job.skills.Clear();
+                    // ✅ 기존 스킬 초기화 후 로드
+                    player.job.skills.Clear();
                 foreach (var skillName in characterData.Skills)
                 {
                     Skill skill = CreateSkillFromName(skillName);
@@ -392,6 +403,12 @@ namespace TextRPGTeam30
                     return new HealingPotion("체력 물약", 30, "체력 회복", "마시면 체력이 회복된다.", 100, 1);
                 case "마나 물약":
                     return new ManaPotion("마나 물약", 30, "마나 회복", "마시면 마나가 회복된다.", 100, 1);
+                case "플레이트 헬멧":
+                    return new Armor("플레이트 헬멧", 10, "방어력", "플레이트 메일과 세트로 이루는 무거운 투구.", 10);
+                case "본 헬름2":
+                    return new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 3);
+                case "숏 소드":
+                    return new Weapon("숏 소드", 4, "공격력", "편하게 사용할 수 있는 짧고 가벼운 소드.", 10);
 
                 default:
                     Console.WriteLine($"⚠ 알 수 없는 아이템: {itemName}");

@@ -348,7 +348,7 @@ namespace TextRPGTeam30
                         }
                         Console.WriteLine($"이름: {item.itName}({item.itType} + {item.itAbility}), 설명: {item.itInfo}");
                     }
-                    else if (item is Consumable consumable) 
+                    else if (item is Consumable consumable)
                     {
                         Console.WriteLine($"    이름: {item.itName}, 남은 갯수: {consumable.itemCount}, 설명: {item.itInfo}");
                     }
@@ -375,7 +375,7 @@ namespace TextRPGTeam30
                     Equip(equipableItem);
                     break; // 정상적으로 장비했으면 루프 탈출
                 }
-                else if(selectedItem is Consumable consumableItem)
+                else if (selectedItem is Consumable consumableItem)
                 {
                     UsePotion(consumableItem);
                     break;
@@ -388,6 +388,7 @@ namespace TextRPGTeam30
 
             DisplayInventory(); // 인벤토리 화면 갱신
         }
+
 
 
         public bool UseGold(int price)
