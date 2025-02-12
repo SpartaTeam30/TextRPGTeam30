@@ -320,6 +320,10 @@
             {
                 deadMonster++;
                 Console.WriteLine("Dead");
+
+                //  퀘스트 진행도 업데이트
+                bool isBoss = bossMonsters.Contains(target); // 보스 몬스터인지 확인
+                QuestManager.Instance.OnMonsterKilled(isBoss);
             }
 
             Console.WriteLine("\n0. 다음\n");

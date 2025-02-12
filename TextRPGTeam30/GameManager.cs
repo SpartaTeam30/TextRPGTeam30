@@ -4,11 +4,15 @@ namespace TextRPGTeam30
     {
         public Player player;
         public DungeonManager dManager;
-      // public QuestManager questManager;
         public Shop shop;
+        public static GameManager Instance { get; private set; }
 
         public GameManager()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
             PrintStartScene();
         }
 
@@ -65,8 +69,9 @@ namespace TextRPGTeam30
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
             dManager = new DungeonManager(player);
-       //     questManager = new QuestManager(player.Name);
+            QuestManager.Instance.Initialize(player.Name);
             shop = new Shop(player);
+            QuestManager.Instance.player = player;
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
             Thread.Sleep(500);
@@ -86,8 +91,23 @@ namespace TextRPGTeam30
             Console.WriteLine("4. 퀘스트");
             Console.WriteLine("5. 상점");
             Console.WriteLine("0. 종료하기");
-            CheckWrongInput(out int select, 0, 5);
-           
+
+            // 🔥 장비 착용 상태 표시
+            Console.WriteLine("\n[장비 상태]");
+            Console.Write("무기: ");
+            if (player.equipWeapon != null)
+                GameManager.PrintColoredLine($"{player.equipWeapon.itName}", ConsoleColor.Cyan);
+            else
+                Console.WriteLine("없음");
+
+            Console.Write("방어구: ");
+            if (player.equipArmor != null)
+                GameManager.PrintColoredLine($"{player.equipArmor.itName}", ConsoleColor.Cyan);
+            else
+                Console.WriteLine("없음");
+
+            Console.Write("\n>> ");
+            GameManager.CheckWrongInput(out int select, 0, 5);
 
             switch (select)
             {
@@ -101,7 +121,7 @@ namespace TextRPGTeam30
                     dManager.DungeonStart();
                     break;
                 case 4:
-               //     questManager.Questscreen();
+                    QuestManager.Instance.Questscreen();
                     break;
                 case 5:
                     shop.PrintShop();
