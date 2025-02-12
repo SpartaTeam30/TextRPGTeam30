@@ -88,6 +88,7 @@
                 rewardGold += new Random().Next(stage * 100, stage * 200);
             }
 
+            player.gold += rewardGold;
             //exp
             player.LevelUp(rewardExp);
 
