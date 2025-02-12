@@ -83,6 +83,7 @@ namespace TextRPGTeam30
             Console.WriteLine("이곳에서는 다양한 활동을 할 수 있습니다.\n");
             GameSaveManager saveManager = new GameSaveManager();
             saveManager.SaveGame(player, player.JobType);
+            SoundManager.Instance.PlaySound("");
 
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리 보기");
@@ -96,18 +97,23 @@ namespace TextRPGTeam30
             switch (select)
             {
                 case 1:
+                    SoundManager.Instance.PlaySound("click");
                     player.DisplayStatus();
                     break;
                 case 2:
+                    SoundManager.Instance.PlaySound("click");
                     player.DisplayInventory();
                     break;
                 case 3:
+                    SoundManager.Instance.PlaySound("click");
                     dManager.DungeonStart();
                     break;
                 case 4:
+                    SoundManager.Instance.PlaySound("click");
                     QuestManager.Instance.Questscreen();
                     break;
                 case 5:
+                    SoundManager.Instance.PlaySound("click");
                     shop.PrintShop();
                     break;
                 case 0:

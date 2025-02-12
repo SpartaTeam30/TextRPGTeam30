@@ -40,6 +40,7 @@
 
         public void DungeonStart()//던전 시작화면
         {
+            SoundManager.Instance.PlaySound("dungeonBGM");
             CreateDungeon();//던전 생성
             deadMonster = 0;//죽은 몬스터 수 초기화
 
@@ -167,7 +168,6 @@
                 Console.Write($"{dungeon.rewardEquip.itName} - ");
                 GameManager.PrintColoredLine("1", ConsoleColor.Magenta);
             }
-
             Console.WriteLine("\n0. 다음\n");
             GameManager.CheckWrongInput(out int con, 0, 0);
         }
