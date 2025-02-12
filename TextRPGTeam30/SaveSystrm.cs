@@ -26,8 +26,29 @@ namespace TextRPGTeam30
 
         public DateTime LastLogin { get; set; } //시간 관련 변수
     }
+
     public class GameSaveManager
     {
+        private readonly List<OffensiveSkill> oSkills = new List<OffensiveSkill>()
+        {
+            new Slash()
+            , new CrashArmor()
+            , new Greysteel()
+            , new Fireball()
+            , new Blizzard()
+            , new DimensionHall()
+        };
+
+        private readonly List<UtilitySkill> uSkills = new List<UtilitySkill>()
+        {
+            new Growl()
+            , new Harden()
+            , new Illusion()
+            , new LegTrip()
+            , new Pray()
+            , new Sand()
+        };
+
         //저장 시스템 
         public void SaveGame(Player player, int jobType)
         {
@@ -116,7 +137,6 @@ namespace TextRPGTeam30
             }
         }
 
-
         // 캐릭터 리스트 파일
         private static readonly string CharacterListFile = "characters.json"; 
 
@@ -166,7 +186,6 @@ namespace TextRPGTeam30
 
             return characters;
         }
-
 
         //기존 캐릭터 로드
         private Player LoadExistingCharacter(string playerName)
@@ -276,6 +295,13 @@ namespace TextRPGTeam30
                 baseDefense,   // Defense 값을 별도로 전달
                 1              // Stage
             );
+
+            List<Skill> s = SelectSkills();
+            foreach(Skill skill in s)
+            {
+                newPlayer.job.skills.Add(skill);
+            }
+
             SaveGame(newPlayer, jobType); // 플레이어 객체에서 JobType을 가져오지 않고 직접 전달
             SaveCharacterList(name, jobType); // 캐릭터 리스트에 저장
 
@@ -284,7 +310,34 @@ namespace TextRPGTeam30
             return newPlayer;
         }
 
+        private List<Skill> SelectSkills()
+        {
+            List<Skill> ss = new List<Skill>();
 
+            Console.WriteLine("\n스킬을 선택할 차례입니다.");
+            
+            Console.WriteLine("\n======공격 스킬 목록======");
+            for(int i = 0; i < oSkills.Count; i++)
+            {
+                OffensiveSkill s = oSkills[i];
+                Console.WriteLine($"{i + 1}. {s.name,-10}: {s.description,20} | 공격력 배수: {s.damageModifier,4} | 공격 대상: {s.count,2}명 | 마나 소모: {s.cost,3}");
+            }
+            Console.WriteLine("공격 스킬을 선택하세요.");
+            GameManager.CheckWrongInput(out int select, 1, oSkills.Count);
+            ss.Add(oSkills[select - 1]);
+
+            Console.WriteLine("\n======버프/디버프 스킬 목록======");
+            for (int i = 0; i < oSkills.Count; i++)
+            {
+                UtilitySkill s = uSkills[i];
+                Console.WriteLine($"{i + 1}. {s.name,-10}: {s.description,20} | 공격력 변동량: {(s.dAttack > 0 ? "+" : "")}{s.dAttack,2} | 방어력 변동량: {(s.dDefense > 0 ? "+" : "")}{s.dDefense,2} | 공격 대상: {s.count,2}명 | 마나 소모: {s.cost,3}");
+            }
+            Console.WriteLine("버프/디버프 스킬을 선택하세요.");
+            GameManager.CheckWrongInput(out select, 1, uSkills.Count);
+            ss.Add(uSkills[select - 1]);
+
+            return ss;
+        }
 
         //스킬생성
         private Skill CreateSkillFromName(string skillName)
@@ -293,8 +346,28 @@ namespace TextRPGTeam30
             {
                 case "베기":
                     return new Slash();
+                case "크래쉬 아머":
+                    return new CrashArmor();
+                case "그레이스틸":
+                    return new Greysteel();
                 case "화염구":
                     return new Fireball();
+                case "블리자드":
+                    return new Blizzard();
+                case "디멘션 홀":
+                    return new DimensionHall();
+                case "울부짖기":
+                    return new Growl();
+                case "단단해지기":
+                    return new Harden();
+                case "일루전":
+                    return new Illusion();
+                case "다리 걸기":
+                    return new LegTrip();
+                case "프레이":
+                    return new Pray();
+                case "흙뿌리기":
+                    return new Sand();
                 default:
                     Console.WriteLine($"알 수 없는 스킬: {skillName}");
                     return null;

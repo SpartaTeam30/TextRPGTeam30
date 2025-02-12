@@ -8,7 +8,7 @@ namespace TextRPGTeam30
         public Warrior()
         {
             name = "전사";
-            skills.Add(new Slash());
+            //skills.Add(new Slash());
             hp = 150;
             attack = 35;
             defense = 40;
@@ -21,7 +21,7 @@ namespace TextRPGTeam30
             this.attack = savedAttack;
             this.defense = savedDefense;
 
-            skills = savedSkills ?? new List<Skill> { new Slash() }; // 저장된 스킬이 없으면 기본 스킬 추가
+            skills = savedSkills ?? new List<Skill> { }; // 저장된 스킬이 없으면 기본 스킬 추가
         }
 
     }

@@ -6,7 +6,7 @@
         public Mage()
         {
             name = "마법사";
-            skills.Add(new Fireball());
+            //skills.Add(new Fireball());
             hp = 80;
             attack = 25;
             defense = 20;
@@ -20,7 +20,7 @@
             this.attack = savedAttack;
             this.defense = savedDefense;
 
-            skills = savedSkills ?? new List<Skill> { new Fireball() }; // 저장된 스킬이 없으면 기본 스킬 추가
+            skills = savedSkills ?? new List<Skill> { }; // 저장된 스킬이 없으면 기본 스킬 추가
         }
 
     }
