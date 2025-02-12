@@ -29,16 +29,13 @@ namespace TextRPGTeam30
     public class GameSaveManager
     {
         //저장 시스템 
-        public void SaveGame(Player player)
+        public void SaveGame(Player player, int jobType)
         {
             string saveFilePath = $"{player.Name}.json";
-
-            string jobName = player.JobType == 0 ? "전사" : "마법사";
-
             PlayerData playerData = new PlayerData
             {
                 Name = player.Name,
-                JobType = player.JobType,
+                JobType = jobType,
                 Level = player.Level,
                 Hp = player.Hp,       //  현재 체력 유지
                 MaxHP = player.MaxHP, //  최대 체력 유지 (레벨업할 때만 변경)
@@ -54,10 +51,8 @@ namespace TextRPGTeam30
                 Stage = player.Stage,
                 Skills = player.job.skills.Select(skill => skill.name).ToList(),
                 Inventory = player.inventory.Select(item =>
-                    item is Consumable consumable ? $"{item.itName},{consumable.itemCount}" : $"{item.itName},1"
-        ).ToList()
+                    item is Consumable consumable ? $"{item.itName},{consumable.itemCount}" : $"{item.itName},1").ToList()
             };
-
             string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
             File.WriteAllText(saveFilePath, jsonData);
         }
@@ -180,8 +175,6 @@ namespace TextRPGTeam30
                 string jsonData = File.ReadAllText(filePath);
                 PlayerData characterData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
 
-                string jobName = characterData.JobType == 0 ? "전사" : "마법사";
-
                 // ✅ 기존 HP & MP 유지 (던전 진행 후 깎인 상태 반영)
                 Player player = new Player(
                     characterData.Name,
@@ -256,27 +249,28 @@ namespace TextRPGTeam30
             int baseAttack = jobType == 0 ? 10 : 20;
             int baseDefense = jobType == 0 ? 10 : 5;
 
+            // 새 캐릭터 생성
             Player newPlayer = new Player(
                 name,
                 1,             // Level
                 baseHp,        // Hp
-                baseHp,        // MaxHP  최대 체력 추가
+                baseHp,        // MaxHP  
                 baseMp,        // Mp
-                baseMp,        // MaxMP  최대 마나 추가
+                baseMp,        // MaxMP  
                 100,           // Gold
                 0,             // Exp
                 10,            // CritRate
                 baseAttack,    // Attack
-                baseDefense,   // Defense
-                jobType,       // JobType
-                1              // Stage  기본 스테이지 추가
+                jobType,       // JobType을 올바르게 전달
+                baseDefense,   // Defense 값을 별도로 전달
+                1              // Stage
             );
-
-            SaveGame(newPlayer); // ✅ 새로운 캐릭터 저장
-            SaveCharacterList(name, jobType); // ✅ 캐릭터 슬롯 추가
+            SaveGame(newPlayer, jobType); // 플레이어 객체에서 JobType을 가져오지 않고 직접 전달
+            SaveCharacterList(name, jobType); // 캐릭터 리스트에 저장
 
             return newPlayer;
         }
+
 
 
         //스킬생성
