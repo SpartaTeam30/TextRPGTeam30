@@ -9,10 +9,9 @@ namespace TextRPGTeam30
         {
             name = "전사";
             skills.Add(new Slash());
-            hp = 100;
-            attack = 10;
-            defense = 10;
-
+            hp = 150;
+            attack = 35;
+            defense = 40;
         }
 
         public Warrior(List<Skill> savedSkills, int savedHp, float savedAttack, int savedDefense)
