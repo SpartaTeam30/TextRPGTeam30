@@ -11,8 +11,6 @@ namespace TextRPGTeam30
         public int gold;
         public int exp;
         public Job job;
-        public List<Equipable> equipment { get; set; }
-        public List<Consumable> consumables { get; set; }
         public Weapon? equipWeapon { get; set; }
         public Armor? equipArmor { get; set; }
         public string Name { get; set; }
@@ -26,77 +24,70 @@ namespace TextRPGTeam30
         public float DAttack { get; set; }
         public int Evasion { get; set; }
         public int JobType { get; set; }
+        public int Stage { get; set; }
 
         public List<Item> inventory = new List<Item>();
 
         public Player()
         {
-            inventory = new List<Item>()
-            {
-                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10, 100),
-                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100),
-                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100),
-            };
         }
 
         public Player(string name, Job job)
         {
             this.Name = name;
             this.job = job;
-            job.ResetStat(this);
-
             this.Level = 1;
             this.Hp = 100;
-            MaxHP = Hp;
+            MaxHP = 100;
             this.Defense = 5;
             this.mp = 50;
-            maxMp = mp;
+            maxMp = 50;
             this.gold = 100;
             this.exp = 0;
             this.CritRate = 15;
             this.Attack = 10;
-            equipment = new List<Equipable>();  // 장비 가능 리스트
-            consumables = new List<Consumable>(); // 소모품 리스트 
             this.Evasion = 10;
             this.equipWeapon = null;
             this.equipArmor = null;
+            this.DAttack = 0;
+            this.DDefense = 0;
             job.ResetStat(this);
         }
 
-        public Player(string name, int level, int hp, int mp, int gold, int exp, int critRate, float attack, int jobType, int defense)
+        public Player(string name, int level, int hp, int maxHp, int mp, int maxMp, int gold, int exp, int critRate, float attack, int jobType, int defense, int stage = 1)
         {
             this.Name = name;
             this.Level = level;
             this.Hp = hp;
-            MaxHP = Hp;
+            this.MaxHP = maxHp;
             this.mp = mp;
-            maxMp = mp;
+            this.maxMp = maxMp;
             this.gold = gold;
             this.exp = exp;
             this.CritRate = critRate;
             this.Attack = attack;
-            this.Defense = defense;
+            this.Defense = defense; 
+            this.Stage = stage;
             this.JobType = jobType; //타입 0전사 1마법사
-            this.job = ConvertJob(JobType);  // 직업 변환
-            equipment = new List<Equipable>();  // 장비 가능 리스트
-            consumables = new List<Consumable>(); // 소모품 리스트 
+            this.job = ConvertJob(jobType, hp, attack, defense);//직업변환
             this.equipWeapon = null;
             this.equipArmor = null;
+            this.DAttack = 0;
+            this.DDefense = 0;
             job.ResetStat(this);
-
             inventory = new List<Item>()
             {
-                new Armor("본 헬름", 30, "방어력", "동물의 뼈를 이용하여 악마의 머리 모양으로 깎아놓은 투구.", 10, 100),
-                new Weapon("아론다이트", 40, "공격력", "원탁의 기사단 단장 란슬롯이 사용했다는 중세 시대의 검.", 10, 100),
-                new Armor("브리간딘 갑옷", 35, "방어력", "부드러운 가죽이나 천 안쪽에 작은 쇠판을 리벳으로 고정시킨 형태의 갑옷.", 15, 100),
             };
         }
 
         //직업 변환
-        private Job ConvertJob(int jobType)
+        private Job ConvertJob(int jobType, int savedHp, float savedAttack, int savedDefense)
         {
-            return jobType == 0 ? new Warrior() : new Mage();
+            return jobType == 0
+                ? new Warrior(null, savedHp, savedAttack, savedDefense)
+                : new Mage(null, savedHp, savedAttack, savedDefense);
         }
+
 
         public void DisplayStatus()
         {
@@ -110,7 +101,7 @@ namespace TextRPGTeam30
             if (equipWeapon != null)
             {
                 Console.Write($"공격력 : ");
-                GameManager.PrintColoredLine($"{Attack - equipWeapon.attack} (+{equipWeapon.attack})", ConsoleColor.Magenta);
+                GameManager.PrintColoredLine($"{Attack} (+{equipWeapon.attack})", ConsoleColor.Magenta);
             }
             else
             {
@@ -120,7 +111,7 @@ namespace TextRPGTeam30
             if (equipArmor != null)
             {
                 Console.Write("방어력 : ");
-                GameManager.PrintColoredLine($"{Defense - equipArmor.defense} (+{equipArmor.defense})", ConsoleColor.Magenta);
+                GameManager.PrintColoredLine($"{Defense} (+{equipArmor.defense})", ConsoleColor.Magenta);
             }
             else
             {
@@ -188,7 +179,7 @@ namespace TextRPGTeam30
                 damage *= 1.6f;
             }
 
-            damage *= 200f / (200 + Defense);
+            damage *= 200f / (200 + GetDefense());
 
             int finalDamage = (int)Math.Round(damage);
 
@@ -221,19 +212,31 @@ namespace TextRPGTeam30
             {
                 int levelAdd = exp / requiredAmount;
 
-                Console.WriteLine($"축하합니다! 레벨이 {levelAdd} 올랐습니다!");
-                Console.WriteLine("체력과 마나가 회복되었습니다!");
-                
+                Console.WriteLine($" 축하합니다! 레벨이 {levelAdd} 올랐습니다!");
+                Console.WriteLine(" 체력과 마나가 회복되었습니다!");
+
                 Level += levelAdd;
                 exp = e % requiredAmount;
+
+                // ✅ 레벨업 시에만 최대 체력 & 최대 마나 증가
+                MaxHP += levelAdd * 5;
+                maxMp += levelAdd * 2;
+
+                Hp = MaxHP;  // ✅ 레벨업 후 체력 회복
+                mp = maxMp;  // ✅ 레벨업 후 마나 회복
                 Attack += levelAdd * 0.5f;
                 Defense += levelAdd * 1;
-                Hp = MaxHP += levelAdd * 5;
-                mp = maxMp += levelAdd * 2;
 
+                // ✅ 레벨업할 때만 `MaxHP`, `MaxMP` 업데이트 저장
+                GameSaveManager saveManager = new GameSaveManager();
+                saveManager.SaveMaxHPMP(this);
+
+                Console.WriteLine($"새로운 상태: HP={Hp}/{MaxHP}, MP={mp}/{maxMp}");
                 Thread.Sleep(500);
             }
         }
+
+
 
         public void ResetdStat()
         {
@@ -256,18 +259,15 @@ namespace TextRPGTeam30
         {
             if (equipWeapon == weapon)//장착해제
             {
-                this.Attack -= equipWeapon.attack;
                 equipWeapon = null;
             }
             else//장착
             {
                 if (equipWeapon != null)
                 {
-                    this.Attack -= equipWeapon.attack;
                     equipWeapon.Toggle();
                 }
                 equipWeapon = weapon;
-                this.Attack += equipWeapon.attack;
             }
         }
 
@@ -275,34 +275,38 @@ namespace TextRPGTeam30
         {
             if (equipArmor == armor)//장착해제
             {
-                this.Defense -= equipArmor.defense;
                 equipArmor = null;
             }
             else//장착
             {
                 if (equipArmor != null)
                 {
-                    this.Defense -= equipArmor.defense;
                     equipArmor.Toggle();
                 }
                 equipArmor = armor;
-                this.Defense += equipArmor.defense;
             }
         }
 
         public void Equip(Equipable equipable)
         {
-            equipable.Toggle();//equipable의 장착 상태 변경
-
-            if (equipable is Weapon)//무기일때
+            if (equipable == null)
             {
-                EquipWeapon((Weapon) equipable);
+                Console.WriteLine("선택한 아이템을 장착할 수 없습니다.");
+                return;
             }
-            else//방어구 일때
+
+            equipable.Toggle(); //장비 상태 변경
+
+            if (equipable is Weapon weapon)
             {
-                EquipArmor((Armor) equipable);
+                EquipWeapon(weapon);
+            }
+            else if (equipable is Armor armor)
+            {
+                EquipArmor(armor);
             }
         }
+
 
         public void DisplayInventory() // 인벤토리 상태
         {
@@ -310,6 +314,7 @@ namespace TextRPGTeam30
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine("================인벤토리===========================");
+
             if (inventory.Count == 0)
             {
                 Console.WriteLine("인벤토리가 비어 있습니다.");
@@ -320,33 +325,61 @@ namespace TextRPGTeam30
                 foreach (var item in inventory)
                 {
                     Console.Write($"{++num}. ");
-                    if (item is Equipable equipable)
+
+                    if (item is Equipable)
                     {
-                        if (equipable.isEquip)
+                        // 착용 여부 확인 후 [E] 표시
+                        if (equipWeapon == item || equipArmor == item)
                         {
-                            GameManager.PrintColored("[E]", ConsoleColor.Magenta);
+                            GameManager.PrintColored("[E] ", ConsoleColor.Magenta);
                         }
                         else
                         {
-                            Console.Write("   ");
+                            Console.Write("    ");
                         }
-                        Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
+                        Console.WriteLine($"이름: {item.itName}({item.itType} + {item.itAbility}), 설명: {item.itInfo}");
+                    }
+                    else if (item is Consumable consumable) 
+                    {
+                        Console.WriteLine($"    이름: {item.itName}, 남은 갯수: {consumable.itemCount}, 설명: {item.itInfo}");
                     }
                 }
                 Console.WriteLine();
                 Console.WriteLine("=================================================");
             }
 
-            Console.WriteLine("0. 돌아가기");
-            GameManager.CheckWrongInput(out int select, 0, num);
-            if (select == 0)
+            while (true) // 유효한 선택을 받을 때까지 반복
             {
-                return;
+                Console.WriteLine("0. 돌아가기");
+                GameManager.CheckWrongInput(out int select, 0, num);
+
+                if (select == 0)
+                {
+                    return;
+                }
+
+                Item selectedItem = inventory[select - 1];
+
+                // 선택한 아이템이 장비 가능한 경우에만 캐스팅
+                if (selectedItem is Equipable equipableItem)
+                {
+                    Equip(equipableItem);
+                    break; // 정상적으로 장비했으면 루프 탈출
+                }
+                else if(selectedItem is Consumable consumableItem)
+                {
+                    UsePotion(consumableItem);
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("이 아이템은 장비할 수 없습니다. 다시 선택하세요.");
+                }
             }
 
-            Equip((Equipable)inventory[select - 1]);
-            DisplayInventory();
+            DisplayInventory(); // 인벤토리 화면 갱신
         }
+
 
         public bool UseGold(int price)
         {
@@ -374,6 +407,10 @@ namespace TextRPGTeam30
                 Hp = Math.Min(MaxHP, Hp + recovery);
                 Console.WriteLine($"회복! 남은 포션: {--HPotion.itemCount}");
                 Console.WriteLine($"현재 체력: {Hp}/{MaxHP}");
+                if(HPotion.itemCount == 0)
+                {
+                    inventory.Remove(HPotion);
+                }
             }
             else if (consumable is ManaPotion MPotion && MPotion.itemCount > 0)
             {
@@ -382,11 +419,33 @@ namespace TextRPGTeam30
                 mp = Math.Min(maxMp, mp + recovery);
                 Console.WriteLine($"회복! 남은 포션: {--MPotion.itemCount}");
                 Console.WriteLine($"현재 체력: {mp}/{maxMp}");
+                if (MPotion.itemCount == 0)
+                {
+                    inventory.Remove(MPotion);
+                }
             }             
             else
             {
                 Console.WriteLine("포션이 부족합니다.");
             }
-        }        
+        }
+        
+        public float GetAttack()
+        {
+            if (equipWeapon != null)
+            {
+                return Attack + equipWeapon.attack + DAttack;
+            }
+            return Attack + DAttack;
+        }
+
+        public float GetDefense()
+        {
+            if (equipArmor != null)
+            {
+                return Defense + equipArmor.defense + DDefense;
+            }
+            return Defense + DDefense;
+        }
     }
 }

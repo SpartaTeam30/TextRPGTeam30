@@ -7,9 +7,10 @@
             name = "베기";
             damageModifier = 1.5f;
             cost = 10;
+            count = 1;
         }
 
-        public Slash(float damageModifier, int cost) : base(damageModifier, cost)
+        public Slash(float damageModifier, int cost, int count) : base(damageModifier, cost, count)
         {
 
         }

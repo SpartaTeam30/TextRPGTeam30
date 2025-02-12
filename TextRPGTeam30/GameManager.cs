@@ -1,10 +1,10 @@
-﻿namespace TextRPGTeam30
+namespace TextRPGTeam30
 {
     public class GameManager
     {
         public Player player;
         public DungeonManager dManager;
-        public QuestManager questManager;
+      // public QuestManager questManager;
         public Shop shop;
 
         public GameManager()
@@ -65,7 +65,7 @@
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
             dManager = new DungeonManager(player);
-            questManager = new QuestManager();
+       //     questManager = new QuestManager(player.Name);
             shop = new Shop(player);
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
@@ -77,13 +77,17 @@
             Console.Clear();
             PrintColoredLine("마을", ConsoleColor.Green);
             Console.WriteLine("이곳에서는 다양한 활동을 할 수 있습니다.\n");
+            GameSaveManager saveManager = new GameSaveManager();
+            saveManager.SaveGame(player, player.JobType);
 
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리 보기");
             Console.WriteLine("3. 전투 시작");
             Console.WriteLine("4. 퀘스트");
             Console.WriteLine("5. 상점");
-            CheckWrongInput(out int select, 1, 5);
+            Console.WriteLine("0. 종료하기");
+            CheckWrongInput(out int select, 0, 5);
+           
 
             switch (select)
             {
@@ -97,10 +101,15 @@
                     dManager.DungeonStart();
                     break;
                 case 4:
-                    questManager.Questscreen();
+               //     questManager.Questscreen();
                     break;
                 case 5:
                     shop.PrintShop();
+                    break;
+                case 0:
+                    Console.WriteLine("게임을 저장하고 종료합니다...");
+                    saveManager.SaveGame(player, player.JobType);
+                    Environment.Exit(0);
                     break;
             }
         }

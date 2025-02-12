@@ -60,7 +60,7 @@
                 Console.Write($"{item.itName,-10} | ");
                 Console.Write(item is Weapon ? $"공격력 +{item.itAbility} | " : $"방어력 +{item.itAbility} | ");
                 bool isSelled = player.inventory.Exists(eq => eq.itName == item.itName);
-                Console.Write($"{item.itInfo,-15} | {(isSelled ? "구매완료" : $"{item.Price} G")}\n");
+                Console.Write($"{item.itInfo,-15} | {(isSelled && item is Equipable ? "구매완료" : $"{item.Price} G")}\n");
             }
         }
 
@@ -101,10 +101,11 @@
 
             GameManager.CheckWrongInput(out int select, 0, items.Count);
             if (select == 0) PrintShop();
-            else BuyItem(select);
+            else if (items[select - 1] is Equipable) BuyEquipableItem(select);
+            else BuyConsumableItem(select);
         }
 
-        public void BuyItem(int select)//아이템 구매
+        public void BuyEquipableItem(int select)//아이템 구매
         {
             bool isSelled = false;
             foreach (Item eq in player.inventory)
@@ -121,6 +122,36 @@
             {
                 player.inventory.Add(items[select - 1]);
                 player.inventory.Last().Price = (int)(player.inventory.Last().Price * 0.85f);
+            }
+
+            SelectBuyItems();
+        }
+
+        public void BuyConsumableItem(int select)//아이템 구매
+        {
+            bool isSelled = false;
+            Consumable consumable = null;
+
+            if (player.UseGold(items[select - 1].Price))
+            {
+                foreach (Item eq in player.inventory)
+                {
+                    if (eq.itName == items[select - 1].itName)
+                    {
+                        isSelled = true;
+                        consumable = (Consumable)eq;
+                        break;
+                    }
+                }
+                if (isSelled)
+                {
+                    consumable.itemCount++;
+                }
+                if (!isSelled)
+                {
+                    player.inventory.Add(items[select - 1]);
+                    player.inventory.Last().Price = (int)(player.inventory.Last().Price * 0.85f);
+                }
             }
 
             SelectBuyItems();
@@ -143,7 +174,7 @@
                 Console.Write($"{item.itName,-10} | ");
                 if (item is Weapon) Console.Write($"공격력 +{item.itAbility} | ");
                 else Console.Write($"방어력 +{item.itAbility} | ");
-                Console.Write(item.itInfo  + " | ");
+                Console.Write(item.itInfo + " | ");
                 Console.WriteLine(item.Price + " G");
             }
 
@@ -151,10 +182,11 @@
 
             GameManager.CheckWrongInput(out int select, 0, player.inventory.Count);
             if (select == 0) PrintShop();
-            else SellItem(select);
+            else if (player.inventory[select - 1] is Equipable) SellEquipItem(select);
+            else SellConsumableItem(select);
         }
 
-        public void SellItem(int select)//아이템 판매
+        public void SellEquipItem(int select)//아이템 판매
         {
             Item item = player.inventory[select - 1];
             if (player.equipWeapon is not null && player.equipWeapon.itName == item.itName) player.equipWeapon = null;
@@ -162,6 +194,25 @@
             //판매
             player.gold += item.Price;
             player.inventory.Remove(item);
+
+            SelectSellItems();
+        }
+
+        public void SellConsumableItem(int select)//아이템 판매
+        {
+            Item item = player.inventory[select - 1];
+            if(item is not null && item is Consumable c)
+            {
+                player.gold += item.Price;
+                if (c.itemCount > 1)
+                {
+                    c.itemCount--;
+                }
+                else
+                {
+                    player.inventory.Remove(item);
+                }
+            }
 
             SelectSellItems();
         }
