@@ -317,41 +317,7 @@ namespace TextRPGTeam30
                 }
             }
 
-            int targetHp = target.Hp;
-
-            PrintTitle();
-            Console.WriteLine($"{player.Name}의 공격!");
-
-            target.TakeDamage(_attack, player.CritRate, isSkill);
-
-            Console.Write("Lv.");
-            GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
-            Console.WriteLine($" {target.Name}");
-            Console.Write("HP ");
-            GameManager.PrintColored($"{targetHp}", ConsoleColor.Magenta);
-            Console.Write(" -> ");
-
-            if (target.Hp > 0)
-            {
-                GameManager.PrintColored($"{target.Hp}", ConsoleColor.Magenta);
-            }
-            else
-            {
-                deadMonster++;
-                Console.WriteLine("Dead");
-
-                //  퀘스트 진행도 업데이트
-                bool isBoss = bossMonsters.Contains(target); // 보스 몬스터인지 확인
-                QuestManager.Instance.OnMonsterKilled(isBoss);
-            }
-
-            Console.WriteLine("\n0. 다음\n");
-            GameManager.CheckWrongInput(out con, 0, 0);
-
-            if (target.Hp <= 0)
-            {
-                target.Dead();
-            }
+            PlayerAttack(target, _attack, isSkill);
         }
 
         public void SelectTargetMulti(float _attack, bool isSkill, int count)//타겟 설정
