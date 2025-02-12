@@ -13,9 +13,10 @@ namespace TextRPGTeam30
             name = "크래쉬 아머";
             damageModifier = 3.5f;
             cost = 40;
+            count = 1;
         }
 
-        public Crash_armor(float damageModifier, int cost) : base(damageModifier, cost)
+        public Crash_armor(float damageModifier, int cost, int count) : base(damageModifier, cost, count)
         {
 
         }              

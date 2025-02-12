@@ -13,9 +13,10 @@ namespace TextRPGTeam30
             name = "그레이스틸";
             damageModifier = 4.0f;
             cost = 30;
+            count = 3;
         }
 
-        public Greysteel(float damageModifier, int cost) : base(damageModifier, cost)
+        public Greysteel(float damageModifier, int cost, int count) : base(damageModifier, cost, count)
         {
 
         }

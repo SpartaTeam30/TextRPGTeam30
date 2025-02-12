@@ -13,8 +13,9 @@ namespace TextRPGTeam30
             name = "다리 걸기";
             dAttack = (int)1.0f;
             cost = 5;
+            count = 1;
         }
-        public Leg_Trip(int cost, int dAttack, int dDefense) : base(cost, dAttack, dDefense)
+        public Leg_Trip(int cost, int dAttack, int dDefense, int count) : base(cost, dAttack, dDefense, count)
         {
 
         }

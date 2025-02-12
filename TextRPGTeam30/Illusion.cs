@@ -13,8 +13,9 @@ namespace TextRPGTeam30
             name = "일루전";
             dAttack = (int)1.5f;
             cost = 20;
+            count = 1;
         }
-        public Illusion(int cost, int dAttack, int dDefense) : base(cost, dAttack, dDefense)
+        public Illusion(int cost, int dAttack, int dDefense, int count) : base(cost, dAttack, dDefense, count)
         {
 
         }

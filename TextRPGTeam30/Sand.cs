@@ -13,8 +13,9 @@ namespace TextRPGTeam30
             name = "흙뿌리기";
             dAttack = (int)0.5f;
             cost = 5;
+            count = 3;
         }
-        public Sand(int cost, int dAttack, int dDefense) : base(cost, dAttack, dDefense)
+        public Sand(int cost, int dAttack, int dDefense, int count) : base(cost, dAttack, dDefense, count)
         {
 
         }

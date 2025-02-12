@@ -13,8 +13,9 @@ namespace TextRPGTeam30
             name = "디멘션 홀";
             damageModifier = 6.0f;
             cost = 100;
+            count = 1;
         }
-        public Dimension_Hall(float damageModifier, int cost) : base(damageModifier, cost)
+        public Dimension_Hall(float damageModifier, int cost, int count) : base(damageModifier, cost, count)
         {
 
         }

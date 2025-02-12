@@ -14,9 +14,10 @@ namespace TextRPGTeam30
             name = "블리자드";
             damageModifier = 3.0f;
             cost = 25;
+            count = 3;
         }
 
-        public Blizzard(float damageModifier, int cost) : base(damageModifier, cost)
+        public Blizzard(float damageModifier, int cost, int count) : base(damageModifier, cost, count)
         {
 
         }
