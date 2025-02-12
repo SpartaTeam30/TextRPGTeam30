@@ -13,6 +13,7 @@ namespace TextRPGTeam30
             name = "프레이";
             dAttack = (int) 1.0f;
             cost = 15;
+            count = 1;
         }
 
         public Frey(int cost, int dAttack, int dDefense, int count) : base(cost, dAttack, dDefense, count)
