@@ -136,7 +136,7 @@
             Console.WriteLine("\n[캐릭터 정보]");
             Console.Write($"Lv.");
             GameManager.PrintColored($"{player.Level}", ConsoleColor.Magenta);
-            Console.WriteLine($"  {player.Name} ()");
+            Console.WriteLine($"  {player.Name}({player.job.name})");
             Console.Write("HP ");
             GameManager.PrintColoredLine($"{player.Hp}/{player.MaxHP}", ConsoleColor.Magenta);
             Console.Write("MP ");

@@ -83,7 +83,7 @@ namespace TextRPGTeam30
             PrintColoredLine("마을", ConsoleColor.Green);
             Console.WriteLine("이곳에서는 다양한 활동을 할 수 있습니다.\n");
             GameSaveManager saveManager = new GameSaveManager();
-            saveManager.SaveGame(player);
+            saveManager.SaveGame(player, player.JobType);
 
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리 보기");
@@ -128,7 +128,7 @@ namespace TextRPGTeam30
                     break;
                 case 0:
                     Console.WriteLine("게임을 저장하고 종료합니다...");
-                    saveManager.SaveGame(player);
+                    saveManager.SaveGame(player, player.JobType);
                     Environment.Exit(0);
                     break;
             }
