@@ -4,7 +4,6 @@ namespace TextRPGTeam30
     {
         public Player player;
         public DungeonManager dManager;
-      // public QuestManager questManager;
         public Shop shop;
         public static GameManager Instance { get; private set; }
 
@@ -72,6 +71,7 @@ namespace TextRPGTeam30
             dManager = new DungeonManager(player);
             QuestManager.Instance.Initialize(player.Name);
             shop = new Shop(player);
+            QuestManager.Instance.player = player;
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
             Thread.Sleep(500);

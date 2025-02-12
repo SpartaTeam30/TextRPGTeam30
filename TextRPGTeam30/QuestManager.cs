@@ -4,6 +4,7 @@ namespace TextRPGTeam30
 {
     public class QuestManager
     {
+        public Player player { get; set; }
         private static QuestManager _instance;
         public static QuestManager Instance
         {
@@ -57,8 +58,10 @@ namespace TextRPGTeam30
         {
             { "몬스터", new List<Quest>
                 {// ID, 퀘스트 명칭, 설명, 완료조건,진행상황, 보상(아이템, 골드, 경험치, 퀘스트 상태, 퀘스트타입)
-                    new Quest(1, "일반 몬스터 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 50, 3, 0, 0),
-                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 50, 3, 0, 1)
+                    new Quest(1, "일반 몬스터 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 9,
+                        new Armor("녹색 망토", 20, "방어력", "숲에서 몸을 숨기고 기습하는 데에 최적인 녹색 망토.", 10, 100), 50, 3, 0, 0),
+                    
+                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, null, 50, 3, 0, 1)
                 }
             },
             { "장비", new List<Quest>
@@ -69,8 +72,8 @@ namespace TextRPGTeam30
             },
             { "레벨업", new List<Quest>
                 {
-                    new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 1, "목장갑", 0, 0, 1, 5),
-                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 1, "나무견갑", 0, 0, 1, 5)
+                    new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 1, null, 0, 0, 1, 5),
+                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 1, null, 0, 0, 1, 5)
                 }
             }
         };

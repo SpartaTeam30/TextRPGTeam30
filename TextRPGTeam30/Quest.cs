@@ -8,14 +8,14 @@
         public string Description { get; set; }                // 퀘스트 설명
         public int Condition { get; set; }                     //완료조건
         public int Progress { get; set; }                      //진행 상황
-        public string RewardItem { get; set; }                 //보상 아이템
+        public Item RewardItem { get; set; }                 //보상 아이템
         public int RewardGold { get; set; }                    //보상 골드
         public int RewardExp { get; set; }                     //보상 경험치
         public int Status { get; set; }                        //퀘스트 상태 0=미수락,1=진행중,2=완료,3=보상수령완료
 
         public int Type { get; set; }                          //퀘스트 타입 0=일반 몬스터, 1 = 보스몬스터, 3= 무기 장착, 4= 방어구 장착, 5= 레벨링 
 
-        public Quest(int id, string name, string description, int condition, int progress, string rewardItem, int rewardGold, int rewardExp, int status, int type)
+        public Quest(int id, string name, string description, int condition, int progress, Item rewardItem, int rewardGold, int rewardExp, int status, int type)
         {
             Id = id;
             Name = name;
@@ -45,7 +45,7 @@
             }
 
             Console.WriteLine("\n보상");
-            Console.WriteLine($"아이템: {RewardItem ?? "없음"}");
+            Console.WriteLine($"아이템: {RewardItem.itName ?? "없음"}");
             Console.WriteLine($"골드: {RewardGold} G");
             Console.WriteLine($"경험치: {RewardExp} EXP");
             Console.WriteLine("==============================================");
@@ -77,11 +77,19 @@
             else if (Status == 2 && choice == 1)
             {
                 Status = 3; // 보상 수령 완료
+                QuestReward();
                 Console.WriteLine("보상을 받았습니다!");
                 isUpdated = true;
             }
             return isUpdated;
         }
 
+        public void QuestReward()
+        {
+            QuestManager.Instance.player.inventory.Add(RewardItem);
+            QuestManager.Instance.player.exp += RewardExp;
+            QuestManager.Instance.player.gold += RewardGold;
+            return;
+        }
     }
 }
