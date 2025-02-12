@@ -38,7 +38,14 @@
                 Console.Write("- ");
                 if (adjustFlag) Console.Write($"{i + 1} ");
                 Console.Write($"{item.itName,-10} | ");
-                Console.Write(item is Weapon ? $"공격력 +{item.itAbility} | " : $"방어력 +{item.itAbility} | ");
+                if (item is Equipable)
+                {
+                    Console.Write(item is Weapon ? $"공격력 +{item.itAbility} | " : $"방어력 +{item.itAbility} | ");
+                }
+                else if(item is Consumable)
+                {
+                    Console.Write($"{item.itType} {item.itAbility} | ");
+                }
                 bool isSelled = player.inventory.Exists(eq => eq.itName == item.itName);
                 Console.Write($"{item.itInfo,-15} | {(isSelled && item is Equipable ? "구매완료" : $"{item.Price} G")}\n");
             }
