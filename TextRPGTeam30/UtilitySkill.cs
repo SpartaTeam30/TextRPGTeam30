@@ -18,29 +18,32 @@
 
         public void UseSkill(ICharacter target)
         {
-            base.UseSkill();
-            
+            PrintUseSkill(target);
             target.ApplydStat(this);
         }
 
         public void UseSkill(List<ICharacter> targets)
         {
-            base.UseSkill();
             foreach (ICharacter target in targets)
             {
+                PrintUseSkill(target);
                 UseSkill(target);
             }
         }
 
         public void UseSkill(List<ICharacter> targets, int count)
         {
-            base.UseSkill();
-
             targets.OrderBy(x => new Random().Next());
             for(int i = 0; i < count; i++)
             {
+                PrintUseSkill(targets[i]);
                 UseSkill(targets[i]);
             }
+        }
+
+        public virtual void PrintUseSkill(ICharacter target)
+        {
+
         }
     }
 }

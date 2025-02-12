@@ -13,9 +13,9 @@ namespace TextRPGTeam30
         // public override void Use()
         // 방어구 사용 로직 Console.WriteLine($"{Name}을(를) 착용했습니다. 방어력 +{DefenseBonus}");
 
-        public Armor(string _ItName, int _ItAbility, string _ItType, string _ItInfo, int _defense, int price) : base(_ItName, _ItAbility, _ItType, _ItInfo, price)
+        public Armor(string _ItName, int _ItAbility, string _ItType, string _ItInfo, int price) : base(_ItName, _ItAbility, _ItType, _ItInfo, price)
         {
-            defense = _defense;
+            defense = itAbility;
         }
 
         public void Toggle()

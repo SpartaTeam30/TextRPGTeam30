@@ -77,7 +77,6 @@ namespace TextRPGTeam30
             job.ResetStat(this);
             inventory = new List<Item>()
             {
-
             };
         }
 
@@ -260,18 +259,15 @@ namespace TextRPGTeam30
         {
             if (equipWeapon == weapon)//장착해제
             {
-                this.Attack -= equipWeapon.attack;
                 equipWeapon = null;
             }
             else//장착
             {
                 if (equipWeapon != null)
                 {
-                    this.Attack -= equipWeapon.attack;
                     equipWeapon.Toggle();
                 }
                 equipWeapon = weapon;
-                this.Attack += equipWeapon.attack;
             }
         }
 
@@ -341,7 +337,7 @@ namespace TextRPGTeam30
                         {
                             Console.Write("    ");
                         }
-                        Console.WriteLine($"이름: {item.itName}, 설명: {item.itInfo}");
+                        Console.WriteLine($"이름: {item.itName}({item.itType} + {item.itAbility}), 설명: {item.itInfo}");
                     }
                     else if (item is Consumable consumable) 
                     {
