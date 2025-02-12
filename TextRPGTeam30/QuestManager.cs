@@ -170,11 +170,8 @@ namespace TextRPGTeam30
                 Quest selectedQuest = quests[select - 1];
 
                 // 🔥 퀘스트 수락 시, 플레이어 레벨 및 장착 상태 확인
-                if (selectedQuest.Status == 0) // 미수락 상태라면
+                if (selectedQuest.Status == 1) 
                 {
-                   // selectedQuest.Status = 1; // 퀘스트 수락 처리
-                   // Console.WriteLine($"'{selectedQuest.Name}' 퀘스트를 수락했습니다!");
-
                     // 현재 플레이어 상태를 체크하여 즉시 퀘스트 진행도 반영
                     if (selectedQuest.Type == 3 && GameManager.Instance.player.equipWeapon != null)
                     {
