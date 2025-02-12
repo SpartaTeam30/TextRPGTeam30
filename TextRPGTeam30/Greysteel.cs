@@ -8,7 +8,7 @@ namespace TextRPGTeam30
 {
     internal class Greysteel : OffensiveSkill
     {
-        public Greysteel() // 검날이 창백하게 빛나면서 거대한 폭발을 일으키는 전사의 스킬
+        public Greysteel() // 검날이 창백하게 빛나면서 거대한 폭발을 일으키는 다인 스킬.
         {
             name = "그레이스틸";
             damageModifier = 4.0f;

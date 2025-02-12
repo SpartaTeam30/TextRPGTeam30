@@ -6,9 +6,9 @@
         {
             name = "전사";
             skills.Add(new Slash());
-            hp = 100;
-            attack = 10;
-            defense = 10;
+            hp = 150;
+            attack = 35;
+            defense = 40;
         }
 
         public Warrior(Skill skill, int hp, float attack, float defense) : base(skill, hp, attack, defense)
