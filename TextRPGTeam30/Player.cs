@@ -211,7 +211,7 @@ namespace TextRPGTeam30
 
         public void LevelUp(int e)
         {
-            int requiredAmount = Level == 1 ? 10 : Level * 5 + 25;
+            int requiredAmount = Level * 5 + 5;
             exp += e;
 
             if (exp >= requiredAmount)
@@ -223,6 +223,7 @@ namespace TextRPGTeam30
 
                 Level += levelAdd;
                 exp = e % requiredAmount;
+                QuestManager.Instance.OnPlayerLevelUp();
 
                 // ✅ 레벨업 시에만 최대 체력 & 최대 마나 증가
                 MaxHP += levelAdd * 5;

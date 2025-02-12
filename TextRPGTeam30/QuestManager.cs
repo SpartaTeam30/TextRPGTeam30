@@ -56,21 +56,21 @@ namespace TextRPGTeam30
             var defaultQuests = new Dictionary<string, List<Quest>>
         {
             { "몬스터", new List<Quest>
-                {// ID, 퀘스트 명칭, 설명, 완료조건,진행상황, 보상(아이템, 골드, 경험치, 퀘스트 상태, 타입)
-                    new Quest(1, "일반 몬스터 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 5, 3, 0, 0),
-                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 5, 3, 0, 1)
+                {// ID, 퀘스트 명칭, 설명, 완료조건,진행상황, 보상(아이템, 골드, 경험치, 퀘스트 상태, 퀘스트타입)
+                    new Quest(1, "일반 몬스터 처치", " 몬스터가 너무 많아 10마리를 처치하세요.", 10, 0, "나무방패", 50, 3, 0, 0),
+                    new Quest(2, "보스 처치", " 보스를 처치하여 위협을 제거하세요.", 1, 0, "나무 칼", 50, 3, 0, 1)
                 }
             },
             { "장비", new List<Quest>
                 {
-                    new Quest(3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 5, 3, 0, 3),
-                    new Quest(4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 5, 3, 0, 4)
+                    new Quest(3, "무기 장비 장착", " 무기를 장착하여 전투 준비를 하세요.", 1, 0, null, 50, 3, 0, 3),
+                    new Quest(4, "방어구 장비 장착", " 방어구를 장착하여 방어력을 높이세요.", 1, 0, null, 50, 3, 0, 4)
                 }
             },
             { "레벨업", new List<Quest>
                 {
-                    new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 0, "목장갑", 15, 0, 0, 5),
-                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 0, "나무견갑", 15, 0, 0, 5)
+                    new Quest(5, "레벨 5 달성", " 캐릭터 레벨을 5까지 올리세요.", 5, 1, "목장갑", 0, 0, 1, 5),
+                    new Quest(6, "레벨 10 달성", " 캐릭터 레벨을 10까지 올리세요.", 10, 1, "나무견갑", 0, 0, 1, 5)
                 }
             }
         };
@@ -85,7 +85,7 @@ namespace TextRPGTeam30
             {
                 string jsonData = JsonConvert.SerializeObject(QuestCategories, Formatting.Indented);
                 File.WriteAllText(QuestFilePath, jsonData);
-                Console.WriteLine($"✅ {QuestFilePath} 저장 완료!");
+                //Console.WriteLine($"✅ {QuestFilePath} 저장 완료!");
             }
             catch (Exception e)
             {
@@ -169,8 +169,8 @@ namespace TextRPGTeam30
                 // 🔥 퀘스트 수락 시, 플레이어 레벨 및 장착 상태 확인
                 if (selectedQuest.Status == 0) // 미수락 상태라면
                 {
-                    selectedQuest.Status = 1; // 퀘스트 수락 처리
-                    Console.WriteLine($"'{selectedQuest.Name}' 퀘스트를 수락했습니다!");
+                   // selectedQuest.Status = 1; // 퀘스트 수락 처리
+                   // Console.WriteLine($"'{selectedQuest.Name}' 퀘스트를 수락했습니다!");
 
                     // 현재 플레이어 상태를 체크하여 즉시 퀘스트 진행도 반영
                     if (selectedQuest.Type == 3 && GameManager.Instance.player.equipWeapon != null)
@@ -252,9 +252,9 @@ namespace TextRPGTeam30
             UpdateQuestProgress(4, 1);
         }
 
-        public void OnPlayerLevelUp(int level)
+        public void OnPlayerLevelUp()
         {
-            UpdateQuestProgress(5, level);
+            UpdateQuestProgress(5, 1);
         }
     }
 }
