@@ -80,15 +80,30 @@ public class 배경음 : ISoundPlayer // 🔥 ISoundPlayer 추가
 
     public void Stop()
     {
-        if (hWaveOut != IntPtr.Zero)
+        if (hWaveOut != IntPtr.Zero) // 🔥 이미 닫힌 상태라면 실행 안 함
         {
             Console.WriteLine("[배경음] 재생 중단");
 
-            waveOutReset(hWaveOut); // 🔥 즉시 중단 추가
-            waveOutClose(hWaveOut); // 🔥 장치 닫기
+            int result = waveOutReset(hWaveOut); // 🔥 즉시 중단
+            if (result != 0)
+            {
+                Console.WriteLine($"[배경음] waveOutReset 실패: {result}"); // 🔥 오류 로그 추가
+            }
+
+            result = waveOutClose(hWaveOut); // 🔥 사운드 장치 닫기
+            if (result != 0)
+            {
+                Console.WriteLine($"[배경음] waveOutClose 실패: {result}"); // 🔥 오류 로그 추가
+            }
+
             hWaveOut = IntPtr.Zero; // 🔥 핸들 초기화
         }
+        else
+        {
+            Console.WriteLine("[배경음] 이미 중지됨"); // ✅ 중복 호출 방지
+        }
     }
+
 
     private static void GenerateBackgroundBGM(double[] buffer, int sampleRate, int durationSeconds)
     {

@@ -170,6 +170,7 @@ namespace TextRPGTeam30
                 Console.Write($"{dungeon.rewardEquip.itName} - ");
                 GameManager.PrintColoredLine("1", ConsoleColor.Magenta);
             }
+            SoundManager.Instance.StopSound("dungeonBGM");
             Console.WriteLine("\n0. 다음\n");
             GameManager.CheckWrongInput(out int con, 0, 0);
         }

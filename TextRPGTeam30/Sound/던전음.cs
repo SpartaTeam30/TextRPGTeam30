@@ -9,7 +9,6 @@ public class 던전음 : ISoundPlayer
     const int WAVE_MAPPER = -1;
 
     private IntPtr hWaveOut = IntPtr.Zero; // 🔥 클래스 멤버 변수로 유지
-    private bool isPlaying = false; // 🔥 재생 중인지 확인하는 변수
 
     [StructLayout(LayoutKind.Sequential)]
     public class WAVEFORMATEX
@@ -59,13 +58,10 @@ public class 던전음 : ISoundPlayer
 
     public void Play()
     {
-        if (isPlaying) return; // 🔥 이미 재생 중이라면 중복 실행 방지
-        isPlaying = true;
-
-        Console.WriteLine("[던전음] Play() 실행됨");
+        Console.WriteLine("[BackgroundBGM] Play() 실행됨");
 
         int sampleRate = 44100;
-        int durationSeconds = 30;
+        int durationSeconds = 30; // 전체 재생 시간: 30초
         int totalSamples = sampleRate * durationSeconds;
         double[] mixBuffer = new double[totalSamples];
 
@@ -85,14 +81,27 @@ public class 던전음 : ISoundPlayer
 
     public void Stop()
     {
-        if (!isPlaying) return; // 🔥 재생 중이 아닐 때는 아무 작업도 하지 않음
-        isPlaying = false;
-
-        if (hWaveOut != IntPtr.Zero)
+        if (hWaveOut != IntPtr.Zero) // 🔥 이미 닫힌 상태라면 실행 안 함
         {
-            Console.WriteLine("[던전음] 재생 중단");
-            waveOutClose(hWaveOut); // 🔥 사운드 장치 닫기
+            Console.WriteLine("[배경음] 재생 중단");
+
+            int result = waveOutReset(hWaveOut); // 🔥 즉시 중단
+            if (result != 0)
+            {
+                Console.WriteLine($"[배경음] waveOutReset 실패: {result}"); // 🔥 오류 로그 추가
+            }
+
+            result = waveOutClose(hWaveOut); // 🔥 사운드 장치 닫기
+            if (result != 0)
+            {
+                Console.WriteLine($"[배경음] waveOutClose 실패: {result}"); // 🔥 오류 로그 추가
+            }
+
             hWaveOut = IntPtr.Zero; // 🔥 핸들 초기화
+        }
+        else
+        {
+            Console.WriteLine("[배경음] 이미 중지됨"); // ✅ 중복 호출 방지
         }
     }
 
@@ -151,9 +160,9 @@ public class 던전음 : ISoundPlayer
         waveOutPrepareHeader(hWaveOut, ref header, (uint)Marshal.SizeOf(header));
         waveOutWrite(hWaveOut, ref header, (uint)Marshal.SizeOf(header));
 
-        while ((header.dwFlags & WHDR_DONE) == 0 && isPlaying) // 🔥 중단 요청 시 즉시 종료
+        while ((header.dwFlags & WHDR_DONE) == 0)
         {
-            Thread.Sleep(100);
+            Thread.Sleep(10);
         }
 
         waveOutUnprepareHeader(hWaveOut, ref header, (uint)Marshal.SizeOf(header));

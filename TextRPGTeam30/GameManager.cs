@@ -63,8 +63,6 @@ namespace TextRPGTeam30
 
         public void PrintStartScene()
         {
-            SoundManager.Instance.PlaySound("background");
-
             Console.Clear();
 
             GameSaveManager saveManager = new GameSaveManager();
@@ -80,6 +78,7 @@ namespace TextRPGTeam30
 
         public void StartSelect()
         {
+            SoundManager.Instance.PlaySound("background");
             Console.Clear();
             PrintColoredLine("마을", ConsoleColor.Green);
             Console.WriteLine("이곳에서는 다양한 활동을 할 수 있습니다.\n");
@@ -108,8 +107,6 @@ namespace TextRPGTeam30
                 case 3:
                     SoundManager.Instance.StopSound("background");
                     dManager.DungeonStart();
-                    SoundManager.Instance.StopSound("dungeonBGM");
-                    SoundManager.Instance.PlaySound("background");
                     break;
                 case 4:
                     QuestManager.Instance.Questscreen();
