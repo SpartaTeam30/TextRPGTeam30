@@ -89,6 +89,8 @@
             {
                 Console.WriteLine("\n");
             }
+
+            SoundManager.Instance.PlaySound("impact");
         }
 
         public void SetLevel(int level) 

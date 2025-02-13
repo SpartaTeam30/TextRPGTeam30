@@ -22,7 +22,7 @@ namespace TextRPGTeam30
             {
                 Console.Write("\n원하시는 행동을 입력해주세요.(숫자로 입력): ");
                 bool rightInput = int.TryParse(Console.ReadLine(), out select);
-
+                SoundManager.Instance.PlaySound("click");
                 if (!rightInput)
                 {
                     Console.WriteLine("입력이 잘못되었습니다. 다시 입력해주세요.");
@@ -63,6 +63,8 @@ namespace TextRPGTeam30
 
         public void PrintStartScene()
         {
+            SoundManager.Instance.PlaySound("background");
+
             Console.Clear();
 
             GameSaveManager saveManager = new GameSaveManager();
@@ -104,11 +106,12 @@ namespace TextRPGTeam30
                     player.DisplayInventory();
                     break;
                 case 3:
-                
+                    SoundManager.Instance.StopSound("background");
                     dManager.DungeonStart();
+                    SoundManager.Instance.StopSound("dungeonBGM");
+                    SoundManager.Instance.PlaySound("background");
                     break;
                 case 4:
-                   
                     QuestManager.Instance.Questscreen();
                     break;
                 case 5:
