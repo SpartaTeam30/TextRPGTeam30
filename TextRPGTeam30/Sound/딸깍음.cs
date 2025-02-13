@@ -55,7 +55,7 @@ public class 딸깍음 : ISoundPlayer // 🔥 ISoundPlayer 추가
 
     public void Play()
     {
-        Console.WriteLine("[ClickSound] Play() 실행됨");
+
 
         int sampleRate = 44100;
         int durationMilliseconds = 50; // 0.05초 (짧은 딸깍 소리)
@@ -80,7 +80,7 @@ public class 딸깍음 : ISoundPlayer // 🔥 ISoundPlayer 추가
     {
         if (hWaveOut != IntPtr.Zero)
         {
-            Console.WriteLine("[배경음] 재생 중단");
+
 
             waveOutReset(hWaveOut); // 🔥 즉시 중단 추가
             waveOutClose(hWaveOut); // 🔥 장치 닫기

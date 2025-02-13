@@ -41,7 +41,7 @@ public class SoundManager
             return;
         }
 
-        Console.WriteLine($"[SoundManager] {soundName} 재생 시작");
+  
 
         // 🔥 메인 스레드를 차단하지 않고, 비동기 실행
         Task.Run(() => soundScripts[soundName].Play());
@@ -53,9 +53,9 @@ public class SoundManager
     {
         if (soundScripts.ContainsKey(soundName))
         {
-            Console.WriteLine($"[SoundManager] '{soundName}' 중단 요청됨"); // ✅ 로그 추가
+          //  Console.WriteLine($"[SoundManager] '{soundName}' 중단 요청됨"); // ✅ 로그 추가
             soundScripts[soundName].Stop();
-            Console.WriteLine($"[SoundManager] '{soundName}' 중단 완료"); // ✅ 중단 완료 로그 추가
+            //Console.WriteLine($"[SoundManager] '{soundName}' 중단 완료"); // ✅ 중단 완료 로그 추가
         }
         else
         {

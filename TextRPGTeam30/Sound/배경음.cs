@@ -57,7 +57,6 @@ public class 배경음 : ISoundPlayer // 🔥 ISoundPlayer 추가
 
     public void Play()
     {
-        Console.WriteLine("[BackgroundBGM] Play() 실행됨");
 
         int sampleRate = 44100;
         int durationSeconds = 30; // 전체 재생 시간: 30초
@@ -82,7 +81,7 @@ public class 배경음 : ISoundPlayer // 🔥 ISoundPlayer 추가
     {
         if (hWaveOut != IntPtr.Zero) // 🔥 이미 닫힌 상태라면 실행 안 함
         {
-            Console.WriteLine("[배경음] 재생 중단");
+        
 
             int result = waveOutReset(hWaveOut); // 🔥 즉시 중단
             if (result != 0)
