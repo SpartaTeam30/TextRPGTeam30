@@ -63,8 +63,9 @@ namespace TextRPGTeam30
 
         public void PrintStartScene()
         {
-            Console.Clear();
+            SoundManager.Instance.PlaySound("background");
 
+            Console.Clear();
             GameSaveManager saveManager = new GameSaveManager();
             player = saveManager.LoadCharacter();
             dManager = new DungeonManager(player);
@@ -74,6 +75,8 @@ namespace TextRPGTeam30
 
             Console.WriteLine("이제 전투를 시작할 수 있습니다.");
             Thread.Sleep(500);
+
+            SoundManager.Instance.StopSound("background");
         }
 
         public void StartSelect()
@@ -93,7 +96,6 @@ namespace TextRPGTeam30
             Console.WriteLine("0. 종료하기");
             CheckWrongInput(out int select, 0, 5);
 
-
             switch (select)
             {
                 case 1:
@@ -107,6 +109,7 @@ namespace TextRPGTeam30
                 case 3:
                     SoundManager.Instance.StopSound("background");
                     dManager.DungeonStart();
+                    SoundManager.Instance.StopSound("dungeonBGM");
                     break;
                 case 4:
                     QuestManager.Instance.Questscreen();
@@ -121,6 +124,8 @@ namespace TextRPGTeam30
                     Environment.Exit(0);
                     break;
             }
+
+            SoundManager.Instance.StopSound("background");
         }
 
         private static List<String> startStory = new List<String>()//게임 시작 스토리
