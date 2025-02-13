@@ -67,7 +67,7 @@
                 damage *= 1.6f;
             }
 
-            damage *= 200f / (200 + Defense);
+            damage *= 200f / (200 + GetDefense());
 
             int finalDamage = (int)Math.Round(damage);
 
@@ -89,6 +89,8 @@
             {
                 Console.WriteLine("\n");
             }
+
+            SoundManager.Instance.PlaySound("impact");
         }
 
         public void SetLevel(int level) 
@@ -112,6 +114,16 @@
         public void Dead()
         {
 
+        }
+
+        public float GetAttack()
+        { 
+            return Attack + DAttack;
+        }
+
+        public float GetDefense()
+        {
+            return Defense + DDefense;
         }
     }
 }

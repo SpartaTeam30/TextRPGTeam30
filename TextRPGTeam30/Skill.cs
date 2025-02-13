@@ -3,16 +3,20 @@
     public class Skill
     {
         public string name;
+        public string description;
         public int cost;
+        public int count;
 
         public Skill()
         {
 
         }
 
-        public Skill(int cost)
+        public Skill(string desctiption, int cost, int count)
         {
+            this.description = desctiption;
             this.cost = cost;
+            this.count = count;
         }
 
         public void UseSkill()

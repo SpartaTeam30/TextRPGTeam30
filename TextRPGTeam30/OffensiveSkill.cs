@@ -9,7 +9,7 @@
 
         }
 
-        public OffensiveSkill(float damageModifier, int cost) : base(cost)
+        public OffensiveSkill(string description, float damageModifier, int cost, int count) : base(description, cost, count)
         {
             this.damageModifier = damageModifier;
         }
