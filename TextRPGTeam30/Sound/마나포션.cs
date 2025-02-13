@@ -34,6 +34,9 @@ public class 마나포션 : ISoundPlayer
     }
 
     [DllImport("winmm.dll")]
+    public static extern int waveOutReset(IntPtr hWaveOut); // 🔥 waveOutReset 추가
+
+    [DllImport("winmm.dll")]
     public static extern int waveOutOpen(out IntPtr hWaveOut, int uDeviceID, WAVEFORMATEX lpFormat,
                                          IntPtr dwCallback, IntPtr dwInstance, int dwFlags);
     [DllImport("winmm.dll")]
@@ -69,7 +72,14 @@ public class 마나포션 : ISoundPlayer
 
     public void Stop()
     {
-        waveOutClose(hWaveOut); // 🔥 클래스 멤버 변수 `hWaveOut` 사용
+        if (hWaveOut != IntPtr.Zero)
+        {
+            Console.WriteLine("[배경음] 재생 중단");
+
+            waveOutReset(hWaveOut); // 🔥 즉시 중단 추가
+            waveOutClose(hWaveOut); // 🔥 장치 닫기
+            hWaveOut = IntPtr.Zero; // 🔥 핸들 초기화
+        }
     }
 
     static void GenerateManaPotionSound(double[] buffer, int sampleRate)

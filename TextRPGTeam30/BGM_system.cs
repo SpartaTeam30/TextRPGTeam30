@@ -53,13 +53,16 @@ public class SoundManager
     {
         if (soundScripts.ContainsKey(soundName))
         {
+            Console.WriteLine($"[SoundManager] '{soundName}' 중단 요청됨"); // ✅ 로그 추가
             soundScripts[soundName].Stop();
+            Console.WriteLine($"[SoundManager] '{soundName}' 중단 완료"); // ✅ 중단 완료 로그 추가
         }
         else
         {
             Console.WriteLine($"[SoundManager] 사운드 '{soundName}' 를 찾을 수 없습니다.");
         }
     }
+
 }
 
 public interface ISoundPlayer

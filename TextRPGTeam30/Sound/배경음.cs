@@ -2,11 +2,13 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 
-public class 배경음 : ISoundPlayer
+public class 배경음 : ISoundPlayer // 🔥 ISoundPlayer 추가
 {
     const int CALLBACK_NULL = 0;
     const int WHDR_DONE = 0x00000001;
     const int WAVE_MAPPER = -1;
+
+    private IntPtr hWaveOut; // 🔥 클래스 멤버 변수 유지
 
     [StructLayout(LayoutKind.Sequential)]
     public class WAVEFORMATEX
@@ -34,92 +36,115 @@ public class 배경음 : ISoundPlayer
     }
 
     [DllImport("winmm.dll")]
+    public static extern int waveOutReset(IntPtr hWaveOut); // 🔥 waveOutReset 추가
+
+
+    [DllImport("winmm.dll")]
     public static extern int waveOutOpen(out IntPtr hWaveOut, int uDeviceID, WAVEFORMATEX lpFormat,
                                          IntPtr dwCallback, IntPtr dwInstance, int dwFlags);
+
+    [DllImport("winmm.dll")]
+    public static extern int waveOutPrepareHeader(IntPtr hWaveOut, ref WAVEHDR lpWaveOutHdr, uint uSize);
+
     [DllImport("winmm.dll")]
     public static extern int waveOutWrite(IntPtr hWaveOut, ref WAVEHDR lpWaveOutHdr, uint uSize);
+
+    [DllImport("winmm.dll")]
+    public static extern int waveOutUnprepareHeader(IntPtr hWaveOut, ref WAVEHDR lpWaveOutHdr, uint uSize);
+
     [DllImport("winmm.dll")]
     public static extern int waveOutClose(IntPtr hWaveOut);
 
-    private IntPtr hWaveOut;
-    private IntPtr pBuffer;
-    private WAVEHDR header;
-
     public void Play()
     {
-        Console.WriteLine("[배경음] Play() 실행됨");
+        Console.WriteLine("[BackgroundBGM] Play() 실행됨");
 
         int sampleRate = 44100;
-        int durationSeconds = 60;
+        int durationSeconds = 30; // 전체 재생 시간: 30초
         int totalSamples = sampleRate * durationSeconds;
-        double[] buffer = new double[totalSamples];
+        double[] mixBuffer = new double[totalSamples];
 
-        GenerateBackgroundMusic(buffer, sampleRate, durationSeconds);
+        GenerateBackgroundBGM(mixBuffer, sampleRate, durationSeconds);
 
         short[] samples = new short[totalSamples];
         for (int i = 0; i < totalSamples; i++)
         {
-            samples[i] = (short)(buffer[i] * short.MaxValue);
+            samples[i] = (short)(mixBuffer[i] * short.MaxValue);
         }
 
         byte[] byteBuffer = new byte[samples.Length * 2];
         Buffer.BlockCopy(samples, 0, byteBuffer, 0, byteBuffer.Length);
 
-        Console.WriteLine("[배경음] waveOutWrite() 실행 전 샘플 최대값: " + samples.Max());
-
         PlayPCM(byteBuffer, sampleRate);
-
-        // 🔥 소리가 끝나지 않도록 일정 시간 유지
-        Thread.Sleep(60000);  // 60초 동안 프로그램이 종료되지 않도록 대기
     }
-
 
     public void Stop()
     {
-        waveOutClose(hWaveOut);
-        Marshal.FreeHGlobal(pBuffer);
-    }
-
-    private void GenerateBackgroundMusic(double[] buffer, int sampleRate, int durationSeconds)
-    {
-        double[] melodyNotes = { 220, 330, 440, 550, 660, 770 };
-        double startTime = 0;
-
-        while (startTime < durationSeconds - 1)
+        if (hWaveOut != IntPtr.Zero)
         {
-            double freq = melodyNotes[new Random().Next(melodyNotes.Length)];
-            AddMelody(buffer, sampleRate, startTime, 0.3, freq, 0.5);
-            startTime += 0.5;
+            Console.WriteLine("[배경음] 재생 중단");
+
+            waveOutReset(hWaveOut); // 🔥 즉시 중단 추가
+            waveOutClose(hWaveOut); // 🔥 장치 닫기
+            hWaveOut = IntPtr.Zero; // 🔥 핸들 초기화
         }
     }
 
-    private void AddMelody(double[] buffer, int sampleRate, double startTime, double duration, double freq, double amplitude)
+    private static void GenerateBackgroundBGM(double[] buffer, int sampleRate, int durationSeconds)
     {
-        amplitude = 1.0; // 🔥 볼륨 증가
+        double[] melodyNotes = { 293.66, 349.23, 440.00, 392.00, 349.23 };
+        double melodyStart = 2.0;
+        double noteDuration = 0.5;
+        double noteGap = 0.1;
+        int noteIndex = 0;
+        double tTime = melodyStart;
+
+        while (tTime + noteDuration < durationSeconds - 4)
+        {
+            double freq = melodyNotes[noteIndex % melodyNotes.Length];
+            AddMelodyNote(buffer, sampleRate, tTime, noteDuration, freq, 0.25);
+            tTime += noteDuration + noteGap;
+            noteIndex++;
+        }
+    }
+
+    private static void AddMelodyNote(double[] buffer, int sampleRate, double startTime, double noteDuration, double frequency, double amplitude)
+    {
         int startSample = (int)(startTime * sampleRate);
-        int endSample = startSample + (int)(duration * sampleRate);
-        for (int i = startSample; i < endSample && i < buffer.Length; i++)
+        int noteSamples = (int)(noteDuration * sampleRate);
+        for (int i = 0; i < noteSamples && (startSample + i) < buffer.Length; i++)
         {
-            buffer[i] += amplitude * Math.Sin(2 * Math.PI * freq * i / sampleRate);
+            double t = (double)i / sampleRate;
+            buffer[startSample + i] += amplitude * Math.Sin(2 * Math.PI * frequency * t);
         }
     }
-
 
     private void PlayPCM(byte[] byteBuffer, int sampleRate)
     {
         WAVEFORMATEX format = new WAVEFORMATEX();
         waveOutOpen(out hWaveOut, WAVE_MAPPER, format, IntPtr.Zero, IntPtr.Zero, CALLBACK_NULL);
-        pBuffer = Marshal.AllocHGlobal(byteBuffer.Length);
+
+        IntPtr pBuffer = Marshal.AllocHGlobal(byteBuffer.Length);
         Marshal.Copy(byteBuffer, 0, pBuffer, byteBuffer.Length);
 
-        header = new WAVEHDR()
+        WAVEHDR header = new WAVEHDR()
         {
             lpData = pBuffer,
             dwBufferLength = (uint)byteBuffer.Length,
             dwFlags = 0,
-            dwLoops = 1 // ✅ BGM 반복 가능하도록 설정
+            dwLoops = 0
         };
 
+        waveOutPrepareHeader(hWaveOut, ref header, (uint)Marshal.SizeOf(header));
         waveOutWrite(hWaveOut, ref header, (uint)Marshal.SizeOf(header));
+
+        while ((header.dwFlags & WHDR_DONE) == 0)
+        {
+            Thread.Sleep(10);
+        }
+
+        waveOutUnprepareHeader(hWaveOut, ref header, (uint)Marshal.SizeOf(header));
+        Marshal.FreeHGlobal(pBuffer);
+        waveOutClose(hWaveOut);
     }
 }

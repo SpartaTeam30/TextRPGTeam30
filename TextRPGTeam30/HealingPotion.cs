@@ -17,6 +17,7 @@
 
         public void UsePotion(ICharacter character)
         {
+            SoundManager.Instance.PlaySound("potion");
             Console.WriteLine($"{character.Name}은 힐링 포션을 사용했습니다.");
         }
     }

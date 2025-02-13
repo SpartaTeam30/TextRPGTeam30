@@ -16,6 +16,7 @@
 
         public void UsePotion(ICharacter character)
         {
+            SoundManager.Instance.PlaySound("manaPotion");
             Console.WriteLine($"{character.Name}은 마나 포션을 사용했습니다.");
         }
     }

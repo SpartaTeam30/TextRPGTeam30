@@ -415,6 +415,7 @@ namespace TextRPGTeam30
                 int recovery = HPotion.HealAmount;
                 // 회복 후 체력이 최대 체력을 넘지 않도록 함
                 Hp = Math.Min(MaxHP, Hp + recovery);
+                SoundManager.Instance.PlaySound("potion");
                 Console.WriteLine($"회복! 남은 포션: {--HPotion.itemCount}");
                 Console.WriteLine($"현재 체력: {Hp}/{MaxHP}");
                 if(HPotion.itemCount == 0)
@@ -427,6 +428,7 @@ namespace TextRPGTeam30
      
                 int recovery = MPotion.ManaAmount;
                 mp = Math.Min(maxMp, mp + recovery);
+                SoundManager.Instance.PlaySound("potion");
                 Console.WriteLine($"회복! 남은 포션: {--MPotion.itemCount}");
                 Console.WriteLine($"현재 체력: {mp}/{maxMp}");
                 if (MPotion.itemCount == 0)

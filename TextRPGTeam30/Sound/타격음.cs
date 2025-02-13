@@ -36,6 +36,9 @@ public class 타격음 : ISoundPlayer // 🔥 ISoundPlayer 추가
     }
 
     [DllImport("winmm.dll")]
+    public static extern int waveOutReset(IntPtr hWaveOut); // 🔥 waveOutReset 추가
+
+    [DllImport("winmm.dll")]
     public static extern int waveOutOpen(out IntPtr hWaveOut, int uDeviceID, WAVEFORMATEX lpFormat,
                                          IntPtr dwCallback, IntPtr dwInstance, int dwFlags);
 
@@ -64,9 +67,14 @@ public class 타격음 : ISoundPlayer // 🔥 ISoundPlayer 추가
 
     public void Stop()
     {
-        isPlaying = false;
-        loopThread?.Join(); // 🔥 루프가 완전히 종료될 때까지 대기
-        waveOutClose(hWaveOut);
+        if (hWaveOut != IntPtr.Zero)
+        {
+            Console.WriteLine("[배경음] 재생 중단");
+
+            waveOutReset(hWaveOut); // 🔥 즉시 중단 추가
+            waveOutClose(hWaveOut); // 🔥 장치 닫기
+            hWaveOut = IntPtr.Zero; // 🔥 핸들 초기화
+        }
     }
 
     private void LoopSound()

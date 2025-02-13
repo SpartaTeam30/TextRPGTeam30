@@ -2,13 +2,14 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 
-public class 던전음 : ISoundPlayer  // 🔥 ISoundPlayer 추가
+public class 던전음 : ISoundPlayer
 {
     const int CALLBACK_NULL = 0;
     const int WHDR_DONE = 0x00000001;
     const int WAVE_MAPPER = -1;
 
-    private IntPtr hWaveOut;
+    private IntPtr hWaveOut = IntPtr.Zero; // 🔥 클래스 멤버 변수로 유지
+    private bool isPlaying = false; // 🔥 재생 중인지 확인하는 변수
 
     [StructLayout(LayoutKind.Sequential)]
     public class WAVEFORMATEX
@@ -36,6 +37,9 @@ public class 던전음 : ISoundPlayer  // 🔥 ISoundPlayer 추가
     }
 
     [DllImport("winmm.dll")]
+    public static extern int waveOutReset(IntPtr hWaveOut); // 🔥 waveOutReset 추가
+
+    [DllImport("winmm.dll")]
     public static extern int waveOutOpen(out IntPtr hWaveOut, int uDeviceID, WAVEFORMATEX lpFormat,
                                          IntPtr dwCallback, IntPtr dwInstance, int dwFlags);
 
@@ -55,7 +59,10 @@ public class 던전음 : ISoundPlayer  // 🔥 ISoundPlayer 추가
 
     public void Play()
     {
-        Console.WriteLine("[BattleBGM] Play() 실행됨");
+        if (isPlaying) return; // 🔥 이미 재생 중이라면 중복 실행 방지
+        isPlaying = true;
+
+        Console.WriteLine("[던전음] Play() 실행됨");
 
         int sampleRate = 44100;
         int durationSeconds = 30;
@@ -67,7 +74,7 @@ public class 던전음 : ISoundPlayer  // 🔥 ISoundPlayer 추가
         short[] samples = new short[totalSamples];
         for (int i = 0; i < totalSamples; i++)
         {
-            samples[i] = (short)(mixBuffer[i] * 1.0 * short.MaxValue);
+            samples[i] = (short)(mixBuffer[i] * short.MaxValue);
         }
 
         byte[] byteBuffer = new byte[samples.Length * 2];
@@ -78,7 +85,15 @@ public class 던전음 : ISoundPlayer  // 🔥 ISoundPlayer 추가
 
     public void Stop()
     {
-        waveOutClose(hWaveOut);
+        if (!isPlaying) return; // 🔥 재생 중이 아닐 때는 아무 작업도 하지 않음
+        isPlaying = false;
+
+        if (hWaveOut != IntPtr.Zero)
+        {
+            Console.WriteLine("[던전음] 재생 중단");
+            waveOutClose(hWaveOut); // 🔥 사운드 장치 닫기
+            hWaveOut = IntPtr.Zero; // 🔥 핸들 초기화
+        }
     }
 
     static void GenerateBattleBGM(double[] buffer, int sampleRate, int durationSeconds)
@@ -117,10 +132,9 @@ public class 던전음 : ISoundPlayer  // 🔥 ISoundPlayer 추가
         }
     }
 
-    static void PlayPCM(byte[] byteBuffer, int sampleRate)
+    void PlayPCM(byte[] byteBuffer, int sampleRate)
     {
         WAVEFORMATEX format = new WAVEFORMATEX();
-        IntPtr hWaveOut;
         waveOutOpen(out hWaveOut, WAVE_MAPPER, format, IntPtr.Zero, IntPtr.Zero, CALLBACK_NULL);
 
         IntPtr pBuffer = Marshal.AllocHGlobal(byteBuffer.Length);
@@ -137,7 +151,7 @@ public class 던전음 : ISoundPlayer  // 🔥 ISoundPlayer 추가
         waveOutPrepareHeader(hWaveOut, ref header, (uint)Marshal.SizeOf(header));
         waveOutWrite(hWaveOut, ref header, (uint)Marshal.SizeOf(header));
 
-        while ((header.dwFlags & WHDR_DONE) == 0)
+        while ((header.dwFlags & WHDR_DONE) == 0 && isPlaying) // 🔥 중단 요청 시 즉시 종료
         {
             Thread.Sleep(100);
         }
