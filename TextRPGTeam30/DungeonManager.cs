@@ -243,7 +243,7 @@ namespace TextRPGTeam30
                 if (player.mp >= player.job.skills[con - 1].cost)
                 {
                     player.mp -= player.job.skills[con - 1].cost;
-                    if (offensive2.count == 0)
+                    if (offensive2.count == 1)
                     {
                         SelectTarget(offensive2.UseSkill(player.GetAttack()), true);
                     }
@@ -265,7 +265,7 @@ namespace TextRPGTeam30
                 if (player.mp >= player.job.skills[con - 1].cost)
                 {
                     player.mp -= player.job.skills[con - 1].cost;
-                    if (utility.count == 0)
+                    if (utility.count == 1)
                     {
                         SelectTargetUtility(utility);
                     }
